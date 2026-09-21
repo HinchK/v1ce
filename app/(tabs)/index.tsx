@@ -1,0 +1,5 @@
+import {View,Text,StyleSheet} from "react-native";
+import {useAuth} from "@/context/AuthContext";
+import {useColors} from "@/hooks/useColors";
+export default function Home(){const {profile}=useAuth(),c=useColors();const days=profile?Math.max(0,Math.floor((Date.now()-new Date(profile.sobriety_date+"T00:00:00").getTime())/86400000)):0;return <View style={[s.container,{backgroundColor:c.background}]}><Text style={[s.label,{color:c.mutedForeground}]}>DAYS SOBER</Text><Text style={[s.days,{color:c.foreground}]}>{days}</Text><View style={[s.coin,{backgroundColor:profile?.coin_color||c.gold,borderColor:c.foreground}]}><Text style={[s.coinText,{color:c.foreground}]}>{days}</Text></View><Text style={[s.name,{color:c.foreground}]}>{profile?.display_name||"V1CE"}</Text></View>}
+const s=StyleSheet.create({container:{flex:1,alignItems:"center",justifyContent:"center",padding:24},label:{letterSpacing:3,fontWeight:"700"},days:{fontSize:88,fontWeight:"700"},coin:{width:190,height:190,borderRadius:95,borderWidth:4,alignItems:"center",justifyContent:"center",margin:20},coinText:{fontSize:56,fontWeight:"700"},name:{fontSize:24,fontWeight:"600"}});
