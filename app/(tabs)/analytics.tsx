@@ -1,0 +1,6 @@
+import {View,Text,StyleSheet} from "react-native";
+import {useAuth} from "@/context/AuthContext";
+import {useColors} from "@/hooks/useColors";
+export default function Analytics(){const {profile}=useAuth(),c=useColors();return <View style={[s.container,{backgroundColor:c.background}]}><Text style={[s.title,{color:c.foreground}]}>STATS</Text><Text style={{color:c.mutedForeground}}>Your sobriety progress.</Text><View style={s.grid}><Stat label="START DATE" value={profile?.sobriety_date||"—"} c={c}/><Stat label="SUBSTANCES" value={String(profile?.substances?.length||0)} c={c}/><Stat label="MILESTONES" value="0" c={c}/><Stat label="CHECK-INS" value="0" c={c}/></View></View>}
+function Stat({label,value,c}:{label:string;value:string;c:any}){return <View style={[s.card,{borderColor:c.border}]}><Text style={{color:c.mutedForeground,fontSize:10,letterSpacing:2}}>{label}</Text><Text style={{color:c.foreground,fontSize:24,fontWeight:"700",marginTop:8}}>{value}</Text></View>}
+const s=StyleSheet.create({container:{flex:1,padding:24,paddingTop:70},title:{fontSize:44,fontWeight:"700"},grid:{marginTop:32,gap:12},card:{borderWidth:2,padding:16}});
