@@ -1,0 +1,10 @@
+{
+  "expo":{
+    "name":"V1CE","slug":"v1ce-native","version":"1.0.0","orientation":"portrait",
+    "scheme":"v1ce","userInterfaceStyle":"automatic","newArchEnabled":true,
+    "ios":{"supportsTablet":false},
+    "android":{},
+    "plugins":["expo-router","expo-font","expo-web-browser"],
+    "experiments":{"typedRoutes":true,"reactCompiler":true}
+  }
+}
