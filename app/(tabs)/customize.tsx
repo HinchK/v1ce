@@ -1,0 +1,5 @@
+import {View,Text,StyleSheet} from "react-native";
+import {useAuth} from "@/context/AuthContext";
+import {useColors} from "@/hooks/useColors";
+export default function Customize(){const {profile}=useAuth(),c=useColors();return <View style={[s.container,{backgroundColor:c.background}]}><Text style={[s.title,{color:c.foreground}]}>COIN</Text><Text style={{color:c.mutedForeground}}>Customize your milestone coin.</Text><View style={[s.coin,{backgroundColor:profile?.coin_color||c.gold,borderColor:c.foreground}]}><Text style={{fontSize:48,fontWeight:"700",color:c.foreground}}>1</Text></View><Text style={{color:c.foreground}}>Shape: {profile?.coin_shape||"circle"}</Text><Text style={{color:c.foreground}}>Style: {profile?.number_style||"classic"}</Text></View>}
+const s=StyleSheet.create({container:{flex:1,padding:24,paddingTop:70},title:{fontSize:44,fontWeight:"700",marginBottom:8},coin:{width:180,height:180,borderRadius:90,borderWidth:4,alignSelf:"center",alignItems:"center",justifyContent:"center",marginVertical:40}});
