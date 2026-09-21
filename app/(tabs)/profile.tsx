@@ -1,0 +1,6 @@
+import {View,Text,StyleSheet,TouchableOpacity} from "react-native";
+import {useRouter} from "expo-router";
+import {useAuth} from "@/context/AuthContext";
+import {useColors} from "@/hooks/useColors";
+export default function Profile(){const {profile,signOut}=useAuth(),c=useColors(),router=useRouter();return <View style={[s.container,{backgroundColor:c.background}]}><Text style={[s.title,{color:c.foreground}]}>PROFILE</Text><Text style={[s.name,{color:c.foreground}]}>{profile?.display_name||"V1CE"}</Text><Text style={{color:c.mutedForeground}}>{profile?.email||"Not signed in"}</Text><TouchableOpacity onPress={async()=>{await signOut();router.replace("/onboarding")}} style={[s.button,{borderColor:c.foreground}]}><Text style={{color:c.foreground,fontWeight:"700"}}>SIGN OUT</Text></TouchableOpacity></View>}
+const s=StyleSheet.create({container:{flex:1,padding:24,paddingTop:70},title:{fontSize:44,fontWeight:"700"},name:{fontSize:28,fontWeight:"700",marginTop:40},button:{borderWidth:2,padding:16,marginTop:40,alignItems:"center"}});
