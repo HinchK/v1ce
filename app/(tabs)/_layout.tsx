@@ -1,0 +1,3 @@
+import {Tabs} from "expo-router";
+import {useColors} from "@/hooks/useColors";
+export default function TabLayout(){const c=useColors();return <Tabs screenOptions={{headerShown:false,tabBarActiveTintColor:c.gold,tabBarInactiveTintColor:c.mutedForeground}}><Tabs.Screen name="index" options={{title:"Home"}}/><Tabs.Screen name="customize" options={{title:"Coin"}}/><Tabs.Screen name="analytics" options={{title:"Stats"}}/><Tabs.Screen name="lounge" options={{title:"Lounge"}}/><Tabs.Screen name="friends" options={{title:"Friends"}}/><Tabs.Screen name="profile" options={{title:"Profile"}}/><Tabs.Screen name="premium" options={{title:"Premium"}}/></Tabs>}
