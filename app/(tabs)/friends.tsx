@@ -1,0 +1,4 @@
+import {View,Text,StyleSheet} from "react-native";
+import {useColors} from "@/hooks/useColors";
+export default function Friends(){const c=useColors();return <View style={[s.container,{backgroundColor:c.background}]}><Text style={[s.title,{color:c.foreground}]}>FRIENDS</Text><Text style={{color:c.mutedForeground}}>Connect with people on their sobriety journey.</Text><View style={[s.card,{borderColor:c.border}]}><Text style={{color:c.foreground,fontWeight:"700"}}>NO FRIENDS YET</Text></View></View>}
+const s=StyleSheet.create({container:{flex:1,padding:24,paddingTop:70},title:{fontSize:44,fontWeight:"700"},card:{borderWidth:2,padding:18,marginTop:32}});
