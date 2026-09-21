@@ -1,0 +1,2 @@
+import {View,Text} from "react-native";
+export function ErrorFallback({error}:{error:Error}){return <View style={{flex:1,alignItems:"center",justifyContent:"center",padding:24}}><Text>V1CE hit an error.</Text><Text>{error.message}</Text></View>}
