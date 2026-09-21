@@ -1,0 +1,5 @@
+import {View,Text,StyleSheet,TouchableOpacity} from "react-native";
+import {useAuth} from "@/context/AuthContext";
+import {useColors} from "@/hooks/useColors";
+export default function Premium(){const {profile}=useAuth(),c=useColors();return <View style={[s.container,{backgroundColor:c.background}]}><Text style={[s.title,{color:c.foreground}]}>PREMIUM</Text><Text style={[s.price,{color:c.gold}]}>$3.99 / MONTH</Text>{["More coin customization","Premium lounge features","Extra milestone options","Profile enhancements","Priority features"].map(x=><Text key={x} style={[s.feature,{color:c.foreground}]}>• {x}</Text>)}<TouchableOpacity style={[s.button,{backgroundColor:c.foreground}]}><Text style={{color:c.background,fontWeight:"700"}}>{profile?.is_premium?"YOU ARE PREMIUM":"UPGRADE NOW"}</Text></TouchableOpacity></View>}
+const s=StyleSheet.create({container:{flex:1,padding:24,paddingTop:70},title:{fontSize:44,fontWeight:"700"},price:{fontSize:24,fontWeight:"700",marginVertical:28},feature:{fontSize:16,marginBottom:16},button:{height:56,alignItems:"center",justifyContent:"center",marginTop:20}});
