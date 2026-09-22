@@ -1,4 +1,5 @@
 import { ScrollView, View, Text, StyleSheet, TouchableOpacity, TextInput } from "react-native";
+import { router } from "expo-router";
 import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/lib/supabase";
@@ -15,7 +16,9 @@ export default function Customize() {
   const [color, setColor] = useState(profile?.coin_color || "gold");
   const [shape, setShape] = useState(profile?.coin_shape || "circle");
   const [style, setStyle] = useState(profile?.number_style || "classic");
+  const [displayName, setDisplayName] = useState(profile?.display_name || "");
   const [motto, setMotto] = useState(profile?.coin_motto || "");
+  const [imageOnlyMode, setImageOnlyMode] = useState(profile?.coin_image_only || false);
   const [border, setBorder] = useState(profile?.coin_show_border ?? true);
   const [borderColor, setBorderColor] = useState(profile?.coin_border_color || "");
   const [numberColor, setNumberColor] = useState(profile?.coin_number_color || "");
@@ -35,7 +38,9 @@ export default function Customize() {
       coin_color: color,
       coin_shape: shape,
       number_style: style,
+      display_name: displayName,
       coin_motto: motto,
+      coin_image_only: imageOnlyMode,
       coin_show_border: border,
       coin_border_color: borderColor || null,
       coin_number_color: numberColor || null,
@@ -62,8 +67,9 @@ export default function Customize() {
           shape={shape}
           numberStyle={style}
           size={220}
-          displayName={profile?.display_name}
+          displayName={displayName}
           motto={motto}
+          imageOnlyMode={imageOnlyMode}
           showBorder={border}
           borderColor={borderColor || undefined}
           numberColor={numberColor || undefined}
@@ -111,11 +117,28 @@ export default function Customize() {
         ))}
       </View>
 
+      <Section title="PERSONALIZE" c={c} />
+      <TextInput
+        value={displayName}
+        onChangeText={(x) => setDisplayName(x.slice(0, 20))}
+        placeholder="Display name"
+        placeholderTextColor={c.mutedForeground}
+        maxLength={20}
+        style={[s.input, { color: c.foreground, borderColor: c.border }]}
+      />
       <Section title="MOTTO" c={c} />
       <TextInput value={motto} onChangeText={(x) => setMotto(x.slice(0, 30))} placeholder="30 characters max" placeholderTextColor={c.mutedForeground} style={[s.input, { color: c.foreground, borderColor: c.border }]} />
 
       <TouchableOpacity onPress={() => setBorder(!border)} style={[s.toggle, { borderColor: c.border }]}>
         <Text style={{ color: c.foreground }}>BORDER: {border ? "ON" : "OFF"}</Text>
+      </TouchableOpacity>
+
+      <Text style={[s.hint, { color: c.mutedForeground }]}>IMAGE MODE</Text>
+      <TouchableOpacity
+        onPress={() => profile?.is_premium ? setImageOnlyMode(!imageOnlyMode) : router.push("/premium")}
+        style={[s.toggle, { borderColor: c.border }]}
+      >
+        <Text style={{ color: c.foreground }}>IMAGE ONLY: {imageOnlyMode && profile?.is_premium ? "ON" : "OFF"}{!profile?.is_premium ? " • PREMIUM" : ""}</Text>
       </TouchableOpacity>
 
       <Text style={[s.hint, { color: c.mutedForeground }]}>BORDER COLOR</Text>
