@@ -15,10 +15,9 @@ import {Stack} from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import React,{useEffect} from "react";
 import {GestureHandlerRootView} from "react-native-gesture-handler";
-import {KeyboardProvider} from "react-native-keyboard-controller";
 import {SafeAreaProvider} from "react-native-safe-area-context";
 import {AuthProvider} from "@/context/AuthContext";
 import {ErrorBoundary} from "@/components/ErrorBoundary";
 const queryClient=new QueryClient();
 SplashScreen.preventAutoHideAsync();
-export default function RootLayout(){const[loaded,error]=useFonts({Inter_400Regular,Inter_500Medium,Inter_600SemiBold,Inter_700Bold,Cinzel_700Bold,Poppins_700Bold,SpaceMono_700Bold,Fredoka_400Regular,IBMPlexSerif_700Bold,DMSans_700Bold,CourierPrime_700Bold,BodoniModa_700Bold,Syne_700Bold,Pacifico_400Regular,BebasNeue_400Regular});useEffect(()=>{if(loaded||error)SplashScreen.hideAsync()},[loaded,error]);if(!loaded&&!error)return null;return <SafeAreaProvider><GestureHandlerRootView style={{flex:1}}><KeyboardProvider><QueryClientProvider client={queryClient}><ErrorBoundary><AuthProvider><Stack screenOptions={{headerShown:false}}/></AuthProvider></ErrorBoundary></QueryClientProvider></KeyboardProvider></GestureHandlerRootView></SafeAreaProvider>}
+export default function RootLayout(){const[loaded,error]=useFonts({Inter_400Regular,Inter_500Medium,Inter_600SemiBold,Inter_700Bold,Cinzel_700Bold,Poppins_700Bold,SpaceMono_700Bold,Fredoka_400Regular,IBMPlexSerif_700Bold,DMSans_700Bold,CourierPrime_700Bold,BodoniModa_700Bold,Syne_700Bold,Pacifico_400Regular,BebasNeue_400Regular});useEffect(()=>{if(loaded||error)SplashScreen.hideAsync()},[loaded,error]);if(!loaded&&!error)return null;return <SafeAreaProvider><GestureHandlerRootView style={{flex:1}}><QueryClientProvider client={queryClient}><ErrorBoundary><AuthProvider><Stack screenOptions={{headerShown:false}}/></AuthProvider></ErrorBoundary></QueryClientProvider></GestureHandlerRootView></SafeAreaProvider>}
