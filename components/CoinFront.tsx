@@ -1,5 +1,5 @@
-import React from "react";
-import { Image, StyleSheet, Text, View } from "react-native";
+import React, { useRef } from "react";
+import { Animated, Easing, Pressable, StyleSheet, Text, View } from "react-native";
 import Svg, { Circle, Defs, ClipPath, G, Image as SvgImage, Path, Polygon } from "react-native-svg";
 import { COIN_COLORS, NUMBER_STYLES, SHAPE_POLYGONS, resolveCoinColor } from "@/constants/coin";
 
@@ -20,6 +20,7 @@ type Props = {
   borderColor?: string;
   numberColor?: string;
   customShapePath?: string;
+  onPress?: () => void;
 };
 
 const PATHS: Record<string, string> = {
@@ -81,7 +82,27 @@ export default function CoinFront({
   borderColor,
   numberColor,
   customShapePath,
+  onPress,
 }: Props) {
+  const flip = useRef(new Animated.Value(0)).current;
+
+  const handlePress = () => {
+    if (!onPress) return;
+    flip.stopAnimation();
+    flip.setValue(0);
+    Animated.timing(flip, {
+      toValue: 1,
+      duration: 650,
+      easing: Easing.inOut(Easing.cubic),
+      useNativeDriver: true,
+    }).start();
+    onPress();
+  };
+
+  const rotateY = flip.interpolate({
+    inputRange: [0, 1],
+    outputRange: ["0deg", "360deg"],
+  });
   const colors = resolveCoinColor(color);
   const style = NUMBER_STYLES[numberStyle as keyof typeof NUMBER_STYLES] || NUMBER_STYLES.classic;
   const years = Math.floor(days / 365);
@@ -98,7 +119,19 @@ export default function CoinFront({
   const verticalOffset = ["arrow", "badge"].includes(shape) ? size * 0.05 : 0;
 
   return (
-    <View style={[styles.wrap, { width: size, height: size }]}>
+    <Pressable
+      accessibilityRole={onPress ? "button" : undefined}
+      accessibilityLabel={onPress ? "Flip coin" : undefined}
+      disabled={!onPress}
+      onPress={handlePress}
+      style={[styles.pressable, { width: size, height: size }]}
+    >
+      <Animated.View
+        style={[
+          styles.wrap,
+          { width: size, height: size, transform: [{ perspective: 900 }, { rotateY }] },
+        ]}
+      >
       <Svg width={size} height={size} viewBox="0 0 100 100">
         <Defs>
           {isSvgShape && !customPoints && (
@@ -148,11 +181,13 @@ export default function CoinFront({
           {motto && <Text numberOfLines={2} style={[styles.motto, { color: textColor, fontSize: size * 0.035 }]}>{motto}</Text>}
         </View>
       )}
-    </View>
+      </Animated.View>
+    </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
+  pressable: { alignItems: "center", justifyContent: "center" },
   wrap: { alignItems: "center", justifyContent: "center" },
   content: { position: "absolute", alignItems: "center", justifyContent: "center", alignSelf: "center" },
   number: { fontWeight: "700", lineHeight: undefined, includeFontPadding: false, textAlign: "center" },
