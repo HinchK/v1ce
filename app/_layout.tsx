@@ -1,4 +1,15 @@
 import {Inter_400Regular,Inter_500Medium,Inter_600SemiBold,Inter_700Bold,useFonts} from "@expo-google-fonts/inter";
+import {Cinzel_700Bold} from "@expo-google-fonts/cinzel";
+import {Poppins_700Bold} from "@expo-google-fonts/poppins";
+import {SpaceMono_700Bold} from "@expo-google-fonts/space-mono";
+import {Fredoka_400Regular} from "@expo-google-fonts/fredoka";
+import {IBMPlexSerif_700Bold} from "@expo-google-fonts/ibm-plex-serif";
+import {DMSans_700Bold} from "@expo-google-fonts/dm-sans";
+import {CourierPrime_700Bold} from "@expo-google-fonts/courier-prime";
+import {BodoniModa_700Bold} from "@expo-google-fonts/bodoni-moda";
+import {Syne_700Bold} from "@expo-google-fonts/syne";
+import {Pacifico_400Regular} from "@expo-google-fonts/pacifico";
+import {BebasNeue_400Regular} from "@expo-google-fonts/bebas-neue";
 import {QueryClient,QueryClientProvider} from "@tanstack/react-query";
 import {Stack} from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
@@ -10,4 +21,4 @@ import {AuthProvider} from "@/context/AuthContext";
 import {ErrorBoundary} from "@/components/ErrorBoundary";
 const queryClient=new QueryClient();
 SplashScreen.preventAutoHideAsync();
-export default function RootLayout(){const[loaded,error]=useFonts({Inter_400Regular,Inter_500Medium,Inter_600SemiBold,Inter_700Bold});useEffect(()=>{if(loaded||error)SplashScreen.hideAsync()},[loaded,error]);if(!loaded&&!error)return null;return <SafeAreaProvider><GestureHandlerRootView style={{flex:1}}><KeyboardProvider><QueryClientProvider client={queryClient}><ErrorBoundary><AuthProvider><Stack screenOptions={{headerShown:false}}/></AuthProvider></ErrorBoundary></QueryClientProvider></KeyboardProvider></GestureHandlerRootView></SafeAreaProvider>}
+export default function RootLayout(){const[loaded,error]=useFonts({Inter_400Regular,Inter_500Medium,Inter_600SemiBold,Inter_700Bold,Cinzel_700Bold,Poppins_700Bold,SpaceMono_700Bold,Fredoka_400Regular,IBMPlexSerif_700Bold,DMSans_700Bold,CourierPrime_700Bold,BodoniModa_700Bold,Syne_700Bold,Pacifico_400Regular,BebasNeue_400Regular});useEffect(()=>{if(loaded||error)SplashScreen.hideAsync()},[loaded,error]);if(!loaded&&!error)return null;return <SafeAreaProvider><GestureHandlerRootView style={{flex:1}}><KeyboardProvider><QueryClientProvider client={queryClient}><ErrorBoundary><AuthProvider><Stack screenOptions={{headerShown:false}}/></AuthProvider></ErrorBoundary></QueryClientProvider></KeyboardProvider></GestureHandlerRootView></SafeAreaProvider>}
