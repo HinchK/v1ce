@@ -45,7 +45,7 @@ export default function Customize() {
       coin_border_color: borderColor || null,
       coin_number_color: numberColor || null,
     };
-    const { data, error } = await supabase.from("SobrietyProfile").update(values).eq("email", profile.email).select().single();
+    const { data, error } = await supabase.from("profiles").update(values).eq("email", profile.email).select().single();
     if (!error) setProfile(data || { ...profile, ...values });
     setSaving(false);
   };
