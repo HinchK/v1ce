@@ -33,6 +33,22 @@ const PATHS: Record<string, string> = {
   arrow: "M0 35 L55 35 L55 10 L100 50 L55 90 L55 65 L0 65 Z",
 };
 
+
+const NATIVE_FONT_FAMILIES: Record<string, string> = {
+  Cinzel: "Cinzel_700Bold",
+  Poppins: "Poppins_700Bold",
+  "Space Mono": "SpaceMono_700Bold",
+  "Fredoka One": "Fredoka_400Regular",
+  "IBM Plex Serif": "IBMPlexSerif_700Bold",
+  "DM Sans": "DMSans_700Bold",
+  "Courier Prime": "CourierPrime_700Bold",
+  "Bodoni Moda": "BodoniModa_700Bold",
+  Syne: "Syne_700Bold",
+  Pacifico: "Pacifico_400Regular",
+  "Bebas Neue": "BebasNeue_400Regular",
+  Inter: "Inter_700Bold",
+};
+
 function shapePath(shape: string) {
   return PATHS[shape] || PATHS.hexagon;
 }
@@ -121,7 +137,7 @@ export default function CoinFront({
                 fontSize,
                 letterSpacing: fontSize * (style.letterSpacing ?? 0),
                 fontWeight: style.fontWeight,
-                fontFamily: style.fontFamily === "Inter" ? "Inter_700Bold" : undefined,
+                fontFamily: NATIVE_FONT_FAMILIES[style.fontFamily] || undefined,
               },
             ]}
           >
