@@ -1,4 +1,4 @@
-import { ScrollView, View, Text, StyleSheet, TouchableOpacity, TextInput } from "react-native";
+﻿import { ScrollView, View, Text, StyleSheet, TouchableOpacity, TextInput } from "react-native";
 import { router } from "expo-router";
 import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
@@ -177,3 +177,4 @@ const s = StyleSheet.create({
   toggle: { borderWidth: 2, padding: 14, marginTop: 16 },
   save: { height: 56, alignItems: "center", justifyContent: "center", marginTop: 24 },
 });
+
