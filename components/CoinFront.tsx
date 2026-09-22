@@ -162,12 +162,12 @@ export default function CoinFront({
         <View pointerEvents="none" style={[styles.content, { width: maxWidth, top: size * 0.5 - fontSize * 0.52 + verticalOffset }]}>
           <Text
             numberOfLines={1}
-            adjustsFontSizeToFit
             style={[
               styles.number,
               {
                 color: textColor,
                 fontSize,
+                lineHeight: fontSize * 1.05,
                 letterSpacing: fontSize * (style.letterSpacing ?? 0),
                 fontWeight: style.fontWeight,
                 fontFamily: NATIVE_FONT_FAMILIES[style.fontFamily] || undefined,
