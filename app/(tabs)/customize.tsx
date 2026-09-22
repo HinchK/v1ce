@@ -73,6 +73,7 @@ export default function Customize() {
           showBorder={border}
           borderColor={borderColor || undefined}
           numberColor={numberColor || undefined}
+          onPress={() => {}}
         />
       </View>
 
