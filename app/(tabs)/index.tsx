@@ -54,7 +54,7 @@ export default function Home(){
     setProfile({...profile,substances:next});
     setSavingSubstances(true);
     const{error}=await supabase
-      .from("SobrietyProfile")
+      .from("profiles")
       .update({substances:next})
       .eq("email",profile.email);
     setSavingSubstances(false);
