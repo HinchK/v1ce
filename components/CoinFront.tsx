@@ -124,12 +124,12 @@ export default function CoinFront({
       accessibilityLabel={onPress ? "Flip coin" : undefined}
       disabled={!onPress}
       onPress={handlePress}
-      style={[styles.pressable, { width: size, height: size }]}
+      style={[styles.pressable, { width: size, height: size, aspectRatio: 1 }]}
     >
       <Animated.View
         style={[
           styles.wrap,
-          { width: size, height: size, transform: [{ perspective: 900 }, { rotateY }] },
+          { width: size, height: size, aspectRatio: 1, transform: [{ perspective: 900 }, { rotateY }] },
         ]}
       >
       <Svg width={size} height={size} viewBox="0 0 100 100">
@@ -187,8 +187,8 @@ export default function CoinFront({
 }
 
 const styles = StyleSheet.create({
-  pressable: { alignItems: "center", justifyContent: "center" },
-  wrap: { alignItems: "center", justifyContent: "center" },
+  pressable: { alignItems: "center", justifyContent: "center", aspectRatio: 1 },
+  wrap: { alignItems: "center", justifyContent: "center", aspectRatio: 1 },
   content: { position: "absolute", alignItems: "center", justifyContent: "center", alignSelf: "center" },
   number: { fontWeight: "700", lineHeight: undefined, includeFontPadding: false, textAlign: "center" },
   label: { fontWeight: "700", letterSpacing: 3, opacity: 0.7, textAlign: "center" },
