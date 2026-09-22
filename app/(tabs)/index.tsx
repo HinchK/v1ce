@@ -100,6 +100,7 @@ export default function Home(){
               coinPhoto={profile.coin_photo}
               imageOnlyMode={profile.coin_image_only}
               size={230}
+              onPress={() => {}}
             />
           : <Text style={{color:c.mutedForeground}}>Set your sobriety date to start tracking.</Text>
         }
