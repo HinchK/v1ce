@@ -114,8 +114,8 @@ export default function CoinFront({
   const clipId = `coin-${Math.round(size)}-${shape.replace(/[^a-z0-9]/gi, "")}`;
   const textColor = numberColor || colors.text;
   const strokeColor = borderColor || colors.border;
-  const fontSize = size * (["star", "cross", "arrow"].includes(shape) ? 0.25 : 0.32);
-  const maxWidth = size * (["star", "cross", "arrow"].includes(shape) ? 0.6 : 0.8);
+  const fontSize = size * (["star", "cross", "arrow"].includes(shape) ? 0.25 : 0.28);
+  const maxWidth = size * (["star", "cross", "arrow"].includes(shape) ? 0.55 : 0.72);
   const verticalOffset = ["arrow", "badge"].includes(shape) ? size * 0.05 : 0;
 
   return (
