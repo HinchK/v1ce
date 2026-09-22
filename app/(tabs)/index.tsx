@@ -1,4 +1,4 @@
-import React,{useEffect,useMemo,useState} from "react";
+﻿import React,{useEffect,useMemo,useState} from "react";
 import {Alert,ScrollView,StyleSheet,Text,TouchableOpacity,View} from "react-native";
 import {useRouter} from "expo-router";
 import {useAuth} from "@/context/AuthContext";
@@ -156,10 +156,10 @@ export default function Home(){
                   {borderColor:achieved?c.gold:c.border,backgroundColor:achieved?c.gold:c.background}
                 ]}
               >
-                <Text style={[s.milestoneDays,{color:achieved?c.goldForeground:c.mutedForeground}]}>
+                <Text style={[s.milestoneDays,{color:achieved?c.foreground:c.mutedForeground}]}>
                   {milestone.days<365?milestone.days+"D":milestone.days===365?"1Y":"2Y"}
                 </Text>
-                <Text style={[s.milestoneLabel,{color:achieved?c.goldForeground:c.mutedForeground}]}>
+                <Text style={[s.milestoneLabel,{color:achieved?c.foreground:c.mutedForeground}]}>
                   {milestone.label}
                 </Text>
               </View>
@@ -205,3 +205,5 @@ const s=StyleSheet.create({
   milestoneLabel:{fontSize:8,fontWeight:"800",letterSpacing:1,textAlign:"center",marginTop:3},
   button:{height:54,alignItems:"center",justifyContent:"center",marginTop:20}
 });
+
+
