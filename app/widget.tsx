@@ -1,21 +1,27 @@
-import React,{useState} from "react";
-import {ScrollView,StyleSheet,Text,TouchableOpacity,View} from "react-native";
-import {useAuth} from "@/context/AuthContext";
-import {useColors} from "@/hooks/useColors";
-import CoinFront from "@/components/CoinFront";
+import React,{useState}from"react";
+import{Alert,ScrollView,Share,StyleSheet,Text,TextInput,TouchableOpacity,View}from"react-native";
+import{useAuth}from"@/context/AuthContext";
+import{useColors}from"@/hooks/useColors";
+import{useRouter}from"expo-router";
+import{Linking}from"react-native";
+import CoinFront from"@/components/CoinFront";
+import{supabase}from"@/lib/supabase";
 
 export default function Widget(){
- const{profile}=useAuth();const c=useColors();const[preview,setPreview]=useState(true);
+ const{profile,user}=useAuth();const c=useColors();const router=useRouter();const[preview,setPreview]=useState(true);const[giftEmail,setGiftEmail]=useState("");const[giveawayEmail,setGiveawayEmail]=useState(user?.email||"");const[busy,setBusy]=useState(false);
  const days=profile?.sobriety_date?Math.max(0,Math.floor((Date.now()-new Date(profile.sobriety_date+"T00:00:00").getTime())/86400000)):0;
+ const share=()=>Share.share({message:"My V1CE sobriety coin. v1ce://coin-widget"});
+ const gift=async()=>{const email=giftEmail.trim();if(!email)return;setBusy(true);const{data,error}=await supabase.functions.invoke("create-checkout",{body:{plan:"yearly",giftEmail:email,gifterEmail:user?.email||"",successUrl:"v1ce://widget?gift=1",cancelUrl:"v1ce://widget"}});setBusy(false);if(error||!data?.url){Alert.alert("V1CE",error?.message||"Gift checkout is not available.");return}Linking.openURL(data.url)};
+ const enterGiveaway=async()=>{const email=giveawayEmail.trim();if(!email)return;setBusy(true);const{data,error}=await supabase.functions.invoke("giveaway-entry",{body:{email}});setBusy(false);if(error)Alert.alert("V1CE",error.message);else Alert.alert("V1CE",data?.message==="already_entered"?"Already entered this month.":"Entry received.")};
  if(!profile)return <View style={[s.empty,{backgroundColor:c.background}]}><Text style={[s.emptyTitle,{color:c.foreground}]}>No Profile Yet</Text><Text style={[s.note,{color:c.mutedForeground}]}>Set your sobriety date on the Home page first.</Text></View>;
- return <ScrollView style={{backgroundColor:c.background}} contentContainerStyle={s.page}>
-  <Text style={[s.title,{color:c.foreground}]}>YOUR{"\n"}WIDGET.</Text>
-  <Text style={[s.subtitle,{color:c.mutedForeground}]}>Share & Install</Text>
-  <Text style={[s.note,{color:c.mutedForeground}]}>Get V1CE on your home screen and share your coin.</Text>
-  <TouchableOpacity style={[s.action,{backgroundColor:c.foreground}]}><Text style={{color:c.background,fontWeight:"900",letterSpacing:2}}>INSTALL APP</Text></TouchableOpacity>
-  <TouchableOpacity style={[s.outline,{borderColor:c.foreground}]}><Text style={{color:c.foreground,fontWeight:"900",letterSpacing:2}}>WIDGET LINK</Text></TouchableOpacity>
-  <TouchableOpacity onPress={()=>setPreview(v=>!v)} style={[s.outline,{borderColor:c.foreground}]}><Text style={{color:c.foreground,fontWeight:"900",letterSpacing:2}}>{preview?"Hide Preview":"Show Preview"}</Text></TouchableOpacity>
+ return <ScrollView style={{backgroundColor:c.background}} contentContainerStyle={s.page} keyboardShouldPersistTaps="handled">
+  <Text style={[s.title,{color:c.foreground}]}>YOUR{"\n"}WIDGET.</Text><Text style={[s.subtitle,{color:c.mutedForeground}]}>Share & Install</Text><Text style={[s.note,{color:c.mutedForeground}]}>Get V1CE on your home screen and share your coin.</Text>
+  <TouchableOpacity onPress={share} style={[s.action,{backgroundColor:c.foreground}]}><Text style={{color:c.background,fontWeight:"900",letterSpacing:2}}>SHARE COIN</Text></TouchableOpacity>
+  <TouchableOpacity onPress={()=>setPreview(v=>!v)} style={[s.outline,{borderColor:c.foreground}]}><Text style={{color:c.foreground,fontWeight:"900",letterSpacing:2}}>{preview?"HIDE PREVIEW":"SHOW PREVIEW"}</Text></TouchableOpacity>
   {preview&&<View style={[s.preview,{borderColor:c.foreground}]}><CoinFront days={days} shape={profile.coin_shape||"circle"} color={profile.coin_color||"gold"} numberStyle={profile.number_style||"classic"} size={190} displayName={profile.display_name||""} showBorder={profile.coin_show_border??true} coinPhoto={profile.coin_photo||undefined} imageOnlyMode={profile.coin_image_only||false}/></View>}
+  <Text style={[s.section,{color:c.foreground}]}>PAY IT FORWARD</Text><Text style={[s.note,{color:c.mutedForeground}]}>Gift Premium to another V1CE user.</Text><View style={s.row}><TextInput value={giftEmail} onChangeText={setGiftEmail} autoCapitalize="none" keyboardType="email-address" placeholder="Recipient email" placeholderTextColor={c.mutedForeground} style={[s.input,{borderColor:c.foreground,color:c.foreground}]}/><TouchableOpacity disabled={busy} onPress={gift} style={[s.smallButton,{backgroundColor:c.foreground}]}><Text style={{color:c.background,fontWeight:"900"}}>GIFT</Text></TouchableOpacity></View>
+  <Text style={[s.section,{color:c.foreground}]}>MONTHLY GIVEAWAY</Text><Text style={[s.note,{color:c.mutedForeground}]}>Enter once each month for the V1CE giveaway.</Text><View style={s.row}><TextInput value={giveawayEmail} onChangeText={setGiveawayEmail} autoCapitalize="none" keyboardType="email-address" placeholder="Email" placeholderTextColor={c.mutedForeground} style={[s.input,{borderColor:c.foreground,color:c.foreground}]}/><TouchableOpacity disabled={busy} onPress={enterGiveaway} style={[s.smallButton,{backgroundColor:c.foreground}]}><Text style={{color:c.background,fontWeight:"900"}}>ENTER</Text></TouchableOpacity></View>
+  <Text style={[s.section,{color:c.foreground}]}>INSTALL</Text><TouchableOpacity onPress={()=>router.push("/(tabs)/index")} style={[s.outline,{borderColor:c.foreground}]}><Text style={{color:c.foreground,fontWeight:"900",letterSpacing:2}}>OPEN V1CE</Text></TouchableOpacity>
  </ScrollView>
 }
-const s=StyleSheet.create({page:{padding:20,paddingTop:55,paddingBottom:80},title:{fontSize:52,fontWeight:"900",lineHeight:52},subtitle:{fontSize:18,fontWeight:"900",marginTop:24},note:{fontSize:13,lineHeight:19,marginTop:8},action:{height:54,alignItems:"center",justifyContent:"center",marginTop:24},outline:{height:54,borderWidth:2,alignItems:"center",justifyContent:"center",marginTop:10},preview:{borderWidth:2,alignItems:"center",justifyContent:"center",paddingVertical:26,marginTop:18},empty:{flex:1,alignItems:"center",justifyContent:"center",padding:30},emptyTitle:{fontSize:28,fontWeight:"900"},});
+const s=StyleSheet.create({page:{padding:20,paddingTop:55,paddingBottom:80},title:{fontSize:52,fontWeight:"900",lineHeight:52},subtitle:{fontSize:18,fontWeight:"900",marginTop:24},note:{fontSize:13,lineHeight:19,marginTop:8},action:{height:54,alignItems:"center",justifyContent:"center",marginTop:24},outline:{height:54,borderWidth:2,alignItems:"center",justifyContent:"center",marginTop:10},preview:{borderWidth:2,alignItems:"center",justifyContent:"center",paddingVertical:26,marginTop:18},section:{fontSize:22,fontWeight:"900",letterSpacing:1.5,marginTop:34,marginBottom:4},row:{flexDirection:"row",gap:8,marginTop:12},input:{flex:1,borderWidth:2,padding:12,fontSize:13},smallButton:{paddingHorizontal:16,justifyContent:"center"},empty:{flex:1,alignItems:"center",justifyContent:"center",padding:30},emptyTitle:{fontSize:28,fontWeight:"900"}});
