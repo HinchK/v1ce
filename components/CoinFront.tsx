@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
-import Svg, { Circle, Path, Polygon } from "react-native-svg";
+import Svg, { Circle, Image, Path, Polygon } from "react-native-svg";
 import { COIN_COLORS, NUMBER_STYLES, resolveCoinColor } from "@/constants/coin";
 
 export { COIN_COLORS, NUMBER_STYLES };
@@ -74,14 +74,11 @@ export default function CoinFront({
     <Svg width={size} height={size} viewBox="0 0 100 100">
       {shape==="circle" ? <>
         <Circle cx="50" cy="50" r="48" fill={colors.bg}/>
-        {coinPhoto && <Svg.Image href={{uri:coinPhoto}} x="2" y="2" width="96" height="96" preserveAspectRatio="xMidYMid slice" opacity={imageOnlyMode?1:.35}/>}
+        {coinPhoto && <Image href={{uri:coinPhoto}} x="2" y="2" width="96" height="96" preserveAspectRatio="xMidYMid slice" opacity={imageOnlyMode?1:.35}/>} 
         {showBorder && <Circle cx="50" cy="50" r="48" fill="none" stroke={resolvedBorderColor} strokeWidth="3"/>}
       </> : <>
         {customPoints ? <Polygon points={customPoints} fill={colors.bg}/> : <Path d={svgPath} fill={colors.bg}/>}
-        {coinPhoto && (customPoints
-          ? <Svg.Image href={{uri:coinPhoto}} x="0" y="0" width="100" height="100" preserveAspectRatio="xMidYMid slice" opacity={imageOnlyMode?1:.35}/>
-          : <Svg.Image href={{uri:coinPhoto}} x="0" y="0" width="100" height="100" preserveAspectRatio="xMidYMid slice" opacity={imageOnlyMode?1:.35}/>
-        )}
+        {coinPhoto && <Image href={{uri:coinPhoto}} x="0" y="0" width="100" height="100" preserveAspectRatio="xMidYMid slice" opacity={imageOnlyMode?1:.35}/>} 
         {showBorder && (customPoints
           ? <Polygon points={customPoints} fill="none" stroke={resolvedBorderColor} strokeWidth="3"/>
           : <Path d={svgPath} fill="none" stroke={resolvedBorderColor} strokeWidth="3"/>
