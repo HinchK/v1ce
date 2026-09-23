@@ -42,7 +42,7 @@ export default function Customize(){
 
   <Section title="NUMBER COLOR" c={c}><Text style={[s.body,{color:c.mutedForeground}]}>Leave blank to auto-contrast with coin color</Text>{mini(numberColor,setNumberColor)}</Section>
 
-  <Section title="NUMBER STYLE" c={c}><View style={s.wrap}>{["bebas","bodoni","courier","classic","pacifico","poppins","monospace","syne","fredoka"].map(item=><TouchableOpacity key={item} onPress={()=>setStyle(item)} style={[s.styleOption,{borderColor:style===item?c.foreground:c.border}]}><Text style={{color:c.foreground,fontFamily:NUMBER_STYLES[item as keyof typeof NUMBER_STYLES].fontFamily,fontSize:16}}>{item.toUpperCase()}</Text></TouchableOpacity>)}</View></Section>
+  <Section title="NUMBER STYLE" c={c}><View style={s.wrap}>{Object.keys(NUMBER_STYLES).map(item=><TouchableOpacity key={item} onPress={()=>setStyle(item)} style={[s.styleOption,{borderColor:style===item?c.foreground:c.border}]}><Text style={{color:c.foreground,fontFamily:NUMBER_STYLES[item as keyof typeof NUMBER_STYLES].fontFamily,fontSize:16}}>{item.toUpperCase()}</Text></TouchableOpacity>)}</View></Section>
 
   <TouchableOpacity onPress={save} disabled={saving} style={[s.save,{backgroundColor:c.foreground,opacity:saving?.45:1}]}><Text style={{color:c.background,fontSize:22,fontWeight:"900",letterSpacing:2}}>{saving?"SAVING...":"SAVE CHANGES →"}</Text></TouchableOpacity>
  </ScrollView>;
