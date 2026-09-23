@@ -1,4 +1,5 @@
 import { useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from "react-native";
 import { useRouter } from "expo-router";
@@ -22,6 +23,7 @@ function toDatabaseDate(value: string) {
 export default function Onboarding() {
   const [step, setStep] = useState(0);
   const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
   const [date, setDate] = useState("");
   const [substances, setSubstances] = useState<string[]>([]);
   const [eula, setEula] = useState(false);
@@ -39,6 +41,7 @@ export default function Onboarding() {
     const sobrietyDate = toDatabaseDate(date);
     if (!sobrietyDate || !user?.id || saving) return;
     setSaving(true);
+    await AsyncStorage.setItem("v1ce_email", email.trim().toLowerCase());
     const values = {
       id: user.id,
       email: user.email || "",
@@ -72,7 +75,7 @@ export default function Onboarding() {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background, paddingTop: insets.top + 28, paddingBottom: insets.bottom + 28 }]}>
-      <Text style={[styles.step, { color: colors.gold }]}>STEP {step + 1} / 3</Text>
+      <Text style={[styles.step, { color: colors.gold }]}>STEP {step + 1} / 4</Text>
 
       {step === 0 && (
         <>
@@ -92,18 +95,31 @@ export default function Onboarding() {
 
       {step === 1 && (
         <>
-          <Text style={[styles.title, { color: colors.foreground }]}>WHEN DID{"\n"}YOU START?</Text>
-          <Text style={[styles.subtitle, { color: colors.mutedForeground }]}>Enter the first day of your sobriety journey.</Text>
-          <Text style={[styles.label, { color: colors.foreground }]}>SOBRIETY DATE</Text>
-          <TextInput value={date} onChangeText={(value) => setDate(formatDate(value))} maxLength={10} keyboardType="number-pad" placeholder="MM/DD/YYYY" placeholderTextColor={colors.mutedForeground} style={[styles.input, { color: colors.foreground, borderColor: colors.foreground }]} />
+          <Text style={[styles.title, { color: colors.foreground }]}>WHAT IS{"\n"}YOUR EMAIL?</Text>
+          <Text style={[styles.subtitle, { color: colors.mutedForeground }]}>Used for friend connections and V1CE account communication.</Text>
+          <Text style={[styles.label, { color: colors.foreground }]}>EMAIL</Text>
+          <TextInput value={email} onChangeText={setEmail} autoCapitalize="none" keyboardType="email-address" placeholder="you@example.com" placeholderTextColor={colors.mutedForeground} style={[styles.input, { color: colors.foreground, borderColor: colors.foreground }]} />
           <View style={styles.buttonRow}>
             <TouchableOpacity onPress={() => setStep(0)} style={[styles.backButton, { borderColor: colors.foreground }]}><Text style={{ color: colors.foreground, fontWeight: "800" }}>← BACK</Text></TouchableOpacity>
-            <Button label="NEXT →" disabled={!/^\d{2}\/\d{2}\/\d{4}$/.test(date)} onPress={() => setStep(2)} colors={colors} />
+            <Button label="NEXT →" disabled={!/^\S+@\S+\.\S+$/.test(email)} onPress={() => setStep(2)} colors={colors} />
           </View>
         </>
       )}
 
       {step === 2 && (
+        <>
+          <Text style={[styles.title, { color: colors.foreground }]}>WHEN DID{"\n"}YOU START?</Text>
+          <Text style={[styles.subtitle, { color: colors.mutedForeground }]}>Enter the first day of your sobriety journey.</Text>
+          <Text style={[styles.label, { color: colors.foreground }]}>SOBRIETY DATE</Text>
+          <TextInput value={date} onChangeText={(value) => setDate(formatDate(value))} maxLength={10} keyboardType="number-pad" placeholder="MM/DD/YYYY" placeholderTextColor={colors.mutedForeground} style={[styles.input, { color: colors.foreground, borderColor: colors.foreground }]} />
+          <View style={styles.buttonRow}>
+            <TouchableOpacity onPress={() => setStep(1)} style={[styles.backButton, { borderColor: colors.foreground }]}><Text style={{ color: colors.foreground, fontWeight: "800" }}>← BACK</Text></TouchableOpacity>
+            <Button label="NEXT →" disabled={!/^\d{2}\/\d{2}\/\d{4}$/.test(date)} onPress={() => setStep(3)} colors={colors} />
+          </View>
+        </>
+      )}
+
+      {step === 3 && (
         <>
           <Text style={[styles.title, { color: colors.foreground }]}>WHAT'S{"\n"}YOUR DOC?</Text>
           <Text style={[styles.subtitle, { color: colors.mutedForeground }]}>Select what you're staying free from. (optional)</Text>
