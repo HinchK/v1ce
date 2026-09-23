@@ -26,7 +26,7 @@ export default function SobrietyRunGame(){
  x.coins=x.coins.filter(c=>{c.x-=x.speed*dt;const hit=x.playerX<c.x+COIN&&x.playerX+PLAYER>c.x&&x.playerY<c.y+COIN&&x.playerY+PLAYER>c.y;if(hit){x.score+=50;setScore(x.score)}return !hit&&c.x>-COIN});
  const lvl=Math.min(Math.floor(x.score/1000)+1,12);if(lvl!==x.level){x.level=lvl;setLevel(lvl);if(lvl===12)x.boss={x:W-50,y:G-80,width:60,height:60,attack:0,health:3};else{x.boss=null;x.projectiles=[]}}
  x.speed=Math.min(INITIAL_SPEED+x.time*.001,MAX_SPEED);
- if(x.level===12&&x.boss){x.attack++;if(x.attack>60){x.projectiles.push({x:x.boss.x,y:x.boss.y+20,vx:-5,vy:(Math.random()-.5)*3});x.attack=0}
+ if(x.level===12&&x.boss){x.boss.attack++;if(x.boss.attack>60){x.projectiles.push({x:x.boss.x,y:x.boss.y+20,vx:-5,vy:(Math.random()-.5)*3});x.boss.attack=0}
   x.projectiles=x.projectiles.filter(p=>{p.x+=p.vx;p.y+=p.vy;const hit=x.playerX<p.x+6&&x.playerX+PLAYER>p.x&&x.playerY<p.y+6&&x.playerY+PLAYER>p.y;if(hit)setGameState("gameOver");return !hit&&p.x>-10});
   if(x.throwing){x.throwing.x+=x.throwing.vx;x.throwing.y+=x.throwing.vy;x.throwing.vy+=.3;if(x.throwing.x>x.boss.x&&x.throwing.x<x.boss.x+x.boss.width&&x.throwing.y>x.boss.y&&x.throwing.y<x.boss.y+x.boss.height){x.boss.health--;x.throwing=null;if(x.boss.health<=0)setGameState("victory")}else if(x.throwing.x>W||x.throwing.y>H)x.throwing=null}
   x.obstacles=[];
