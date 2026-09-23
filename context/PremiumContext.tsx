@@ -1,0 +1,30 @@
+import React, { createContext, useContext, useMemo, type ReactNode } from "react";
+import { useAuth } from "@/context/AuthContext";
+
+type PremiumContextValue = {
+  isPremium: boolean;
+  unlockPremium: () => void;
+};
+
+const PremiumContext = createContext<PremiumContextValue | null>(null);
+
+export function PremiumProvider({ children }: { children: ReactNode }) {
+  const { profile, setProfile } = useAuth();
+  const isPremium = !!profile?.is_premium;
+  const value = useMemo(
+    () => ({
+      isPremium,
+      unlockPremium: () => {
+        if (profile) setProfile({ ...profile, is_premium: true });
+      },
+    }),
+    [isPremium, profile, setProfile]
+  );
+  return <PremiumContext.Provider value={value}>{children}</PremiumContext.Provider>;
+}
+
+export function usePremium() {
+  const ctx = useContext(PremiumContext);
+  if (!ctx) throw new Error("usePremium must be used within PremiumProvider");
+  return ctx;
+}

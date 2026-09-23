@@ -4,9 +4,15 @@
     "slug": "v1ce-native",
     "version": "1.0.0",
     "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
     "scheme": "v1ce",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/images/icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#F7F7F7"
+    },
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "app.v1ce"
@@ -14,8 +20,16 @@
     "android": {
       "package": "app.v1ce"
     },
+    "web": {
+      "favicon": "./assets/images/icon.png"
+    },
     "plugins": [
-      "expo-router",
+      [
+        "expo-router",
+        {
+          "origin": "https://replit.com/"
+        }
+      ],
       "expo-font",
       "expo-web-browser"
     ],

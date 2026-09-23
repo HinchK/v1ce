@@ -1,54 +1,203 @@
-import React,{useEffect,useState}from"react";
-import{ScrollView,StyleSheet,Text,TextInput,TouchableOpacity,View}from"react-native";
-import{useRouter}from"expo-router";
-import{useAuth}from"@/context/AuthContext";
-import{useColors}from"@/hooks/useColors";
-import{supabase}from"@/lib/supabase";
-import CoinFront,{NUMBER_STYLES,SHAPES}from"@/components/CoinFront";
-import{COIN_COLORS,resolveCoinColor}from"@/constants/coin";
+import React, { useEffect, useState } from "react";
+import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { useAuth } from "@/context/AuthContext";
+import { useColors } from "@/hooks/useColors";
+import { supabase, TABLES } from "@/lib/supabase";
+import SobrietyCoin from "@/components/coin/SobrietyCoin";
+import ShapePicker from "@/components/customize/ShapePicker";
+import ColorPicker from "@/components/customize/ColorPicker";
+import NumberStylePicker from "@/components/customize/NumberStylePicker";
+import BackgroundPicker from "@/components/customize/BackgroundPicker";
+import DrawShapePicker from "@/components/customize/DrawShapePicker";
+import { COIN_COLORS, resolveCoinColor } from "@/constants/coin";
+import { daysSince } from "@/constants/app";
+import { AsteriskStar, Crosshair, DiamondGrid, Starburst } from "@/components/ui/RetroAccents";
 
-const ROTATING_WORDS=["COIN","TOKEN","CHIP","V1CE","JOURNEY","PROGRESS","BAGEL","SHINY CIRCLE","NOT A NICKEL","PIZZA FUND","PET ROCK","DOUBLOON","PAPERWEIGHT","SOUVENIR","OBJECT","THINGY"];
-const AUTO_COLORS=["","#0A0A0A","#FFFFFF","#F5A41A"];
+const ROTATING_WORDS = ["COIN", "TOKEN", "CHIP", "V1CE", "JOURNEY", "PROGRESS", "BAGEL", "SHINY CIRCLE", "NOT A NICKEL", "PIZZA FUND", "PET ROCK", "DOUBLOON", "PAPERWEIGHT", "SOUVENIR", "OBJECT", "THINGY"];
 
-export default function Customize(){
- const{profile,setProfile}=useAuth(),c=useColors(),router=useRouter();
- const[wordIndex,setWordIndex]=useState(0),[saving,setSaving]=useState(false);
- const[color,setColor]=useState(profile?.coin_color||"#F5D680"),[shape,setShape]=useState(profile?.coin_shape||"circle"),[style,setStyle]=useState(profile?.number_style||"classic");
- const[displayName,setDisplayName]=useState(profile?.display_name||""),[motto,setMotto]=useState(profile?.coin_motto||""),[customShapePath,setCustomShapePath]=useState(profile?.coin_shape_path||"");
- const[imageOnlyMode,setImageOnlyMode]=useState(profile?.coin_image_only||false),[border,setBorder]=useState(profile?.coin_show_border??true),[borderColor,setBorderColor]=useState(profile?.coin_border_color||""),[numberColor,setNumberColor]=useState(profile?.coin_number_color||""),[coinPhoto,setCoinPhoto]=useState(profile?.coin_photo||"");
- const[customHex,setCustomHex]=useState(/^#[0-9A-Fa-f]{6}$/.test(profile?.coin_color||"")?profile?.coin_color||"":"");
- useEffect(()=>{const id=setInterval(()=>setWordIndex(v=>(v+1)%ROTATING_WORDS.length),1500);return()=>clearInterval(id)},[]);
- useEffect(()=>{if(!profile)return;setColor(profile.coin_color||"#F5D680");setShape(profile.coin_shape||"circle");setStyle(profile.number_style||"classic");setDisplayName(profile.display_name||"");setMotto(profile.coin_motto||"");setCustomShapePath(profile.coin_shape_path||"");setImageOnlyMode(profile.coin_image_only||false);setBorder(profile.coin_show_border??true);setBorderColor(profile.coin_border_color||"");setNumberColor(profile.coin_number_color||"");setCoinPhoto(profile.coin_photo||"");setCustomHex(/^#[0-9A-Fa-f]{6}$/.test(profile.coin_color||"")?profile.coin_color||"":"")},[profile]);
- const days=profile?.sobriety_date?Math.max(0,Math.floor((Date.now()-new Date(profile.sobriety_date+"T00:00:00").getTime())/86400000)):0;
- const active=resolveCoinColor(color);
- const save=async()=>{if(!profile?.id||saving)return;setSaving(true);const values={coin_shape:shape,coin_color:color,number_style:style,display_name:displayName,coin_motto:motto,coin_shape_path:customShapePath,coin_show_border:border,coin_border_color:borderColor||null,coin_number_color:numberColor||null,coin_image_only:imageOnlyMode,coin_photo:coinPhoto||null};const{data,error}=await supabase.from("profiles").update(values).eq("id",profile.id).select().single();if(!error)setProfile(data||{...profile,...values});setSaving(false)};
- const mini=(value:string,setter:(v:string)=>void,placeholder="Auto")=><View style={s.miniRow}>{<View style={[s.swatch,{backgroundColor:value||active.border,borderColor:c.foreground}]}/>}<TextInput value={value} onChangeText={v=>{if(v===""||/^#[0-9A-Fa-f]{6}$/.test(v)||v.length<=7)setter(v.toUpperCase())}} placeholder={placeholder} maxLength={7} autoCapitalize="characters" placeholderTextColor={c.mutedForeground} style={[s.miniInput,{color:c.foreground,borderColor:c.foreground}]}/>{value?<TouchableOpacity onPress={()=>setter("")}><Text style={[s.auto,{color:c.mutedForeground}]}>AUTO</Text></TouchableOpacity>:null}</View>;
+export default function Customize() {
+  const { profile, setProfile } = useAuth();
+  const colors = useColors();
+  const [wordIndex, setWordIndex] = useState(0);
+  const [saving, setSaving] = useState(false);
+  const [color, setColor] = useState(profile?.coin_color || "#F5D680");
+  const [shape, setShape] = useState(profile?.coin_shape || "circle");
+  const [style, setStyle] = useState(profile?.number_style || "classic");
+  const [displayName, setDisplayName] = useState(profile?.display_name || "");
+  const [motto, setMotto] = useState(profile?.coin_motto || "");
+  const [customShapePath, setCustomShapePath] = useState(profile?.coin_shape_path || "");
+  const [imageOnlyMode, setImageOnlyMode] = useState(profile?.coin_image_only || false);
+  const [border, setBorder] = useState(profile?.coin_show_border ?? true);
+  const [borderColor, setBorderColor] = useState(profile?.coin_border_color || "");
+  const [numberColor, setNumberColor] = useState(profile?.coin_number_color || "");
+  const [background, setBackground] = useState(profile?.coin_background || "solid");
+  const [customHex, setCustomHex] = useState(/^#[0-9A-Fa-f]{6}$/.test(profile?.coin_color || "") ? profile?.coin_color || "" : "");
 
- return <ScrollView style={{backgroundColor:c.background}} contentContainerStyle={s.page} keyboardShouldPersistTaps="handled">
-  <View style={[s.hero,{borderBottomColor:c.foreground}]}><Text style={[s.heroText,{color:c.foreground}]}>YOUR</Text><Text style={[s.heroWord,{color:c.foreground}]}>{ROTATING_WORDS[wordIndex]}</Text><View style={[s.burst,{borderColor:c.foreground}]}/><View style={[s.diamond,{borderColor:c.foreground}]}/></View>
-  <View style={[s.preview,{borderBottomColor:c.foreground}]}><CoinFront days={days} shape={shape} color={color} numberStyle={style} size={240} displayName={displayName} motto={motto} customShapePath={customShapePath} showBorder={border} coinPhoto={coinPhoto||undefined} borderColor={borderColor||undefined} numberColor={numberColor||undefined} imageOnlyMode={imageOnlyMode}/></View>
+  useEffect(() => {
+    const id = setInterval(() => setWordIndex((v) => (v + 1) % ROTATING_WORDS.length), 1500);
+    return () => clearInterval(id);
+  }, []);
 
-  <Section title="SHAPE" c={c}><View style={s.wrap}>{SHAPES.map(item=>{const locked=item!=="circle"&&!profile?.is_premium;return <TouchableOpacity key={item} onPress={()=>locked?router.push("/(tabs)/premium"):setShape(item)} style={[s.option,{borderColor:shape===item?c.foreground:c.border,opacity:locked?.5:1}]}><Text style={{color:c.foreground,fontSize:10,fontWeight:"900",letterSpacing:1}}>{item.toUpperCase()}</Text>{locked&&<Text style={[s.micro,{color:c.mutedForeground,marginBottom:0}]}>PREMIUM</Text>}</TouchableOpacity>})}</View></Section>
+  useEffect(() => {
+    if (!profile) return;
+    setColor(profile.coin_color || "#F5D680");
+    setShape(profile.coin_shape || "circle");
+    setStyle(profile.number_style || "classic");
+    setDisplayName(profile.display_name || "");
+    setMotto((profile.coin_motto || "").slice(0, 30));
+    setCustomShapePath(profile.coin_shape_path || "");
+    setImageOnlyMode(profile.coin_image_only || false);
+    setBorder(profile.coin_show_border ?? true);
+    setBorderColor(profile.coin_border_color || "");
+    setNumberColor(profile.coin_number_color || "");
+    setBackground(profile.coin_background || "solid");
+  }, [profile]);
 
-  <Section title="COIN PHOTO" c={c} muted><View style={s.titleBadge}><Text style={[s.micro,{color:c.foreground,marginBottom:0}]}>COMING SOON</Text></View><Text style={[s.body,{color:c.mutedForeground}]}>UPLOAD A PHOTO TO APPEAR ON YOUR COIN FACE</Text><View style={[s.disabled,{borderColor:c.foreground}]}><Text style={{color:c.foreground,fontSize:16,fontWeight:"900",letterSpacing:2}}>+ UPLOAD PHOTO</Text></View></Section>
+  const days = daysSince(profile?.sobriety_date);
+  const save = async () => {
+    if (!profile?.id || saving) return;
+    setSaving(true);
+    const values = {
+      coin_shape: shape,
+      coin_color: color,
+      number_style: style,
+      display_name: displayName,
+      coin_motto: motto.slice(0, 30),
+      coin_shape_path: customShapePath,
+      coin_show_border: border,
+      coin_border_color: borderColor || null,
+      coin_number_color: numberColor || null,
+      coin_image_only: imageOnlyMode,
+      coin_background: background,
+    };
+    const { data, error } = await supabase.from(TABLES.SobrietyProfile).update(values).eq("id", profile.id).select().single();
+    if (!error) setProfile(data || { ...profile, ...values });
+    setSaving(false);
+  };
 
-  <Section title="IMAGE MODE" c={c}><Text style={[s.body,{color:c.mutedForeground}]}>Show only your photo on the front. Your sober time, name & motto move to the back.</Text><View style={s.toggleRow}><TouchableOpacity onPress={()=>profile?.is_premium?setImageOnlyMode(!imageOnlyMode):router.push("/(tabs)/premium")} style={[s.toggle,{backgroundColor:imageOnlyMode&&profile?.is_premium?c.foreground:"#EBEBEB"}]}><View style={[s.knob,{backgroundColor:c.background,transform:[{translateX:imageOnlyMode&&profile?.is_premium?24:2}]}]}/></TouchableOpacity><Text style={[s.body,{color:c.mutedForeground}]}>{imageOnlyMode&&profile?.is_premium?"On — photo fills front":"Off"}{!profile?.is_premium?"  PREMIUM":""}</Text></View></Section>
+  return (
+    <ScrollView style={{ backgroundColor: colors.background }} contentContainerStyle={styles.page} keyboardShouldPersistTaps="handled">
+      <View style={[styles.hero, { borderBottomColor: colors.foreground }]}>
+        <View style={styles.accent}><Starburst size={90} color={colors.foreground} opacity={0.08} /></View>
+        <View style={[styles.accent, { right: 42, top: 40 }]}><DiamondGrid size={50} color={colors.foreground} /></View>
+        <Text style={[styles.heroText, { color: colors.foreground }]}>YOUR</Text>
+        <Text style={[styles.heroWord, { color: colors.foreground }]}>{ROTATING_WORDS[wordIndex]}</Text>
+      </View>
+      <View style={[styles.preview, { borderBottomColor: colors.foreground }]}>
+        <SobrietyCoin
+          days={days}
+          shape={shape}
+          color={color}
+          numberStyle={style}
+          size={240}
+          displayName={displayName}
+          motto={motto}
+          customShapePath={customShapePath}
+          showBorder={border}
+          borderColor={borderColor || undefined}
+          numberColor={numberColor || undefined}
+          imageOnlyMode={imageOnlyMode}
+          background={background}
+          substances={profile?.substances}
+        />
+      </View>
 
-  <Section title="PERSONALIZE" c={c}><Field label="DISPLAY NAME" value={displayName} onChangeText={v=>setDisplayName(v.slice(0,20))} placeholder="Your name or nickname" c={c}/><Field label="PERSONAL MOTTO" value={motto} onChangeText={v=>setMotto(v.slice(0,50))} placeholder="Your personal motto (back of coin)" c={c}/></Section>
+      <Section title="SHAPE" colors={colors}>
+        <View style={styles.accent}><AsteriskStar size={36} color={colors.foreground} /></View>
+        <ShapePicker value={shape} onChange={setShape} />
+        {shape === "drawn" ? <View style={{ marginTop: 16 }}><DrawShapePicker value={customShapePath} onChange={setCustomShapePath} /></View> : null}
+      </Section>
 
-  <Section title="COLOR" c={c}><View style={s.wrap}>{Object.keys(COIN_COLORS).map(name=>{const coin=COIN_COLORS[name as keyof typeof COIN_COLORS];return <TouchableOpacity key={name} onPress={()=>{setColor(name);setCustomHex("")}} style={[s.colorChip,{backgroundColor:coin.bg,borderColor:color===name?c.foreground:c.border}]}><Text style={{color:coin.text,fontSize:10,fontWeight:"900",letterSpacing:1}}>{name.replace("_"," ").toUpperCase()}</Text></TouchableOpacity>})}</View><Text style={[s.micro,{color:c.mutedForeground}]}>CUSTOM HEX</Text><TextInput value={customHex} onChangeText={v=>{const next=v.startsWith("#")?v:"#"+v;setCustomHex(next.slice(0,7));if(/^#[0-9A-Fa-f]{6}$/.test(next))setColor(next.toUpperCase())}} maxLength={7} autoCapitalize="characters" placeholder="#F5D680" placeholderTextColor={c.mutedForeground} style={[s.input,{color:c.foreground,borderColor:c.foreground}]}/></Section>
+      <Section title="BACKGROUND" colors={colors}>
+        <BackgroundPicker value={background} onChange={setBackground} />
+      </Section>
 
-  <Section title="BORDER" c={c}><View style={s.toggleRow}><TouchableOpacity onPress={()=>setBorder(!border)} style={[s.toggle,{backgroundColor:border?c.foreground:"#EBEBEB"}]}><View style={[s.knob,{backgroundColor:c.background,transform:[{translateX:border?24:2}]}]}/></TouchableOpacity><Text style={[s.body,{color:c.mutedForeground}]}>{border?"SHOW":"HIDE"}</Text></View>{border&&<View style={s.subsection}><Text style={[s.micro,{color:c.mutedForeground}]}>BORDER COLOR <Text style={{opacity:.5}}>(leave blank for auto)</Text></Text>{mini(borderColor,setBorderColor)}</View>}</Section>
+      <Section title="COLOR" colors={colors}>
+        <View style={styles.named}>
+          {Object.keys(COIN_COLORS).map((name) => {
+            const coin = COIN_COLORS[name as keyof typeof COIN_COLORS];
+            return (
+              <TouchableOpacity key={name} onPress={() => { setColor(name); setCustomHex(""); }} style={[styles.colorChip, { backgroundColor: coin.bg, borderColor: color === name ? colors.foreground : colors.border }]}>
+                <Text style={{ color: coin.text, fontSize: 10, fontWeight: "900" }}>{name.replace("_", " ").toUpperCase()}</Text>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+        <ColorPicker value={/^#[0-9A-Fa-f]{6}$/.test(color) ? color : resolveCoinColor(color).bg} onChange={(hex) => { setColor(hex); setCustomHex(hex); }} />
+        <TextInput
+          value={customHex}
+          onChangeText={(v) => {
+            const next = v.startsWith("#") ? v : `#${v}`;
+            setCustomHex(next.slice(0, 7));
+            if (/^#[0-9A-Fa-f]{6}$/.test(next)) setColor(next.toUpperCase());
+          }}
+          maxLength={7}
+          autoCapitalize="characters"
+          placeholder="#F5D680"
+          placeholderTextColor={colors.mutedForeground}
+          style={[styles.input, { color: colors.foreground, borderColor: colors.foreground, marginTop: 12 }]}
+        />
+      </Section>
 
-  <Section title="NUMBER COLOR" c={c}><Text style={[s.body,{color:c.mutedForeground}]}>Leave blank to auto-contrast with coin color</Text>{mini(numberColor,setNumberColor)}</Section>
+      <Section title="BORDER" colors={colors}>
+        <View style={styles.toggleRow}>
+          <TouchableOpacity onPress={() => setBorder(!border)} style={[styles.toggle, { backgroundColor: border ? colors.foreground : colors.secondary }]}>
+            <View style={[styles.knob, { backgroundColor: colors.background, transform: [{ translateX: border ? 24 : 2 }] }]} />
+          </TouchableOpacity>
+          <Text style={{ color: colors.mutedForeground }}>{border ? "SHOW" : "HIDE"}</Text>
+        </View>
+        {border ? (
+          <TextInput value={borderColor} onChangeText={setBorderColor} placeholder="Auto border hex" maxLength={7} placeholderTextColor={colors.mutedForeground} style={[styles.input, { color: colors.foreground, borderColor: colors.foreground, marginTop: 12 }]} />
+        ) : null}
+      </Section>
 
-  <Section title="NUMBER STYLE" c={c}><View style={s.wrap}>{Object.keys(NUMBER_STYLES).map(item=><TouchableOpacity key={item} onPress={()=>setStyle(item)} style={[s.styleOption,{borderColor:style===item?c.foreground:c.border}]}><Text style={{color:c.foreground,fontFamily:NUMBER_STYLES[item as keyof typeof NUMBER_STYLES].fontFamily,fontSize:16}}>{item.toUpperCase()}</Text></TouchableOpacity>)}</View></Section>
+      <Section title="NUMBER COLOR" colors={colors}>
+        <TextInput value={numberColor} onChangeText={setNumberColor} placeholder="Auto number hex" maxLength={7} placeholderTextColor={colors.mutedForeground} style={[styles.input, { color: colors.foreground, borderColor: colors.foreground }]} />
+      </Section>
 
-  <TouchableOpacity onPress={save} disabled={saving} style={[s.save,{backgroundColor:c.foreground,opacity:saving?.45:1}]}><Text style={{color:c.background,fontSize:22,fontWeight:"900",letterSpacing:2}}>{saving?"SAVING...":"SAVE CHANGES →"}</Text></TouchableOpacity>
- </ScrollView>;
+      <Section title="NUMBER STYLE" colors={colors}>
+        <View style={styles.accent}><Crosshair size={44} color={colors.foreground} /></View>
+        <NumberStylePicker value={style} onChange={setStyle} />
+      </Section>
+
+      <Section title="PERSONALIZE" colors={colors}>
+        <Text style={[styles.micro, { color: colors.mutedForeground }]}>DISPLAY NAME</Text>
+        <TextInput value={displayName} onChangeText={(v) => setDisplayName(v.slice(0, 20))} maxLength={20} placeholder="Your name" placeholderTextColor={colors.mutedForeground} style={[styles.input, { color: colors.foreground, borderColor: colors.foreground }]} />
+        <Text style={[styles.micro, { color: colors.mutedForeground, marginTop: 16 }]}>PERSONAL MOTTO</Text>
+        <TextInput value={motto} onChangeText={(v) => setMotto(v.slice(0, 30))} maxLength={30} placeholder="Your personal motto" placeholderTextColor={colors.mutedForeground} style={[styles.input, { color: colors.foreground, borderColor: colors.foreground }]} />
+      </Section>
+
+      <TouchableOpacity onPress={save} disabled={saving} style={[styles.save, { backgroundColor: colors.foreground, opacity: saving ? 0.45 : 1 }]}>
+        <Text style={{ color: colors.background, fontSize: 22, fontWeight: "900", letterSpacing: 2 }}>{saving ? "SAVING..." : "SAVE CHANGES →"}</Text>
+      </TouchableOpacity>
+    </ScrollView>
+  );
 }
-function Section({title,c,children,muted=false}:{title:string;c:any;children:React.ReactNode;muted?:boolean}){return <View style={[s.section,{borderBottomColor:c.foreground,opacity:muted?.6:1}]}><View style={s.sectionTitleRow}><Text style={[s.sectionTitle,{color:c.foreground}]}>{title}</Text>{muted&&<View style={[s.titleBadge,{borderColor:c.foreground}]}><Text style={[s.micro,{color:c.foreground,marginBottom:0}]}>COMING SOON</Text></View>}</View><View style={s.sectionBody}>{children}</View></View>}
-function Field({label,value,onChangeText,placeholder,c}:{label:string;value:string;onChangeText:(v:string)=>void;placeholder:string;c:any}){return <View style={s.field}><Text style={[s.micro,{color:c.mutedForeground}]}>{label}</Text><TextInput value={value} onChangeText={onChangeText} maxLength={label==="DISPLAY NAME"?20:50} placeholder={placeholder} placeholderTextColor={c.mutedForeground} style={[s.input,{color:c.foreground,borderColor:c.foreground}]}/></View>}
-const s=StyleSheet.create({
- page:{paddingBottom:80},hero:{paddingHorizontal:20,paddingTop:28,paddingBottom:22,borderBottomWidth:2,overflow:"hidden",position:"relative"},heroText:{fontSize:42,lineHeight:40,fontWeight:"900",letterSpacing:-1},heroWord:{fontSize:54,lineHeight:52,fontWeight:"900",letterSpacing:-2},burst:{position:"absolute",width:90,height:90,right:8,top:-2,borderWidth:2,transform:[{rotate:"45deg"}],opacity:.08},diamond:{position:"absolute",width:50,height:50,right:42,bottom:4,borderWidth:2,transform:[{rotate:"45deg"}],opacity:.1},preview:{minHeight:330,alignItems:"center",justifyContent:"center",paddingVertical:28,borderBottomWidth:2},section:{paddingHorizontal:20,paddingVertical:28,borderBottomWidth:2,position:"relative"},sectionTitleRow:{flexDirection:"row",alignItems:"center",gap:8},sectionTitle:{fontSize:28,lineHeight:30,fontWeight:"900",letterSpacing:-.5},sectionBody:{marginTop:18},titleBadge:{borderWidth:1,paddingHorizontal:6,paddingVertical:3,alignSelf:"flex-start",marginBottom:8},body:{fontSize:11,lineHeight:17,letterSpacing:1.2,fontWeight:"600"},micro:{fontSize:9,letterSpacing:2.5,fontWeight:"800",marginBottom:8},wrap:{flexDirection:"row",flexWrap:"wrap",gap:8},option:{borderWidth:2,paddingHorizontal:11,paddingVertical:10,minWidth:84},styleOption:{borderWidth:2,paddingHorizontal:12,paddingVertical:12,minWidth:105},colorChip:{borderWidth:2,paddingHorizontal:12,paddingVertical:11},input:{borderWidth:2,paddingHorizontal:12,paddingVertical:11,fontSize:14},disabled:{borderWidth:2,borderStyle:"dashed",minHeight:48,alignItems:"center",justifyContent:"center",marginTop:14},toggleRow:{flexDirection:"row",alignItems:"center",gap:12},toggle:{width:54,height:30,borderRadius:18,justifyContent:"center",padding:1},knob:{width:26,height:26,borderRadius:13},subsection:{marginTop:22,paddingTop:18,borderTopWidth:1,borderTopColor:"#999"},miniRow:{flexDirection:"row",alignItems:"center",gap:8},swatch:{width:32,height:32,borderRadius:16,borderWidth:2},miniInput:{flex:1,borderWidth:2,paddingHorizontal:8,paddingVertical:7,fontSize:12},auto:{fontSize:9,letterSpacing:2,fontWeight:"900"},field:{marginBottom:18},save:{marginHorizontal:20,marginTop:26,height:56,alignItems:"center",justifyContent:"center"}
+
+function Section({ title, colors, children }: { title: string; colors: ReturnType<typeof useColors>; children: React.ReactNode }) {
+  return (
+    <View style={[styles.section, { borderBottomColor: colors.foreground }]}>
+      <Text style={[styles.sectionTitle, { color: colors.foreground }]}>{title}</Text>
+      <View style={{ marginTop: 18 }}>{children}</View>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  page: { paddingBottom: 100 },
+  hero: { paddingHorizontal: 20, paddingTop: 28, paddingBottom: 22, borderBottomWidth: 2, overflow: "hidden" },
+  heroText: { fontSize: 42, lineHeight: 40, fontWeight: "900" },
+  heroWord: { fontSize: 54, lineHeight: 52, fontWeight: "900" },
+  accent: { position: "absolute", right: 8, top: 8 },
+  preview: { minHeight: 330, alignItems: "center", justifyContent: "center", paddingVertical: 28, borderBottomWidth: 2 },
+  section: { paddingHorizontal: 20, paddingVertical: 28, borderBottomWidth: 2, position: "relative" },
+  sectionTitle: { fontSize: 28, lineHeight: 30, fontWeight: "900" },
+  named: { flexDirection: "row", flexWrap: "wrap", gap: 8, marginBottom: 12 },
+  colorChip: { borderWidth: 2, paddingHorizontal: 12, paddingVertical: 11 },
+  input: { borderWidth: 2, paddingHorizontal: 12, paddingVertical: 11, fontSize: 14 },
+  toggleRow: { flexDirection: "row", alignItems: "center", gap: 12 },
+  toggle: { width: 54, height: 30, borderRadius: 18, justifyContent: "center" },
+  knob: { width: 26, height: 26, borderRadius: 13 },
+  micro: { fontSize: 9, letterSpacing: 2.5, fontWeight: "800", marginBottom: 8 },
+  save: { marginHorizontal: 20, marginTop: 26, height: 56, alignItems: "center", justifyContent: "center" },
 });

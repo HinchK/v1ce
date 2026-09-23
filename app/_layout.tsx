@@ -1,5 +1,8 @@
 import {
-  Inter_400Regular, Inter_500Medium, Inter_600SemiBold, Inter_700Bold,
+  Inter_400Regular,
+  Inter_500Medium,
+  Inter_600SemiBold,
+  Inter_700Bold,
 } from "@expo-google-fonts/inter";
 import { BebasNeue_400Regular } from "@expo-google-fonts/bebas-neue";
 import { BodoniModa_700Bold } from "@expo-google-fonts/bodoni-moda";
@@ -13,47 +16,79 @@ import { Poppins_700Bold } from "@expo-google-fonts/poppins";
 import { SpaceMono_700Bold } from "@expo-google-fonts/space-mono";
 import { Syne_700Bold } from "@expo-google-fonts/syne";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Redirect, Stack } from "expo-router";
+import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useFonts } from "expo-font";
 import React, { useEffect } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { KeyboardProvider } from "react-native-keyboard-controller";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
-import { AuthProvider, useAuth } from "@/context/AuthContext";
+import { AuthProvider } from "@/context/AuthContext";
 import { ThemeProvider } from "@/context/ThemeContext";
+import { CoinProvider } from "@/context/CoinContext";
+import { PremiumProvider } from "@/context/PremiumContext";
+import { LanguageProvider } from "@/lib/i18n";
 
 SplashScreen.preventAutoHideAsync();
 const queryClient = new QueryClient();
 
-function RootNavigation() {
-  const { isLoading, profile } = useAuth();
-  if (isLoading) return null;
-  if (!profile?.sobriety_date) return <Redirect href="/onboarding" />;
-  return <Stack screenOptions={{ headerShown: false }}><Stack.Screen name="(tabs)" /><Stack.Screen name="game" /><Stack.Screen name="widget" /><Stack.Screen name="coin-widget" /></Stack>;
+function RootLayoutNav() {
+  return (
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="index" />
+      <Stack.Screen name="onboarding" />
+      <Stack.Screen name="(tabs)" />
+      <Stack.Screen name="game" />
+      <Stack.Screen name="widget" />
+      <Stack.Screen name="coin-widget" />
+    </Stack>
+  );
 }
 
 export default function RootLayout() {
-  const [loaded, error] = useFonts({
-    Inter_400Regular, Inter_500Medium, Inter_600SemiBold, Inter_700Bold,
-    BebasNeue_400Regular, BodoniModa_700Bold, Cinzel_700Bold, CourierPrime_700Bold,
-    DMSans_700Bold, Fredoka_400Regular, IBMPlexSerif_700Bold, Pacifico_400Regular,
-    Poppins_700Bold, SpaceMono_700Bold, Syne_700Bold,
+  const [fontsLoaded, fontError] = useFonts({
+    Inter_400Regular,
+    Inter_500Medium,
+    Inter_600SemiBold,
+    Inter_700Bold,
+    BebasNeue_400Regular,
+    BodoniModa_700Bold,
+    Cinzel_700Bold,
+    CourierPrime_700Bold,
+    DMSans_700Bold,
+    Fredoka_400Regular,
+    IBMPlexSerif_700Bold,
+    Pacifico_400Regular,
+    Poppins_700Bold,
+    SpaceMono_700Bold,
+    Syne_700Bold,
   });
 
-  useEffect(() => { if (loaded || error) SplashScreen.hideAsync(); }, [loaded, error]);
-  if (!loaded && !error) return null;
+  useEffect(() => {
+    if (fontsLoaded || fontError) SplashScreen.hideAsync();
+  }, [fontsLoaded, fontError]);
+
+  if (!fontsLoaded && !fontError) return null;
 
   return (
     <SafeAreaProvider>
       <ErrorBoundary>
         <QueryClientProvider client={queryClient}>
           <GestureHandlerRootView style={{ flex: 1 }}>
-            <ThemeProvider>
-              <AuthProvider>
-                <RootNavigation />
-              </AuthProvider>
-            </ThemeProvider>
+            <KeyboardProvider>
+              <LanguageProvider>
+                <ThemeProvider>
+                  <AuthProvider>
+                    <CoinProvider>
+                      <PremiumProvider>
+                        <RootLayoutNav />
+                      </PremiumProvider>
+                    </CoinProvider>
+                  </AuthProvider>
+                </ThemeProvider>
+              </LanguageProvider>
+            </KeyboardProvider>
           </GestureHandlerRootView>
         </QueryClientProvider>
       </ErrorBoundary>

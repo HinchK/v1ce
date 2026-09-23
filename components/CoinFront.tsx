@@ -2,6 +2,7 @@ import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import Svg, { Circle, Image, Path, Polygon } from "react-native-svg";
 import { COIN_COLORS, NUMBER_STYLES, resolveCoinColor } from "@/constants/coin";
+import { CoinBackground } from "@/components/coin/CoinBackground";
 
 export { COIN_COLORS, NUMBER_STYLES };
 
@@ -70,6 +71,7 @@ type Props={
   borderColor?:string;
   numberColor?:string;
   imageOnlyMode?:boolean;
+  background?:string;
   onPress?:()=>void;
 };
 
@@ -86,6 +88,7 @@ export default function CoinFront({
   borderColor,
   numberColor,
   imageOnlyMode=false,
+  background="solid",
   onPress,
 }:Props){
   const colors=resolveCoinColor(color);
@@ -127,6 +130,9 @@ export default function CoinFront({
           </>
         )}
       </Svg>
+      <View pointerEvents="none" style={StyleSheet.absoluteFill}>
+        <CoinBackground kind={background} size={size} color={colors.bg} />
+      </View>
       {!imageOnlyMode && (
         <View pointerEvents="none" style={[styles.content,{width:maxWidth,top:size*.5-numberFontSize*.52+verticalOffset}]}>
           <Text numberOfLines={1} style={[styles.number,{
