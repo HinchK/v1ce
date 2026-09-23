@@ -4,7 +4,7 @@ import {useAuth} from "@/context/AuthContext";
 import {supabase} from "@/lib/supabase";
 import {useColors} from "@/hooks/useColors";
 
-type Friend={id:string;requester_id:string;recipient_id:string;status:"pending"|"accepted"|"declined"|"blocked";created_at:string;requester_name:string|null;requester_avatar:string|null;recipient_name:string|null;recipient_avatar:string|null};
+type Friend={id:string;requester_id:string;recipient_id:string;status:"pending"|"accepted"|"declined"|"blocked";created_at:string;is_active_in_lounge?:boolean;requester_name:string|null;requester_avatar:string|null;recipient_name:string|null;recipient_avatar:string|null};
 
 export default function Friends(){
  const{user}=useAuth();const c=useColors();const[email,setEmail]=useState("");const[friends,setFriends]=useState<Friend[]>([]);const[pending,setPending]=useState<Friend[]>([]);const[blocked,setBlocked]=useState<any[]>([]);
@@ -45,6 +45,8 @@ export default function Friends(){
  const unblock=async(id:string)=>{const{error}=await supabase.from("blocked_users").delete().eq("id",id);if(error)Alert.alert("V1CE",error.message);load()};
 
  const friendName=(f:Friend)=>f.requester_id===user?.id?(f.recipient_name||"Friend"):(f.requester_name||"Friend");
+ const activeCount=friends.filter(f=>(f as any).is_active_in_lounge).length;
+ const toggleLounge=async(id:string,current:boolean)=>{if(!current&&activeCount>=8){return Alert.alert("V1CE","You can have up to 8 friends active in the lounge.");}const{error}=await supabase.from("friend_connections").update({is_active_in_lounge:!current}).eq("id",id);if(error)Alert.alert("V1CE",error.message);else load()};
  const pendingName=(f:Friend)=>f.requester_name||"Friend";
 
  return <ScrollView style={{backgroundColor:c.background}} contentContainerStyle={s.container}>
@@ -52,7 +54,7 @@ export default function Friends(){
   <Text style={{color:c.mutedForeground}}>Connect with people on their sobriety journey.</Text>
   <View style={s.row}><TextInput value={email} onChangeText={setEmail} autoCapitalize="none" keyboardType="email-address" placeholder="Enter email" placeholderTextColor={c.mutedForeground} style={[s.input,{borderColor:c.foreground,color:c.foreground}]}/><TouchableOpacity onPress={send} style={[s.send,{backgroundColor:c.foreground}]}><Text style={{color:c.background,fontWeight:"800"}}>SEND</Text></TouchableOpacity></View>
   <Text style={[s.heading,{color:c.foreground}]}>YOUR FRIENDS</Text>
-  {friends.length===0?<Text style={{color:c.mutedForeground}}>No friends yet.</Text>:friends.map(f=><View key={f.id} style={[s.card,{borderColor:c.border}]}><Text style={{color:c.foreground,fontWeight:"700"}}>{friendName(f)}</Text><View style={s.actions}><TouchableOpacity onPress={()=>remove(f.id)}><Text style={{color:c.mutedForeground}}>REMOVE</Text></TouchableOpacity><TouchableOpacity onPress={()=>block(f.id)}><Text style={{color:c.mutedForeground}}>BLOCK</Text></TouchableOpacity></View></View>)}
+  {friends.length===0?<Text style={{color:c.mutedForeground}}>No friends yet.</Text>:friends.map(f=><View key={f.id} style={[s.card,{borderColor:c.border}]}><Text style={{color:c.foreground,fontWeight:"700"}}>{friendName(f)}</Text><View style={s.actions}><TouchableOpacity onPress={()=>toggleLounge(f.id,!!(f as any).is_active_in_lounge)}><Text style={{color:c.foreground,fontWeight:"800"}}>{(f as any).is_active_in_lounge?"LOUNGE ON":"LOUNGE"}</Text></TouchableOpacity><TouchableOpacity onPress={()=>remove(f.id)}><Text style={{color:c.mutedForeground}}>REMOVE</Text></TouchableOpacity><TouchableOpacity onPress={()=>block(f.id)}><Text style={{color:c.mutedForeground}}>BLOCK</Text></TouchableOpacity></View></View>)}
   <Text style={[s.heading,{color:c.foreground}]}>PENDING REQUESTS</Text>
   {pending.length===0?<Text style={{color:c.mutedForeground}}>No pending requests</Text>:pending.map(f=><View key={f.id} style={[s.card,{borderColor:c.border}]}><Text style={{color:c.foreground}}>{pendingName(f)}</Text><View style={s.actions}><TouchableOpacity onPress={()=>action(f.id,"accepted")}><Text style={{color:c.foreground,fontWeight:"800"}}>ACCEPT</Text></TouchableOpacity><TouchableOpacity onPress={()=>action(f.id,"declined")}><Text style={{color:c.mutedForeground}}>REJECT</Text></TouchableOpacity></View></View>)}
   <Text style={[s.heading,{color:c.foreground}]}>BLOCKED USERS</Text>
