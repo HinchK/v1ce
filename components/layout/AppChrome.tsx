@@ -54,11 +54,13 @@ export default function AppChrome() {
         <TouchableOpacity onPress={() => setMenuOpen(true)} hitSlop={10} style={styles.iconBtn}>
           <Feather name="menu" size={22} color={colors.foreground} />
         </TouchableOpacity>
-        <Image
-          source={{ uri: "https://media.base44.com/images/public/69fd9ed0922dc60247de8924/7e6c269c0_vice__1_.png" }}
-          style={[styles.logo, isDark && { tintColor: colors.foreground }]}
-          resizeMode="contain"
-        />
+        <View style={[styles.logoWrap, { pointerEvents: "none" }]}>
+          <Image
+            source={{ uri: "https://media.base44.com/images/public/69fd9ed0922dc60247de8924/7e6c269c0_vice__1_.png" }}
+            style={[styles.logo, isDark ? { tintColor: colors.foreground } : null]}
+            resizeMode="contain"
+          />
+        </View>
         <View style={styles.right}>
           <TouchableOpacity onPress={toggleTheme} hitSlop={8} style={styles.iconBtn}>
             <ThemeGlyph color={colors.foreground} fill={colors.foreground} />
@@ -140,12 +142,14 @@ const styles = StyleSheet.create({
     height: 52,
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 12,
+    paddingHorizontal: 10,
     borderBottomWidth: 2,
+    zIndex: 2,
   },
-  logo: { height: 22, width: 86, position: "absolute", left: 0, right: 0, alignSelf: "center", pointerEvents: "none" },
-  right: { marginLeft: "auto", flexDirection: "row", alignItems: "center", gap: 8 },
-  iconBtn: { padding: 4 },
+  logoWrap: { position: "absolute", left: 0, right: 0, top: 0, bottom: 0, alignItems: "center", justifyContent: "center" },
+  logo: { height: 22, width: 86 },
+  right: { marginLeft: "auto", flexDirection: "row", alignItems: "center", gap: 8, zIndex: 3 },
+  iconBtn: { padding: 6, zIndex: 3 },
   v1: { borderWidth: 1.5, paddingHorizontal: 6, paddingVertical: 2, minWidth: 28, alignItems: "center" },
   v1Text: { fontSize: 11, fontFamily: fonts.bodyBold, letterSpacing: 0.5 },
   nav: { flexDirection: "row", borderBottomWidth: 2 },

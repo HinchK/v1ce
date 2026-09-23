@@ -18,7 +18,7 @@ export default function ArcadeCabinet() {
               <Text style={styles.hudText}>SCORE:{"\n"}0</Text>
               <Text style={[styles.hudText, { textAlign: "right" }]}>HI-SCORE{"\n"}0</Text>
             </View>
-            <Svg width="100%" height={120} viewBox="0 0 220 120">
+            <Svg width="100%" height={150} viewBox="0 0 220 120">
               <Path d="M8 96 H212" stroke="#39FF14" strokeWidth="3" />
               <Path d="M8 100 H212" stroke="#1DBA0A" strokeWidth="2" />
               <Rect x="18" y="78" width="10" height="18" fill="#39FF14" />
@@ -51,7 +51,7 @@ export default function ArcadeCabinet() {
 }
 
 const styles = StyleSheet.create({
-  wrap: { marginTop: 18, alignItems: "center" },
+  wrap: { marginTop: 18, alignItems: "center", maxWidth: 360, alignSelf: "center", width: "100%" },
   glowLeft: {
     position: "absolute",
     left: 8,
@@ -80,11 +80,12 @@ const styles = StyleSheet.create({
   bezel: { padding: 10, paddingBottom: 0 },
   screen: {
     backgroundColor: "#030303",
-    minHeight: 210,
+    height: 240,
     paddingHorizontal: 14,
     paddingTop: 12,
     borderWidth: 2,
     borderColor: "#111",
+    overflow: "hidden",
   },
   logo: {
     color: "#39FF14",

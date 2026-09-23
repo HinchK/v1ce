@@ -120,8 +120,8 @@ export default function Friends() {
             style={[styles.input, { color: colors.foreground }]}
           />
         </View>
-        <TouchableOpacity onPress={send} style={[styles.send, { backgroundColor: colors.secondary }]}>
-          <Feather name="send" size={18} color={colors.background} />
+        <TouchableOpacity onPress={send} style={styles.send}>
+          <Feather name="send" size={18} color="#FFFFFF" />
         </TouchableOpacity>
       </View>
       <View style={[styles.rule, { backgroundColor: colors.foreground }]} />
@@ -198,7 +198,7 @@ const styles = StyleSheet.create({
     minHeight: 52,
   },
   input: { flex: 1, fontSize: 15, fontFamily: fonts.body, paddingVertical: 12 },
-  send: { width: 52, alignItems: "center", justifyContent: "center" },
+  send: { width: 52, alignItems: "center", justifyContent: "center", backgroundColor: "#8E8E8E" },
   empty: { textAlign: "center", fontSize: 14, fontFamily: fonts.body, marginTop: 8 },
   foot: { textAlign: "center", fontSize: 14, fontFamily: fonts.body, marginTop: 36 },
   card: { borderWidth: 2, padding: 16, marginBottom: 10, flexDirection: "row", justifyContent: "space-between", alignItems: "center", gap: 8 },

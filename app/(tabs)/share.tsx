@@ -97,8 +97,8 @@ export default function ShareScreen() {
           <Text style={[styles.cardTitle, { color: c.foreground }]}>PAY IT FORWARD</Text>
         </View>
         <Text style={[styles.cardSub, { color: c.mutedForeground }]}>Gift Premium to someone on their sobriety journey.</Text>
-        <View style={[styles.banner, { backgroundColor: c.foreground }]}>
-          <Text style={[styles.bannerText, { color: c.background }]}>☀  GIFT OF THE YEAR — 3 MONTHS FREE AFTER 60 DAYS</Text>
+        <View style={styles.banner}>
+          <Text style={styles.bannerText}>☀  GIFT OF THE YEAR — 3 MONTHS FREE AFTER 60 DAYS</Text>
         </View>
         <Text style={[styles.micro, { color: c.mutedForeground }]}>THEIR EMAIL</Text>
         <TextInput
@@ -187,8 +187,8 @@ const styles = StyleSheet.create({
   cardTitleRow: { flexDirection: "row", alignItems: "center", gap: 8 },
   cardTitle: { fontSize: 22, fontFamily: fonts.display, letterSpacing: 1 },
   cardSub: { fontSize: 14, fontFamily: fonts.body, marginTop: 8, marginBottom: 14, lineHeight: 20 },
-  banner: { padding: 12, marginBottom: 16 },
-  bannerText: { fontFamily: fonts.bodyBold, fontSize: 11, letterSpacing: 0.6 },
+  banner: { backgroundColor: "#0A0A0A", padding: 12, marginBottom: 16 },
+  bannerText: { fontFamily: fonts.bodyBold, fontSize: 11, letterSpacing: 0.6, color: "#FAFAFA" },
   micro: { fontSize: 10, letterSpacing: 1.8, fontFamily: fonts.bodyBold, marginBottom: 8 },
   input: { borderWidth: 2, paddingHorizontal: 12, paddingVertical: 12, fontSize: 15, fontFamily: fonts.body, marginBottom: 12 },
   plans: { flexDirection: "row", gap: 0, marginBottom: 12 },

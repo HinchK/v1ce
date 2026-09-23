@@ -116,25 +116,25 @@ export default function CoinFront({
         {shape==="circle" ? (
           <>
             <Circle cx="50" cy="50" r="48" fill={colors.bg}/>
-            {coinPhoto && <Image href={{uri:coinPhoto}} x="2" y="2" width="96" height="96" preserveAspectRatio="xMidYMid slice" opacity={imageOnlyMode?1:.35}/>}
-            {showBorder && <Circle cx="50" cy="50" r="48" fill="none" stroke={resolvedBorderColor} strokeWidth="3"/>}
+            {coinPhoto ? <Image href={{uri:coinPhoto}} x="2" y="2" width="96" height="96" preserveAspectRatio="xMidYMid slice" opacity={imageOnlyMode?1:.35}/> : null}
+            {showBorder ? <Circle cx="50" cy="50" r="48" fill="none" stroke={resolvedBorderColor} strokeWidth="3"/> : null}
           </>
         ) : (
           <>
             {customPoints ? <Polygon points={customPoints} fill={colors.bg}/> : <Path d={path} fill={colors.bg}/>}
-            {coinPhoto && <Image href={{uri:coinPhoto}} x="0" y="0" width="100" height="100" preserveAspectRatio="xMidYMid slice" opacity={imageOnlyMode?1:.35}/>}
-            {showBorder && (customPoints
+            {coinPhoto ? <Image href={{uri:coinPhoto}} x="0" y="0" width="100" height="100" preserveAspectRatio="xMidYMid slice" opacity={imageOnlyMode?1:.35}/> : null}
+            {showBorder ? (customPoints
               ? <Polygon points={customPoints} fill="none" stroke={resolvedBorderColor} strokeWidth="3"/>
               : <Path d={path} fill="none" stroke={resolvedBorderColor} strokeWidth="3"/>
-            )}
+            ) : null}
           </>
         )}
       </Svg>
-      <View pointerEvents="none" style={StyleSheet.absoluteFill}>
+      <View style={[StyleSheet.absoluteFill,{pointerEvents:"none"}]}>
         <CoinBackground kind={background} size={size} color={colors.bg} />
       </View>
-      {!imageOnlyMode && (
-        <View pointerEvents="none" style={[styles.content,{width:maxWidth,top:size*.5-numberFontSize*.52+verticalOffset}]}>
+      {imageOnlyMode ? null : (
+        <View style={[styles.content,{pointerEvents:"none",width:maxWidth,top:size*.5-numberFontSize*.52+verticalOffset}]}>
           <Text numberOfLines={1} style={[styles.number,{
             color:resolvedNumberColor,
             fontSize:numberFontSize,
@@ -145,9 +145,9 @@ export default function CoinFront({
             maxWidth,
           }]}>{mainNumber}</Text>
           <Text style={[styles.label,{color:resolvedNumberColor,fontSize:size*.09,fontFamily:"BebasNeue_400Regular"}]}>{label}</Text>
-          {displayName && (
+          {displayName ? (
             <Text numberOfLines={1} style={[styles.name,{color:resolvedNumberColor,fontSize:size*.04,maxWidth}]}>{displayName}</Text>
-          )}
+          ) : null}
         </View>
       )}
     </View>

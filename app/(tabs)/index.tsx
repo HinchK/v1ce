@@ -114,7 +114,7 @@ export default function Home() {
 
 const styles = StyleSheet.create({
   page: { paddingBottom: 48 },
-  hero: { paddingHorizontal: 20, paddingTop: 18, paddingBottom: 28, borderBottomWidth: 2, overflow: "hidden" },
+  hero: { paddingHorizontal: 20, paddingTop: 18, paddingBottom: 36, borderBottomWidth: 2, overflow: "visible" },
   days: {
     fontSize: 132,
     lineHeight: 118,
@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
     marginLeft: -6,
   },
   burst: { position: "absolute", right: 12, top: 18 },
-  splat: { position: "absolute", left: -6, bottom: -10 },
+  splat: { position: "absolute", left: -4, bottom: -18, zIndex: 1 },
   coinWrap: { alignItems: "center", paddingVertical: 18 },
   customizeWrap: { alignItems: "center", zIndex: 2 },
   link: {
