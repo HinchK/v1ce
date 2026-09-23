@@ -3,6 +3,10 @@ import {
   Inter_500Medium,
   Inter_600SemiBold,
   Inter_700Bold,
+  Inter_800ExtraBold,
+  Inter_900Black,
+  Inter_800ExtraBold_Italic,
+  Inter_900Black_Italic,
 } from "@expo-google-fonts/inter";
 import { BebasNeue_400Regular } from "@expo-google-fonts/bebas-neue";
 import { BodoniModa_700Bold } from "@expo-google-fonts/bodoni-moda";
@@ -52,6 +56,10 @@ export default function RootLayout() {
     Inter_500Medium,
     Inter_600SemiBold,
     Inter_700Bold,
+    Inter_800ExtraBold,
+    Inter_900Black,
+    Inter_800ExtraBold_Italic,
+    Inter_900Black_Italic,
     BebasNeue_400Regular,
     BodoniModa_700Bold,
     Cinzel_700Bold,

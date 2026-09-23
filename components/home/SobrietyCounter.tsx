@@ -31,6 +31,6 @@ export default function SobrietyCounter({ sobrietyDate }: { sobrietyDate?: strin
 const styles = StyleSheet.create({
   grid: { flexDirection: "row" },
   cell: { flex: 1, minHeight: 94, borderWidth: 2, marginRight: -2, alignItems: "center", justifyContent: "center" },
-  value: { fontSize: 29, fontWeight: "900", lineHeight: 31, fontFamily: "Inter_700Bold" },
+  value: { fontSize: 29, fontWeight: "900", lineHeight: 31, fontFamily: "BebasNeue_400Regular" },
   label: { fontSize: 9, fontWeight: "800", letterSpacing: 2, marginTop: 5 },
 });

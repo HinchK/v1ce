@@ -2,25 +2,43 @@ import React, { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { useAuth } from "@/context/AuthContext";
 import { useColors } from "@/hooks/useColors";
+import { usePremium } from "@/context/PremiumContext";
+import { useRouter } from "expo-router";
 import { supabase, TABLES } from "@/lib/supabase";
-import SobrietyCoin from "@/components/coin/SobrietyCoin";
 import ShapePicker from "@/components/customize/ShapePicker";
 import ColorPicker from "@/components/customize/ColorPicker";
 import NumberStylePicker from "@/components/customize/NumberStylePicker";
-import BackgroundPicker from "@/components/customize/BackgroundPicker";
+import MiniColorInput from "@/components/customize/MiniColorInput";
 import DrawShapePicker from "@/components/customize/DrawShapePicker";
-import { COIN_COLORS, resolveCoinColor } from "@/constants/coin";
 import { daysSince } from "@/constants/app";
-import { AsteriskStar, Crosshair, DiamondGrid, Starburst } from "@/components/ui/RetroAccents";
+import { fonts } from "@/constants/typography";
+import { Crosshair } from "@/components/ui/RetroAccents";
+import SobrietyCoin from "@/components/coin/SobrietyCoin";
 
-const ROTATING_WORDS = ["COIN", "TOKEN", "CHIP", "V1CE", "JOURNEY", "PROGRESS", "BAGEL", "SHINY CIRCLE", "NOT A NICKEL", "PIZZA FUND", "PET ROCK", "DOUBLOON", "PAPERWEIGHT", "SOUVENIR", "OBJECT", "THINGY"];
+function Switch({ on, onToggle, label }: { on: boolean; onToggle: () => void; label: string }) {
+  const colors = useColors();
+  return (
+    <View style={styles.toggleRow}>
+      <TouchableOpacity onPress={onToggle} style={[styles.track, { backgroundColor: on ? colors.foreground : colors.secondary }]}>
+        <View
+          style={[
+            styles.knob,
+            { backgroundColor: colors.background, transform: [{ translateX: on ? 26 : 3 }] },
+          ]}
+        />
+      </TouchableOpacity>
+      <Text style={[styles.toggleLabel, { color: colors.mutedForeground }]}>{label}</Text>
+    </View>
+  );
+}
 
 export default function Customize() {
   const { profile, setProfile } = useAuth();
   const colors = useColors();
-  const [wordIndex, setWordIndex] = useState(0);
+  const { isPremium } = usePremium();
+  const router = useRouter();
   const [saving, setSaving] = useState(false);
-  const [color, setColor] = useState(profile?.coin_color || "#F5D680");
+  const [color, setColor] = useState(profile?.coin_color || "#E0E0E0");
   const [shape, setShape] = useState(profile?.coin_shape || "circle");
   const [style, setStyle] = useState(profile?.number_style || "classic");
   const [displayName, setDisplayName] = useState(profile?.display_name || "");
@@ -30,17 +48,10 @@ export default function Customize() {
   const [border, setBorder] = useState(profile?.coin_show_border ?? true);
   const [borderColor, setBorderColor] = useState(profile?.coin_border_color || "");
   const [numberColor, setNumberColor] = useState(profile?.coin_number_color || "");
-  const [background, setBackground] = useState(profile?.coin_background || "solid");
-  const [customHex, setCustomHex] = useState(/^#[0-9A-Fa-f]{6}$/.test(profile?.coin_color || "") ? profile?.coin_color || "" : "");
-
-  useEffect(() => {
-    const id = setInterval(() => setWordIndex((v) => (v + 1) % ROTATING_WORDS.length), 1500);
-    return () => clearInterval(id);
-  }, []);
 
   useEffect(() => {
     if (!profile) return;
-    setColor(profile.coin_color || "#F5D680");
+    setColor(profile.coin_color || "#E0E0E0");
     setShape(profile.coin_shape || "circle");
     setStyle(profile.number_style || "classic");
     setDisplayName(profile.display_name || "");
@@ -50,7 +61,6 @@ export default function Customize() {
     setBorder(profile.coin_show_border ?? true);
     setBorderColor(profile.coin_border_color || "");
     setNumberColor(profile.coin_number_color || "");
-    setBackground(profile.coin_background || "solid");
   }, [profile]);
 
   const days = daysSince(profile?.sobriety_date);
@@ -68,7 +78,6 @@ export default function Customize() {
       coin_border_color: borderColor || null,
       coin_number_color: numberColor || null,
       coin_image_only: imageOnlyMode,
-      coin_background: background,
     };
     const { data, error } = await supabase.from(TABLES.SobrietyProfile).update(values).eq("id", profile.id).select().single();
     if (!error) setProfile(data || { ...profile, ...values });
@@ -77,19 +86,13 @@ export default function Customize() {
 
   return (
     <ScrollView style={{ backgroundColor: colors.background }} contentContainerStyle={styles.page} keyboardShouldPersistTaps="handled">
-      <View style={[styles.hero, { borderBottomColor: colors.foreground }]}>
-        <View style={styles.accent}><Starburst size={90} color={colors.foreground} opacity={0.08} /></View>
-        <View style={[styles.accent, { right: 42, top: 40 }]}><DiamondGrid size={50} color={colors.foreground} /></View>
-        <Text style={[styles.heroText, { color: colors.foreground }]}>YOUR</Text>
-        <Text style={[styles.heroWord, { color: colors.foreground }]}>{ROTATING_WORDS[wordIndex]}</Text>
-      </View>
       <View style={[styles.preview, { borderBottomColor: colors.foreground }]}>
         <SobrietyCoin
           days={days}
           shape={shape}
           color={color}
           numberStyle={style}
-          size={240}
+          size={200}
           displayName={displayName}
           motto={motto}
           customShapePath={customShapePath}
@@ -97,107 +100,133 @@ export default function Customize() {
           borderColor={borderColor || undefined}
           numberColor={numberColor || undefined}
           imageOnlyMode={imageOnlyMode}
-          background={background}
           substances={profile?.substances}
         />
       </View>
 
-      <Section title="SHAPE" colors={colors}>
-        <View style={styles.accent}><AsteriskStar size={36} color={colors.foreground} /></View>
+      <View style={[styles.section, { borderBottomColor: colors.foreground }]}>
         <ShapePicker value={shape} onChange={setShape} />
-        {shape === "drawn" ? <View style={{ marginTop: 16 }}><DrawShapePicker value={customShapePath} onChange={setCustomShapePath} /></View> : null}
-      </Section>
-
-      <Section title="BACKGROUND" colors={colors}>
-        <BackgroundPicker value={background} onChange={setBackground} />
-      </Section>
-
-      <Section title="COLOR" colors={colors}>
-        <View style={styles.named}>
-          {Object.keys(COIN_COLORS).map((name) => {
-            const coin = COIN_COLORS[name as keyof typeof COIN_COLORS];
-            return (
-              <TouchableOpacity key={name} onPress={() => { setColor(name); setCustomHex(""); }} style={[styles.colorChip, { backgroundColor: coin.bg, borderColor: color === name ? colors.foreground : colors.border }]}>
-                <Text style={{ color: coin.text, fontSize: 10, fontWeight: "900" }}>{name.replace("_", " ").toUpperCase()}</Text>
-              </TouchableOpacity>
-            );
-          })}
-        </View>
-        <ColorPicker value={/^#[0-9A-Fa-f]{6}$/.test(color) ? color : resolveCoinColor(color).bg} onChange={(hex) => { setColor(hex); setCustomHex(hex); }} />
-        <TextInput
-          value={customHex}
-          onChangeText={(v) => {
-            const next = v.startsWith("#") ? v : `#${v}`;
-            setCustomHex(next.slice(0, 7));
-            if (/^#[0-9A-Fa-f]{6}$/.test(next)) setColor(next.toUpperCase());
-          }}
-          maxLength={7}
-          autoCapitalize="characters"
-          placeholder="#F5D680"
-          placeholderTextColor={colors.mutedForeground}
-          style={[styles.input, { color: colors.foreground, borderColor: colors.foreground, marginTop: 12 }]}
-        />
-      </Section>
-
-      <Section title="BORDER" colors={colors}>
-        <View style={styles.toggleRow}>
-          <TouchableOpacity onPress={() => setBorder(!border)} style={[styles.toggle, { backgroundColor: border ? colors.foreground : colors.secondary }]}>
-            <View style={[styles.knob, { backgroundColor: colors.background, transform: [{ translateX: border ? 24 : 2 }] }]} />
-          </TouchableOpacity>
-          <Text style={{ color: colors.mutedForeground }}>{border ? "SHOW" : "HIDE"}</Text>
-        </View>
-        {border ? (
-          <TextInput value={borderColor} onChangeText={setBorderColor} placeholder="Auto border hex" maxLength={7} placeholderTextColor={colors.mutedForeground} style={[styles.input, { color: colors.foreground, borderColor: colors.foreground, marginTop: 12 }]} />
+        {shape === "drawn" ? (
+          <View style={{ marginTop: 16 }}>
+            <DrawShapePicker value={customShapePath} onChange={setCustomShapePath} />
+          </View>
         ) : null}
-      </Section>
+      </View>
 
-      <Section title="NUMBER COLOR" colors={colors}>
-        <TextInput value={numberColor} onChangeText={setNumberColor} placeholder="Auto number hex" maxLength={7} placeholderTextColor={colors.mutedForeground} style={[styles.input, { color: colors.foreground, borderColor: colors.foreground }]} />
-      </Section>
+      <View style={[styles.section, { borderBottomColor: colors.foreground, opacity: 0.6 }]}>
+        <View style={styles.row}>
+          <Text style={[styles.sectionTitle, { color: colors.foreground }]}>COIN PHOTO</Text>
+          <View style={[styles.badge, { borderColor: colors.foreground }]}>
+            <Text style={[styles.badgeText, { color: colors.foreground }]}>COMING SOON</Text>
+          </View>
+        </View>
+        <Text style={[styles.sub, { color: colors.mutedForeground }]}>Upload a photo to appear on your coin face</Text>
+        <View style={[styles.dashed, { borderColor: colors.foreground }]}>
+          <Text style={[styles.dashedText, { color: colors.foreground }]}>+ UPLOAD PHOTO</Text>
+        </View>
+      </View>
 
-      <Section title="NUMBER STYLE" colors={colors}>
-        <View style={styles.accent}><Crosshair size={44} color={colors.foreground} /></View>
-        <NumberStylePicker value={style} onChange={setStyle} />
-      </Section>
+      <View style={[styles.section, { borderBottomColor: colors.foreground }]}>
+        <View style={styles.row}>
+          <Text style={[styles.sectionTitle, { color: colors.foreground }]}>IMAGE MODE</Text>
+          {!isPremium ? (
+            <View style={[styles.badge, { borderColor: colors.foreground }]}>
+              <Text style={[styles.badgeText, { color: colors.foreground }]}>PREMIUM</Text>
+            </View>
+          ) : null}
+        </View>
+        <Text style={[styles.sub, { color: colors.mutedForeground }]}>
+          Show only your photo on the front. Your sober time, name & motto move to the back.
+        </Text>
+        <Switch
+          on={imageOnlyMode && isPremium}
+          onToggle={() => (isPremium ? setImageOnlyMode(!imageOnlyMode) : router.push("/(tabs)/premium"))}
+          label={imageOnlyMode && isPremium ? "On — photo fills front" : "Off"}
+        />
+      </View>
 
-      <Section title="PERSONALIZE" colors={colors}>
+      <View style={[styles.section, { borderBottomColor: colors.foreground }]}>
+        <Text style={[styles.sectionTitle, { color: colors.foreground }]}>PERSONALIZE</Text>
         <Text style={[styles.micro, { color: colors.mutedForeground }]}>DISPLAY NAME</Text>
-        <TextInput value={displayName} onChangeText={(v) => setDisplayName(v.slice(0, 20))} maxLength={20} placeholder="Your name" placeholderTextColor={colors.mutedForeground} style={[styles.input, { color: colors.foreground, borderColor: colors.foreground }]} />
+        <TextInput
+          value={displayName}
+          onChangeText={(v) => setDisplayName(v.slice(0, 20))}
+          maxLength={20}
+          placeholder="Your name"
+          placeholderTextColor={colors.mutedForeground}
+          style={[styles.input, { color: colors.foreground, borderColor: colors.foreground }]}
+        />
         <Text style={[styles.micro, { color: colors.mutedForeground, marginTop: 16 }]}>PERSONAL MOTTO</Text>
-        <TextInput value={motto} onChangeText={(v) => setMotto(v.slice(0, 30))} maxLength={30} placeholder="Your personal motto" placeholderTextColor={colors.mutedForeground} style={[styles.input, { color: colors.foreground, borderColor: colors.foreground }]} />
-      </Section>
+        <TextInput
+          value={motto}
+          onChangeText={(v) => setMotto(v.slice(0, 30))}
+          maxLength={30}
+          placeholder="Your personal motto"
+          placeholderTextColor={colors.mutedForeground}
+          style={[styles.input, { color: colors.foreground, borderColor: colors.foreground }]}
+        />
+      </View>
+
+      <View style={[styles.section, { borderBottomColor: colors.foreground }]}>
+        <Text style={[styles.sectionTitle, { color: colors.foreground }]}>COLOR</Text>
+        <ColorPicker value={/^#[0-9A-Fa-f]{6}$/.test(color) ? color : "#E0E0E0"} onChange={setColor} />
+
+        <View style={[styles.inner, { borderTopColor: colors.foreground }]}>
+          <Text style={[styles.subhead, { color: colors.foreground }]}>BORDER</Text>
+          <Switch on={border} onToggle={() => setBorder(!border)} label={border ? "Show" : "Hide"} />
+          {border ? (
+            <View style={{ marginTop: 16 }}>
+              <Text style={[styles.micro, { color: colors.mutedForeground }]}>
+                BORDER COLOR <Text style={{ opacity: 0.5 }}>(LEAVE BLANK FOR AUTO)</Text>
+              </Text>
+              <MiniColorInput value={borderColor} onChange={setBorderColor} placeholder="AUTO" />
+            </View>
+          ) : null}
+        </View>
+
+        <View style={[styles.inner, { borderTopColor: colors.foreground }]}>
+          <Text style={[styles.subhead, { color: colors.foreground }]}>NUMBER COLOR</Text>
+          <Text style={[styles.micro, { color: colors.mutedForeground }]}>LEAVE BLANK TO AUTO-CONTRAST WITH COIN COLOR</Text>
+          <MiniColorInput value={numberColor} onChange={setNumberColor} placeholder="AUTO" />
+        </View>
+      </View>
+
+      <View style={[styles.section, { borderBottomColor: colors.foreground }]}>
+        <View style={styles.crosshair}>
+          <Crosshair size={44} color={colors.foreground} opacity={0.18} />
+        </View>
+        <Text style={[styles.sectionTitle, { color: colors.foreground }]}>NUMBER STYLE</Text>
+        <NumberStylePicker value={style} onChange={setStyle} />
+      </View>
 
       <TouchableOpacity onPress={save} disabled={saving} style={[styles.save, { backgroundColor: colors.foreground, opacity: saving ? 0.45 : 1 }]}>
-        <Text style={{ color: colors.background, fontSize: 22, fontWeight: "900", letterSpacing: 2 }}>{saving ? "SAVING..." : "SAVE CHANGES →"}</Text>
+        <Text style={{ color: colors.background, fontSize: 22, fontFamily: fonts.display, letterSpacing: 2 }}>
+          {saving ? "SAVING..." : "SAVE CHANGES →"}
+        </Text>
       </TouchableOpacity>
     </ScrollView>
   );
 }
 
-function Section({ title, colors, children }: { title: string; colors: ReturnType<typeof useColors>; children: React.ReactNode }) {
-  return (
-    <View style={[styles.section, { borderBottomColor: colors.foreground }]}>
-      <Text style={[styles.sectionTitle, { color: colors.foreground }]}>{title}</Text>
-      <View style={{ marginTop: 18 }}>{children}</View>
-    </View>
-  );
-}
-
 const styles = StyleSheet.create({
-  page: { paddingBottom: 100 },
-  hero: { paddingHorizontal: 20, paddingTop: 28, paddingBottom: 22, borderBottomWidth: 2, overflow: "hidden" },
-  heroText: { fontSize: 42, lineHeight: 40, fontWeight: "900" },
-  heroWord: { fontSize: 54, lineHeight: 52, fontWeight: "900" },
-  accent: { position: "absolute", right: 8, top: 8 },
-  preview: { minHeight: 330, alignItems: "center", justifyContent: "center", paddingVertical: 28, borderBottomWidth: 2 },
-  section: { paddingHorizontal: 20, paddingVertical: 28, borderBottomWidth: 2, position: "relative" },
-  sectionTitle: { fontSize: 28, lineHeight: 30, fontWeight: "900" },
-  named: { flexDirection: "row", flexWrap: "wrap", gap: 8, marginBottom: 12 },
-  colorChip: { borderWidth: 2, paddingHorizontal: 12, paddingVertical: 11 },
-  input: { borderWidth: 2, paddingHorizontal: 12, paddingVertical: 11, fontSize: 14 },
+  page: { paddingBottom: 48 },
+  preview: { alignItems: "center", paddingVertical: 20, borderBottomWidth: 2 },
+  section: { paddingHorizontal: 20, paddingVertical: 26, borderBottomWidth: 2 },
+  sectionTitle: { fontSize: 26, fontFamily: fonts.display, letterSpacing: 1, marginBottom: 6 },
+  row: { flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 6 },
+  badge: { borderWidth: 1, paddingHorizontal: 6, paddingVertical: 2 },
+  badgeText: { fontSize: 8, fontFamily: fonts.bodyBold, letterSpacing: 1.2 },
+  sub: { fontSize: 13, lineHeight: 18, fontFamily: fonts.body, marginBottom: 14 },
+  dashed: { height: 52, borderWidth: 2, borderStyle: "dashed", alignItems: "center", justifyContent: "center" },
+  dashedText: { fontSize: 18, fontFamily: fonts.display, letterSpacing: 2 },
   toggleRow: { flexDirection: "row", alignItems: "center", gap: 12 },
-  toggle: { width: 54, height: 30, borderRadius: 18, justifyContent: "center" },
+  track: { width: 56, height: 32, borderRadius: 16, justifyContent: "center" },
   knob: { width: 26, height: 26, borderRadius: 13 },
-  micro: { fontSize: 9, letterSpacing: 2.5, fontWeight: "800", marginBottom: 8 },
+  toggleLabel: { fontSize: 15, fontFamily: fonts.body },
+  micro: { fontSize: 9, letterSpacing: 1.6, fontFamily: fonts.bodyBold, marginBottom: 8 },
+  input: { borderWidth: 2, paddingHorizontal: 12, paddingVertical: 11, fontSize: 14, fontFamily: fonts.body, backgroundColor: "#FFFFFF" },
+  inner: { marginTop: 22, paddingTop: 22, borderTopWidth: 2 },
+  subhead: { fontSize: 20, fontFamily: fonts.display, letterSpacing: 1, marginBottom: 12 },
+  crosshair: { position: "absolute", right: 12, top: 18 },
   save: { marginHorizontal: 20, marginTop: 26, height: 56, alignItems: "center", justifyContent: "center" },
 });

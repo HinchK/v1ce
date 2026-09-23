@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Feather } from "@expo/vector-icons";
 import { useAuth } from "@/context/AuthContext";
 import { supabase, TABLES, type BlockedUser, type FriendConnection } from "@/lib/supabase";
 import { useColors } from "@/hooks/useColors";
+import { fonts } from "@/constants/typography";
 
 export default function Friends() {
   const { user } = useAuth();
@@ -30,17 +32,6 @@ export default function Friends() {
   useEffect(() => {
     if (signedIn) load();
   }, [user?.id, signedIn]);
-
-  if (!signedIn) {
-    return (
-      <View style={[styles.gate, { backgroundColor: colors.background }]}>
-        <Text style={[styles.title, { color: colors.foreground }]}>FRIENDS.</Text>
-        <Text style={{ color: colors.mutedForeground, marginTop: 12 }}>
-          Add an email in onboarding or profile to send friend requests.
-        </Text>
-      </View>
-    );
-  }
 
   const send = async () => {
     if (!user?.id || !email.trim()) return;
@@ -110,54 +101,40 @@ export default function Friends() {
   };
 
   return (
-    <ScrollView style={{ backgroundColor: colors.background }} contentContainerStyle={styles.container}>
-      <Text style={[styles.title, { color: colors.foreground }]}>FRIENDS.</Text>
-      <Text style={{ color: colors.mutedForeground }}>Connect with people on their sobriety journey.</Text>
+    <ScrollView style={{ backgroundColor: colors.background }} contentContainerStyle={styles.page} keyboardShouldPersistTaps="handled">
+      <Text style={[styles.title, { color: colors.foreground }]}>MANAGE{"\n"}FRIENDS</Text>
+      <Text style={[styles.sub, { color: colors.mutedForeground }]}>Send requests, manage your top 8, and block users.</Text>
+      <View style={[styles.rule, { backgroundColor: colors.foreground }]} />
+
+      <Text style={[styles.heading, { color: colors.foreground }]}>SEND FRIEND REQUEST</Text>
       <View style={styles.row}>
-        <TextInput
-          value={email}
-          onChangeText={setEmail}
-          autoCapitalize="none"
-          keyboardType="email-address"
-          placeholder="Enter email"
-          placeholderTextColor={colors.mutedForeground}
-          style={[styles.input, { borderColor: colors.foreground, color: colors.foreground }]}
-        />
-        <TouchableOpacity onPress={send} style={[styles.send, { backgroundColor: colors.foreground }]}>
-          <Text style={{ color: colors.background, fontWeight: "800" }}>SEND</Text>
+        <View style={[styles.inputWrap, { borderColor: colors.foreground }]}>
+          <Feather name="mail" size={18} color={colors.foreground} style={{ marginRight: 8 }} />
+          <TextInput
+            value={email}
+            onChangeText={setEmail}
+            autoCapitalize="none"
+            keyboardType="email-address"
+            placeholder="Enter email"
+            placeholderTextColor={colors.mutedForeground}
+            style={[styles.input, { color: colors.foreground }]}
+          />
+        </View>
+        <TouchableOpacity onPress={send} style={[styles.send, { backgroundColor: colors.secondary }]}>
+          <Feather name="send" size={18} color={colors.background} />
         </TouchableOpacity>
       </View>
-      <Text style={[styles.heading, { color: colors.foreground }]}>YOUR FRIENDS</Text>
-      {friends.length === 0 ? (
-        <Text style={{ color: colors.mutedForeground }}>No friends yet.</Text>
-      ) : (
-        friends.map((f) => (
-          <View key={f.id} style={[styles.card, { borderColor: colors.border }]}>
-            <Text style={{ color: colors.foreground, fontWeight: "700", flex: 1 }}>{friendName(f)}</Text>
-            <View style={styles.actions}>
-              <TouchableOpacity onPress={() => toggleLounge(f.id, !!f.is_active_in_lounge)}>
-                <Text style={{ color: colors.foreground, fontWeight: "800" }}>{f.is_active_in_lounge ? "LOUNGE ON" : "LOUNGE"}</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => remove(f.id)}>
-                <Text style={{ color: colors.mutedForeground, fontSize: 18, fontWeight: "900" }}>X</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => block(f.id)}>
-                <Text style={{ color: colors.mutedForeground }}>BLOCK</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        ))
-      )}
-      <Text style={[styles.heading, { color: colors.foreground }]}>PENDING REQUESTS</Text>
+      <View style={[styles.rule, { backgroundColor: colors.foreground }]} />
+
       {pending.length === 0 ? (
-        <Text style={{ color: colors.mutedForeground }}>No pending requests</Text>
+        <Text style={[styles.empty, { color: colors.mutedForeground }]}>No pending requests</Text>
       ) : (
         pending.map((f) => (
           <View key={f.id} style={[styles.card, { borderColor: colors.border }]}>
-            <Text style={{ color: colors.foreground }}>{f.requester_name || f.requester_email || "Friend"}</Text>
+            <Text style={{ color: colors.foreground, fontFamily: fonts.bodySemi }}>{f.requester_name || f.requester_email || "Friend"}</Text>
             <View style={styles.actions}>
               <TouchableOpacity onPress={() => action(f.id, "accepted")}>
-                <Text style={{ color: colors.foreground, fontWeight: "800" }}>ACCEPT</Text>
+                <Text style={{ color: colors.foreground, fontFamily: fonts.extraBold }}>ACCEPT</Text>
               </TouchableOpacity>
               <TouchableOpacity onPress={() => action(f.id, "rejected")}>
                 <Text style={{ color: colors.mutedForeground }}>REJECT</Text>
@@ -166,31 +143,64 @@ export default function Friends() {
           </View>
         ))
       )}
-      <Text style={[styles.heading, { color: colors.foreground }]}>BLOCKED USERS</Text>
-      {blocked.length === 0 ? (
-        <Text style={{ color: colors.mutedForeground }}>No blocked users</Text>
+
+      {friends.length === 0 ? (
+        <Text style={[styles.foot, { color: colors.mutedForeground }]}>No friends yet. Send a friend request to get started!</Text>
       ) : (
-        blocked.map((b) => (
-          <View key={b.id} style={[styles.card, { borderColor: colors.border }]}>
-            <Text style={{ color: colors.foreground }}>{b.blocked_email || "BLOCKED USER"}</Text>
-            <TouchableOpacity onPress={() => unblock(b.id)}>
-              <Text style={{ color: colors.mutedForeground }}>UNBLOCK</Text>
-            </TouchableOpacity>
+        friends.map((f) => (
+          <View key={f.id} style={[styles.card, { borderColor: colors.border }]}>
+            <Text style={{ color: colors.foreground, fontFamily: fonts.bodyBold, flex: 1 }}>{friendName(f)}</Text>
+            <View style={styles.actions}>
+              <TouchableOpacity onPress={() => toggleLounge(f.id, !!f.is_active_in_lounge)}>
+                <Text style={{ color: colors.foreground, fontFamily: fonts.extraBold }}>{f.is_active_in_lounge ? "LOUNGE ON" : "LOUNGE"}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => remove(f.id)}>
+                <Text style={{ color: colors.mutedForeground, fontSize: 18, fontFamily: fonts.extraBold }}>X</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => block(f.id)}>
+                <Text style={{ color: colors.mutedForeground }}>BLOCK</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         ))
       )}
+
+      {blocked.length > 0 ? (
+        <>
+          <Text style={[styles.heading, { color: colors.foreground, marginTop: 28 }]}>BLOCKED USERS</Text>
+          {blocked.map((b) => (
+            <View key={b.id} style={[styles.card, { borderColor: colors.border }]}>
+              <Text style={{ color: colors.foreground }}>{b.blocked_email || "BLOCKED USER"}</Text>
+              <TouchableOpacity onPress={() => unblock(b.id)}>
+                <Text style={{ color: colors.mutedForeground }}>UNBLOCK</Text>
+              </TouchableOpacity>
+            </View>
+          ))}
+        </>
+      ) : null}
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { padding: 20, paddingTop: 55, paddingBottom: 100 },
-  gate: { flex: 1, padding: 20, paddingTop: 55 },
-  title: { fontSize: 48, fontWeight: "900" },
-  row: { flexDirection: "row", gap: 8, marginTop: 28 },
-  input: { flex: 1, borderWidth: 2, padding: 12, fontSize: 14 },
-  send: { paddingHorizontal: 18, justifyContent: "center" },
-  heading: { fontSize: 22, fontWeight: "900", letterSpacing: 2, marginTop: 34, marginBottom: 12 },
+  page: { paddingHorizontal: 20, paddingTop: 28, paddingBottom: 48 },
+  title: { fontSize: 56, lineHeight: 52, fontFamily: fonts.display },
+  sub: { fontSize: 15, lineHeight: 22, fontFamily: fonts.body, marginTop: 12 },
+  rule: { height: 2, marginVertical: 22 },
+  heading: { fontSize: 13, fontFamily: fonts.extraBold, letterSpacing: 1.4, marginBottom: 12 },
+  row: { flexDirection: "row", gap: 0 },
+  inputWrap: {
+    flex: 1,
+    borderWidth: 2,
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 12,
+    minHeight: 52,
+  },
+  input: { flex: 1, fontSize: 15, fontFamily: fonts.body, paddingVertical: 12 },
+  send: { width: 52, alignItems: "center", justifyContent: "center" },
+  empty: { textAlign: "center", fontSize: 14, fontFamily: fonts.body, marginTop: 8 },
+  foot: { textAlign: "center", fontSize: 14, fontFamily: fonts.body, marginTop: 36 },
   card: { borderWidth: 2, padding: 16, marginBottom: 10, flexDirection: "row", justifyContent: "space-between", alignItems: "center", gap: 8 },
   actions: { flexDirection: "row", gap: 14, alignItems: "center" },
 });

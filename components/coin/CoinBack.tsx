@@ -2,6 +2,7 @@ import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import Svg, { Circle, Path, Polygon } from "react-native-svg";
 import { resolveCoinColor } from "@/constants/coin";
+import { fonts } from "@/constants/typography";
 
 const PATHS: Record<string, string> = {
   hexagon: "M25 2 L75 2 L100 50 L75 98 L25 98 L0 50 Z",
@@ -57,6 +58,8 @@ export default function CoinBack({
   const resolvedBorder = borderColor || colors.border;
   const customPoints = shape === "drawn" ? parseCustomPolygon(customShapePath) : null;
   const path = PATHS[shape] || PATHS.hexagon;
+  const years = Math.floor(days / 365);
+  const mainNumber = years >= 1 ? years : days;
 
   return (
     <View style={[styles.wrap, { width: size, height: size }]}>
@@ -79,19 +82,20 @@ export default function CoinBack({
         )}
       </Svg>
       <View pointerEvents="none" style={[styles.content, { width: size * 0.72 }]}>
+        <Text style={[styles.brand, { color: colors.text, fontSize: size * 0.055 }]}>V1CE</Text>
         {imageOnlyMode ? (
           <>
             <Text style={[styles.days, { color: colors.text, fontSize: size * 0.18 }]}>{days}</Text>
             <Text style={[styles.label, { color: colors.text }]}>DAYS</Text>
             {displayName ? <Text style={[styles.name, { color: colors.text }]}>{displayName}</Text> : null}
           </>
-        ) : null}
-        <Text style={[styles.motto, { color: colors.text, fontSize: size * 0.055 }]}>
-          {motto || "ONE DAY AT A TIME"}
-        </Text>
+        ) : (
+          <Text style={[styles.days, { color: colors.text, fontSize: size * 0.22 }]}>{mainNumber}</Text>
+        )}
+        <Text style={[styles.free, { color: colors.text, fontSize: size * 0.045 }]}>{motto || "FREE FROM"}</Text>
         {substances.length > 0 ? (
-          <Text style={[styles.subs, { color: colors.text }]} numberOfLines={3}>
-            {substances.join(" · ").toUpperCase()}
+          <Text style={[styles.subs, { color: colors.text, fontSize: size * 0.038 }]} numberOfLines={4}>
+            {substances.join("\n").toUpperCase()}
           </Text>
         ) : null}
       </View>
@@ -102,9 +106,10 @@ export default function CoinBack({
 const styles = StyleSheet.create({
   wrap: { alignItems: "center", justifyContent: "center" },
   content: { position: "absolute", alignItems: "center", justifyContent: "center", paddingHorizontal: 8 },
-  motto: { fontWeight: "800", letterSpacing: 1.5, textAlign: "center", textTransform: "uppercase" },
-  subs: { marginTop: 10, fontSize: 8, fontWeight: "700", letterSpacing: 1, textAlign: "center", opacity: 0.55 },
-  days: { fontWeight: "900", textAlign: "center" },
-  label: { fontSize: 10, letterSpacing: 3, fontWeight: "800", opacity: 0.7 },
-  name: { fontSize: 9, letterSpacing: 2, marginTop: 6, fontWeight: "600", textTransform: "uppercase", opacity: 0.5 },
+  brand: { fontFamily: fonts.bodyBold, letterSpacing: 4, textAlign: "center", opacity: 0.7, marginBottom: 4 },
+  free: { fontFamily: fonts.bodyBold, letterSpacing: 2, textAlign: "center", textTransform: "uppercase", marginTop: 6, opacity: 0.7 },
+  subs: { marginTop: 8, fontFamily: fonts.bodyBold, letterSpacing: 1.5, textAlign: "center", opacity: 0.55, lineHeight: 14 },
+  days: { fontFamily: fonts.display, textAlign: "center" },
+  label: { fontSize: 10, letterSpacing: 3, fontFamily: fonts.bodyBold, opacity: 0.7 },
+  name: { fontSize: 9, letterSpacing: 2, marginTop: 6, fontFamily: fonts.bodySemi, textTransform: "uppercase", opacity: 0.5 },
 });

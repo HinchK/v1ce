@@ -15,6 +15,19 @@ export const SUBSTANCES = [
   "Other",
 ];
 
+export const ONBOARDING_SUBSTANCES = [
+  "Alcohol",
+  "Cannabis",
+  "Cocaine",
+  "Opioids",
+  "Meth",
+  "Benzodiazepines",
+  "Nicotine",
+  "Sugar",
+  "Gambling",
+  "Other",
+];
+
 export const MILESTONES = [
   { days: 1, label: "1 DAY", message: "The journey begins. You took the first step." },
   { days: 7, label: "1 WEEK", message: "One week strong. Keep going!" },

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useRouter } from "expo-router";
 import { useAuth } from "@/context/AuthContext";
 import { useCoinContext } from "@/context/CoinContext";
@@ -7,13 +7,14 @@ import { useColors } from "@/hooks/useColors";
 import { useTranslation } from "@/lib/i18n";
 import { supabase, TABLES } from "@/lib/supabase";
 import { daysSince } from "@/constants/app";
+import { fonts } from "@/constants/typography";
 import SobrietyCoin from "@/components/coin/SobrietyCoin";
 import RotatingLabel from "@/components/home/RotatingLabel";
 import SobrietyCounter from "@/components/home/SobrietyCounter";
 import SubstanceChecklist from "@/components/home/SubstanceChecklist";
 import MilestoneTimeline from "@/components/home/MilestoneTimeline";
 import MilestoneCalendarExport from "@/components/home/MilestoneCalendarExport";
-import { AsteriskStar, BlobSplat, Crosshair, DiamondGrid, Halftone, Starburst, WarpedTorus } from "@/components/ui/RetroAccents";
+import { FilledSplat, FilledStarburst, WireframeGlobe } from "@/components/ui/RetroAccents";
 
 export default function Home() {
   const { profile, setProfile } = useAuth();
@@ -22,16 +23,15 @@ export default function Home() {
   const { t } = useTranslation();
   const router = useRouter();
   const [substances, setSubstances] = useState<string[]>(profile?.substances || []);
-  const [sobrietyDate, setSobrietyDate] = useState(profile?.sobriety_date || "");
+  const sobrietyDate = profile?.sobriety_date || "";
   const days = daysSince(sobrietyDate);
 
   useEffect(() => {
     setSubstances(profile?.substances || []);
-    setSobrietyDate(profile?.sobriety_date || "");
-  }, [profile?.substances, profile?.sobriety_date]);
+  }, [profile?.substances]);
 
   useEffect(() => {
-    updateCoinData({ days, color: profile?.coin_color || "#F5D680", displayName: profile?.display_name || "" });
+    updateCoinData({ days, color: profile?.coin_color || "#E0E0E0", displayName: profile?.display_name || "" });
   }, [days, profile?.coin_color, profile?.display_name, updateCoinData]);
 
   const persist = async (values: Record<string, unknown>) => {
@@ -42,18 +42,19 @@ export default function Home() {
 
   return (
     <ScrollView style={{ backgroundColor: colors.background }} contentContainerStyle={styles.page} showsVerticalScrollIndicator={false}>
-      <View style={[styles.section, { borderBottomColor: colors.foreground, overflow: "hidden" }]}>
-        <View style={styles.accentTopRight}><Starburst size={64} color={colors.foreground} /></View>
-        <View style={styles.accentBottomLeft}><BlobSplat size={90} color={colors.foreground} /></View>
+      <View style={[styles.hero, { borderBottomColor: colors.foreground }]}>
+        <View style={styles.burst}>
+          <FilledStarburst size={72} color={colors.foreground} />
+        </View>
         <Text style={[styles.days, { color: colors.foreground }]}>{days}</Text>
-        <RotatingLabel mode="labels" style={[styles.rotate, { color: colors.foreground }]} />
+        <RotatingLabel />
         <View style={styles.coinWrap}>
           <SobrietyCoin
             days={days}
             shape={profile?.coin_shape || "circle"}
-            color={profile?.coin_color || "#F5D680"}
+            color={profile?.coin_color || "#E0E0E0"}
             numberStyle={profile?.number_style || "classic"}
-            size={260}
+            size={250}
             displayName={profile?.display_name || ""}
             motto={profile?.coin_motto}
             customShapePath={profile?.coin_shape_path || undefined}
@@ -66,35 +67,28 @@ export default function Home() {
             substances={substances}
           />
         </View>
-        <Pressable onPress={() => router.push("/(tabs)/customize")}>
-          <Text style={[styles.link, { color: colors.mutedForeground }]}>{t("home.customize")}</Text>
+        <Pressable onPress={() => router.push("/(tabs)/customize")} style={styles.customizeWrap}>
+          <Text style={[styles.link, { color: colors.mutedForeground, borderBottomColor: colors.mutedForeground }]}>
+            {t("home.customize")}
+          </Text>
         </Pressable>
+        <View style={styles.splat}>
+          <FilledSplat size={88} color={colors.foreground} />
+        </View>
       </View>
 
       <View style={[styles.section, { borderBottomColor: colors.foreground }]}>
-        <View style={styles.accentTopRight}><DiamondGrid size={72} color={colors.foreground} /></View>
         <Text style={[styles.sectionTitle, { color: colors.foreground }]}>{t("home.timeElapsed")}</Text>
         <SobrietyCounter sobrietyDate={sobrietyDate} />
       </View>
 
       <View style={[styles.section, { borderBottomColor: colors.foreground }]}>
-        <Text style={[styles.eyebrow, { color: colors.mutedForeground }]}>{t("home.soberSince")}</Text>
-        <TextInput
-          value={sobrietyDate}
-          onChangeText={(value) => {
-            setSobrietyDate(value);
-            if (/^\d{4}-\d{2}-\d{2}$/.test(value)) persist({ sobriety_date: value });
-          }}
-          placeholder="YYYY-MM-DD"
-          placeholderTextColor={colors.mutedForeground}
-          style={[styles.dateInput, { color: colors.foreground, borderColor: colors.foreground }]}
-        />
-      </View>
-
-      <View style={[styles.section, { borderBottomColor: colors.foreground }]}>
-        <View style={styles.accentTopRight}><Crosshair size={60} color={colors.foreground} /></View>
-        <View style={styles.accentBottomRight}><Halftone size={56} color={colors.foreground} /></View>
-        <Text style={[styles.sectionTitle, { color: colors.foreground }]}>{t("home.whatsYourDoc")}</Text>
+        <View style={styles.globe}>
+          <WireframeGlobe size={56} color={colors.foreground} opacity={1} />
+        </View>
+        <View style={styles.docBurst}>
+          <FilledStarburst size={48} color={colors.foreground} />
+        </View>
         <SubstanceChecklist
           selected={substances}
           onChange={(next) => {
@@ -106,8 +100,9 @@ export default function Home() {
 
       {days > 0 ? (
         <View style={[styles.section, { borderBottomColor: colors.foreground }]}>
-          <View style={styles.accentTopRight}><AsteriskStar size={48} color={colors.foreground} /></View>
-          <View style={styles.accentBottomRight}><WarpedTorus size={100} color={colors.foreground} /></View>
+          <View style={styles.docBurst}>
+            <FilledStarburst size={52} color={colors.foreground} />
+          </View>
           <Text style={[styles.sectionTitle, { color: colors.foreground }]}>{t("home.yourMilestones")}</Text>
           <MilestoneTimeline days={days} />
           <MilestoneCalendarExport sobrietyDate={sobrietyDate} displayName={profile?.display_name} />
@@ -118,16 +113,28 @@ export default function Home() {
 }
 
 const styles = StyleSheet.create({
-  page: { paddingBottom: 100 },
+  page: { paddingBottom: 48 },
+  hero: { paddingHorizontal: 20, paddingTop: 18, paddingBottom: 28, borderBottomWidth: 2, overflow: "hidden" },
+  days: {
+    fontSize: 132,
+    lineHeight: 118,
+    letterSpacing: -4,
+    fontFamily: fonts.display,
+    marginLeft: -6,
+  },
+  burst: { position: "absolute", right: 12, top: 18 },
+  splat: { position: "absolute", left: -6, bottom: -10 },
+  coinWrap: { alignItems: "center", paddingVertical: 18 },
+  customizeWrap: { alignItems: "center", zIndex: 2 },
+  link: {
+    fontSize: 11,
+    fontFamily: fonts.bodyBold,
+    letterSpacing: 2.4,
+    borderBottomWidth: 1,
+    paddingBottom: 2,
+  },
   section: { paddingHorizontal: 20, paddingVertical: 28, borderBottomWidth: 2, position: "relative" },
-  days: { fontSize: 96, fontWeight: "900", lineHeight: 96, letterSpacing: -2, fontFamily: "Inter_700Bold" },
-  rotate: { fontSize: 28, fontWeight: "800", letterSpacing: 2, marginTop: 8, fontFamily: "Inter_700Bold" },
-  coinWrap: { alignItems: "center", paddingVertical: 20 },
-  link: { fontSize: 12, fontWeight: "800", letterSpacing: 2, textAlign: "center" },
-  sectionTitle: { fontSize: 32, lineHeight: 34, fontWeight: "900", letterSpacing: -1, marginBottom: 18 },
-  eyebrow: { fontSize: 11, fontWeight: "800", letterSpacing: 3, marginBottom: 8 },
-  dateInput: { borderWidth: 2, padding: 12, fontSize: 18, fontFamily: "Inter_600SemiBold" },
-  accentTopRight: { position: "absolute", right: 8, top: 8 },
-  accentBottomLeft: { position: "absolute", left: -6, bottom: -4 },
-  accentBottomRight: { position: "absolute", right: 0, bottom: 8 },
+  sectionTitle: { fontSize: 48, lineHeight: 46, fontFamily: fonts.display, letterSpacing: 0.5, marginBottom: 18 },
+  globe: { position: "absolute", right: 16, bottom: 20, opacity: 0.9 },
+  docBurst: { position: "absolute", right: 10, top: 18 },
 });

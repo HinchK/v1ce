@@ -1,5 +1,5 @@
 import React from "react";
-import Svg, { Circle, Path } from "react-native-svg";
+import Svg, { Circle, Path, Polygon } from "react-native-svg";
 
 type AccentProps = { size?: number; color?: string; opacity?: number };
 
@@ -79,6 +79,36 @@ export function WireframeGlobe({ size = 64, color = "#0A0A0A", opacity = 0.08 }:
     <Svg width={size} height={size} viewBox="0 0 64 64" opacity={opacity}>
       <Circle cx="32" cy="32" r="28" fill="none" stroke={color} strokeWidth="2" />
       <Path d="M4 32 H60 M32 4 V60" stroke={color} strokeWidth="1.5" />
+      <Path d="M20 8 Q32 32 20 56 M44 8 Q32 32 44 56" fill="none" stroke={color} strokeWidth="1.5" />
+    </Svg>
+  );
+}
+
+export function FilledStarburst({ size = 72, color = "#0A0A0A" }: AccentProps) {
+  const spikes = 16;
+  const cx = 50;
+  const cy = 50;
+  const outer = 48;
+  const inner = 18;
+  const points = Array.from({ length: spikes * 2 }, (_, i) => {
+    const a = (i * Math.PI) / spikes - Math.PI / 2;
+    const r = i % 2 === 0 ? outer : inner;
+    return `${cx + Math.cos(a) * r},${cy + Math.sin(a) * r}`;
+  }).join(" ");
+  return (
+    <Svg width={size} height={size} viewBox="0 0 100 100">
+      <Polygon points={points} fill={color} />
+    </Svg>
+  );
+}
+
+export function FilledSplat({ size = 90, color = "#0A0A0A" }: AccentProps) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 100 100">
+      <Path
+        d="M50 4 L58 28 L78 12 L68 36 L98 38 L72 52 L92 74 L64 64 L62 96 L50 72 L38 96 L36 64 L8 74 L28 52 L2 38 L32 36 L22 12 L42 28 Z"
+        fill={color}
+      />
     </Svg>
   );
 }

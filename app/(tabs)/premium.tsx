@@ -76,7 +76,7 @@ export default function Premium() {
 }
 
 const styles = StyleSheet.create({
-  container: { padding: 20, paddingTop: 55, paddingBottom: 100 },
+  container: { padding: 20, paddingBottom: 48 },
   title: { fontSize: 52, fontWeight: "900", lineHeight: 52 },
   subtitle: { fontSize: 15, marginTop: 16 },
   badge: { borderWidth: 2, padding: 12, alignSelf: "flex-start", marginTop: 24 },

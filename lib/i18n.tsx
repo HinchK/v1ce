@@ -3,7 +3,7 @@ import React, { createContext, useContext, useEffect, useMemo, useState, type Re
 
 export const LANGUAGES = [
   { code: "en", label: "EN" },
-  { code: "ko", label: "한국어" },
+  { code: "ko", label: "한" },
   { code: "es", label: "ES" },
   { code: "vi", label: "VI" },
   { code: "zh", label: "中" },
@@ -19,6 +19,8 @@ const STRINGS: Record<LangCode, Record<string, string>> = {
     "home.soberSince": "Sober Since",
     "home.whatsYourDoc": "WHAT'S\nYOUR DOC?",
     "home.yourMilestones": "YOUR\nMILESTONES.",
+    "nav.customize": "CUSTOMIZE",
+    "nav.share": "SHARE",
     "calendar.addToCalendar": "ADD TO CALENDAR",
     "nav.home": "Home",
     "nav.coin": "Coin",

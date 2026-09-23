@@ -55,7 +55,7 @@ export default function Analytics() {
 }
 
 const styles = StyleSheet.create({
-  container: { padding: 20, paddingTop: 55, paddingBottom: 100 },
+  container: { padding: 20, paddingBottom: 48 },
   title: { fontSize: 54, fontWeight: "900", lineHeight: 52, letterSpacing: -1 },
   subtitle: { fontSize: 14, lineHeight: 21, marginTop: 18 },
   chart: { borderWidth: 2, marginTop: 36, padding: 18, minHeight: 190 },

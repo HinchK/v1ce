@@ -89,7 +89,7 @@ export type GiveawayEntry = {
 };
 
 export const defaultProfileFields = {
-  coin_color: "#F5D680",
+  coin_color: "#E0E0E0",
   coin_shape: "circle",
   number_style: "classic",
   coin_show_border: true,
@@ -99,7 +99,7 @@ export const defaultProfileFields = {
   coin_image_only: false,
   coin_motto: "",
   coin_background: "solid",
-  coin_background_color: "#F5D680",
+  coin_background_color: "#E0E0E0",
   coin_shape_path: "",
   avatar_url: "",
   gifted_count: 0,

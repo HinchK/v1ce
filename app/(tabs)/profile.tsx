@@ -119,7 +119,7 @@ export default function Profile() {
 }
 
 const styles = StyleSheet.create({
-  container: { padding: 20, paddingTop: 55, paddingBottom: 100 },
+  container: { padding: 20, paddingBottom: 48 },
   title: { fontSize: 48, fontWeight: "900", lineHeight: 50, marginBottom: 40 },
   avatarWrap: { alignItems: "center", marginBottom: 34 },
   avatar: { width: 112, height: 112 },
