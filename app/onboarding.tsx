@@ -156,7 +156,7 @@ export default function Onboarding() {
 
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: "#F3F3F3" },
-  content: { paddingHorizontal: 24, flexGrow: 1 },
+  content: { paddingHorizontal: 24, flexGrow: 1, width: "100%", maxWidth: 430, alignSelf: "center" },
   title: { fontSize: 56, lineHeight: 54, fontFamily: fonts.display, color: "#0A0A0A", marginBottom: 12 },
   subtitle: { fontSize: 16, lineHeight: 24, color: "#737373", fontFamily: fonts.body, marginBottom: 32 },
   label: { fontSize: 10, letterSpacing: 2, color: "#737373", fontFamily: fonts.bodyBold, marginBottom: 8 },
