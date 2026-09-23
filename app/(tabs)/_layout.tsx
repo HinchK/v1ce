@@ -12,7 +12,7 @@ function NativeTabLayout() {
     <NativeTabs>
       <NativeTabs.Trigger name="index"><Icon sf={{ default: "house", selected: "house.fill" }} /><Label>HOME</Label></NativeTabs.Trigger>
       <NativeTabs.Trigger name="customize"><Icon sf={{ default: "circle", selected: "circle.fill" }} /><Label>CUSTOMIZE</Label></NativeTabs.Trigger>
-      <NativeTabs.Trigger name="lounge"><Icon sf={{ default: "person.2", selected: "person.2.fill" }} /><Label>LOUNGE</Label></Tabs.Trigger>
+      <NativeTabs.Trigger name="lounge"><Icon sf={{ default: "person.2", selected: "person.2.fill" }} /><Label>LOUNGE</Label></NativeTabs.Trigger>
       <NativeTabs.Trigger name="friends"><Icon sf={{ default: "person.2", selected: "person.2.fill" }} /><Label>FRIENDS</Label></NativeTabs.Trigger>
       <NativeTabs.Trigger name="widget"><Icon sf={{ default: "square.and.arrow.up", selected: "square.and.arrow.up.fill" }} /><Label>SHARE</Label></NativeTabs.Trigger>
     </NativeTabs>
