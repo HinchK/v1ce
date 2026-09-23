@@ -13,7 +13,7 @@ import { Poppins_700Bold } from "@expo-google-fonts/poppins";
 import { SpaceMono_700Bold } from "@expo-google-fonts/space-mono";
 import { Syne_700Bold } from "@expo-google-fonts/syne";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Stack } from "expo-router";
+import { Redirect, Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useFonts } from "expo-font";
 import React, { useEffect } from "react";
@@ -22,9 +22,17 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { AuthProvider } from "@/context/AuthContext";
 import { ThemeProvider } from "@/context/ThemeContext";
+import { useAuth } from "@/context/AuthContext";
 
 SplashScreen.preventAutoHideAsync();
 const queryClient = new QueryClient();
+
+function RootNavigation() {
+  const { isLoading, profile } = useAuth();
+  if (isLoading) return null;
+  if (!profile?.sobriety_date) return <Redirect href="/onboarding" />;
+  return <Stack screenOptions={{ headerShown: false }}><Stack.Screen name="(tabs)" /><Stack.Screen name="game" /><Stack.Screen name="widget" /><Stack.Screen name="coin-widget" /></Stack>;
+}
 
 export default function RootLayout() {
   const [loaded, error] = useFonts({
@@ -44,13 +52,7 @@ export default function RootLayout() {
           <GestureHandlerRootView style={{ flex: 1 }}>
             <ThemeProvider>
               <AuthProvider>
-                <Stack screenOptions={{ headerShown: false }}>
-                  <Stack.Screen name="onboarding" />
-                  <Stack.Screen name="(tabs)" />
-                  <Stack.Screen name="game" />
-                  <Stack.Screen name="widget" />
-                  <Stack.Screen name="coin-widget" />
-                </Stack>
+                <RootNavigation />
               </AuthProvider>
             </ThemeProvider>
           </GestureHandlerRootView>
