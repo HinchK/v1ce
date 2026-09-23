@@ -15,6 +15,7 @@ import { Syne_700Bold } from "@expo-google-fonts/syne";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
+import { useFonts } from "expo-font";
 import React, { useEffect } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -26,8 +27,7 @@ SplashScreen.preventAutoHideAsync();
 const queryClient = new QueryClient();
 
 export default function RootLayout() {
-  const [fontsLoaded, fontError] = SplashScreen.useFonts ? [true, null] : [false, null];
-  const [loaded, error] = require("expo-font").useFonts({
+  const [loaded, error] = useFonts({
     Inter_400Regular, Inter_500Medium, Inter_600SemiBold, Inter_700Bold,
     BebasNeue_400Regular, BodoniModa_700Bold, Cinzel_700Bold, CourierPrime_700Bold,
     DMSans_700Bold, Fredoka_400Regular, IBMPlexSerif_700Bold, Pacifico_400Regular,
