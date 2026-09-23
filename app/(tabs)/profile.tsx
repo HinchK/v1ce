@@ -47,7 +47,7 @@ export default function Profile(){
  return <ScrollView style={{backgroundColor:c.background}} contentContainerStyle={s.container}>
   <Text style={[s.title,{color:c.foreground}]}>YOUR{String.fromCharCode(10)}PROFILE.</Text>
   <View style={s.avatarWrap}>
-   {avatarUrl?<Image source={{uri:avatarUrl}} style={s.avatar}/>:<View style={[s.avatar,s.placeholder,{backgroundColor:c.foreground}]}><Text style={{color:c.background,fontSize:28,fontWeight:"900"}}>{(name.trim()||user?.email||"?")[0].toUpperCase()}</Text></View>}
+   {avatarUrl?<Image source={{uri:avatarUrl}} style={s.avatar}/>:<View style={[s.avatar,s.placeholder,{backgroundColor:c.foreground}]}><Text style={{color:c.background,fontSize:28,fontWeight:"900"}}>{(name.trim()||user?.email||"?").split(/\s+/).slice(0,2).map(v=>v[0]).join("").toUpperCase()}</Text></View>}{(profile?.gifted_count||0)>0&&<View style={[s.giftBadge,{backgroundColor:c.gold}]}><Text style={{color:"#0A0A0A",fontWeight:"900"}}>{profile?.gifted_count}</Text></View>}
    <TouchableOpacity disabled={uploading} onPress={pickAvatar}><Text style={[s.avatarAction,{color:c.foreground}]}>{uploading?"UPLOADING...":avatarUrl?"CHANGE PFP":"ADD PFP"}</Text></TouchableOpacity>
    {avatarUrl&&<TouchableOpacity disabled={uploading} onPress={removeAvatar}><Text style={[s.remove,{color:c.mutedForeground}]}>REMOVE PFP</Text></TouchableOpacity>}
   </View>
@@ -57,8 +57,8 @@ export default function Profile(){
   <TouchableOpacity disabled={saving} onPress={save} style={[s.button,{backgroundColor:c.foreground}]}><Text style={{color:c.background,fontWeight:"800"}}>{saving?"SAVING...":"SAVE →"}</Text></TouchableOpacity>
   <View style={[s.account,{borderTopColor:c.border}]}>
    <Text style={{color:c.foreground,fontWeight:"700"}}>{user?.email||profile?.email}</Text>
-   <TouchableOpacity onPress={async()=>{await signOut();router.replace("/onboarding")}}><Text style={{color:c.mutedForeground,marginTop:16}}>LOG OUT</Text></TouchableOpacity>
+   <TouchableOpacity style={[s.logout,{borderColor:c.foreground}]} onPress={async()=>{await signOut();router.replace("/onboarding")}}><Text style={{color:c.foreground,fontWeight:"900",letterSpacing:2}}>LOG OUT</Text></TouchableOpacity>
   </View>
  </ScrollView>
 }
-const s=StyleSheet.create({container:{padding:20,paddingTop:55,paddingBottom:60},title:{fontSize:48,fontWeight:"900",lineHeight:50,marginBottom:40},avatarWrap:{alignItems:"center",marginBottom:34},avatar:{width:112,height:112},placeholder:{alignItems:"center",justifyContent:"center"},avatarAction:{fontSize:11,fontWeight:"900",letterSpacing:2,marginTop:14},remove:{fontSize:10,fontWeight:"800",letterSpacing:2,marginTop:10},label:{fontSize:10,letterSpacing:3,fontWeight:"800",marginBottom:7},input:{borderWidth:2,padding:13,fontSize:15},button:{height:54,alignItems:"center",justifyContent:"center",marginTop:24},account:{borderTopWidth:2,marginTop:40,paddingTop:24}});
+const s=StyleSheet.create({container:{padding:20,paddingTop:55,paddingBottom:60},title:{fontSize:48,fontWeight:"900",lineHeight:50,marginBottom:40},avatarWrap:{alignItems:"center",marginBottom:34},avatar:{width:112,height:112},giftBadge:{position:"absolute",right:"31%",top:-8,minWidth:30,height:30,paddingHorizontal:8,borderRadius:15,alignItems:"center",justifyContent:"center"},placeholder:{alignItems:"center",justifyContent:"center"},avatarAction:{fontSize:11,fontWeight:"900",letterSpacing:2,marginTop:14},remove:{fontSize:10,fontWeight:"800",letterSpacing:2,marginTop:10},label:{fontSize:10,letterSpacing:3,fontWeight:"800",marginBottom:7},input:{borderWidth:2,padding:13,fontSize:15},button:{height:54,alignItems:"center",justifyContent:"center",marginTop:24},account:{borderTopWidth:2,marginTop:40,paddingTop:24},logout:{height:48,borderWidth:2,alignItems:"center",justifyContent:"center",marginTop:20}});
