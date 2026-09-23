@@ -41,6 +41,7 @@ export default function Friends(){
   if(error)Alert.alert("V1CE",error.message);load();
  };
  const remove=async(id:string)=>{const{error}=await supabase.from("friend_connections").delete().eq("id",id);if(error)Alert.alert("V1CE",error.message);load()};
+ const block=async(id:string)=>{const friend=friends.find(f=>f.id===id);if(!friend||!user?.id)return;const blockedId=friend.requester_id===user.id?friend.recipient_id:friend.requester_id;const{error}=await supabase.from("blocked_users").insert({blocker_id:user.id,blocked_id:blockedId});if(error)Alert.alert("V1CE",error.message);else{await supabase.from("friend_connections").delete().eq("id",id);load()}};
  const unblock=async(id:string)=>{const{error}=await supabase.from("blocked_users").delete().eq("id",id);if(error)Alert.alert("V1CE",error.message);load()};
 
  const friendName=(f:Friend)=>f.requester_id===user?.id?(f.recipient_name||"Friend"):(f.requester_name||"Friend");
@@ -51,7 +52,7 @@ export default function Friends(){
   <Text style={{color:c.mutedForeground}}>Connect with people on their sobriety journey.</Text>
   <View style={s.row}><TextInput value={email} onChangeText={setEmail} autoCapitalize="none" keyboardType="email-address" placeholder="Enter email" placeholderTextColor={c.mutedForeground} style={[s.input,{borderColor:c.foreground,color:c.foreground}]}/><TouchableOpacity onPress={send} style={[s.send,{backgroundColor:c.foreground}]}><Text style={{color:c.background,fontWeight:"800"}}>SEND</Text></TouchableOpacity></View>
   <Text style={[s.heading,{color:c.foreground}]}>YOUR FRIENDS</Text>
-  {friends.length===0?<Text style={{color:c.mutedForeground}}>No friends yet.</Text>:friends.map(f=><View key={f.id} style={[s.card,{borderColor:c.border}]}><Text style={{color:c.foreground,fontWeight:"700"}}>{friendName(f)}</Text><TouchableOpacity onPress={()=>remove(f.id)}><Text style={{color:c.mutedForeground}}>REMOVE</Text></TouchableOpacity></View>)}
+  {friends.length===0?<Text style={{color:c.mutedForeground}}>No friends yet.</Text>:friends.map(f=><View key={f.id} style={[s.card,{borderColor:c.border}]}><Text style={{color:c.foreground,fontWeight:"700"}}>{friendName(f)}</Text><View style={s.actions}><TouchableOpacity onPress={()=>remove(f.id)}><Text style={{color:c.mutedForeground}}>REMOVE</Text></TouchableOpacity><TouchableOpacity onPress={()=>block(f.id)}><Text style={{color:c.mutedForeground}}>BLOCK</Text></TouchableOpacity></View></View>)}
   <Text style={[s.heading,{color:c.foreground}]}>PENDING REQUESTS</Text>
   {pending.length===0?<Text style={{color:c.mutedForeground}}>No pending requests</Text>:pending.map(f=><View key={f.id} style={[s.card,{borderColor:c.border}]}><Text style={{color:c.foreground}}>{pendingName(f)}</Text><View style={s.actions}><TouchableOpacity onPress={()=>action(f.id,"accepted")}><Text style={{color:c.foreground,fontWeight:"800"}}>ACCEPT</Text></TouchableOpacity><TouchableOpacity onPress={()=>action(f.id,"declined")}><Text style={{color:c.mutedForeground}}>REJECT</Text></TouchableOpacity></View></View>)}
   <Text style={[s.heading,{color:c.foreground}]}>BLOCKED USERS</Text>
