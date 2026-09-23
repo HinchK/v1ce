@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import * as ImagePicker from "expo-image-picker";
 import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { useRouter } from "expo-router";
 import { useAuth } from "@/context/AuthContext";
@@ -24,6 +25,7 @@ export default function Customize() {
   const [border, setBorder] = useState(profile?.coin_show_border ?? true);
   const [borderColor, setBorderColor] = useState(profile?.coin_border_color || "");
   const [numberColor, setNumberColor] = useState(profile?.coin_number_color || "");
+  const [coinPhoto, setCoinPhoto] = useState(profile?.coin_photo || "");
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -42,6 +44,7 @@ export default function Customize() {
     setBorder(profile.coin_show_border ?? true);
     setBorderColor(profile.coin_border_color || "");
     setNumberColor(profile.coin_number_color || "");
+    setCoinPhoto(profile.coin_photo || "");
   }, [profile]);
 
   const days = profile?.sobriety_date
@@ -49,6 +52,13 @@ export default function Customize() {
     : 0;
 
   const activeColors = resolveCoinColor(color);
+
+  const pickCoinPhoto = async () => {
+    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!permission.granted) { Alert.alert("V1CE", "Photo access is required to choose a coin photo."); return; }
+    const result = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ["images"], allowsEditing: true, aspect: [1, 1], quality: 0.9 });
+    if (!result.canceled && result.assets[0]?.uri) setCoinPhoto(result.assets[0].uri);
+  };
 
   const save = async () => {
     if (!profile?.email || saving) return;
@@ -63,6 +73,7 @@ export default function Customize() {
       coin_show_border: border,
       coin_border_color: borderColor || null,
       coin_number_color: numberColor || null,
+      coin_photo: coinPhoto || null,
     };
     const { data, error } = await supabase.from("profiles").update(values).eq("email", profile.email).select().single();
     if (!error) setProfile(data || { ...profile, ...values });
