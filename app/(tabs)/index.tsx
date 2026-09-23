@@ -77,12 +77,12 @@ export default function Home(){
         return <Pressable key={item} onPress={()=>toggleSubstance(item)} style={[styles.chip,{backgroundColor:active?c.foreground:c.background,borderColor:c.foreground}]}>
           <Text style={{color:active?c.background:c.foreground,fontSize:11,fontWeight:"700",letterSpacing:1}}>{item.toUpperCase()}</Text>
         </Pressable>
-      })}</View>
+      })}</View>{substances.includes("Other")&&<TextInput value={other} onChangeText={setOther} placeholder="What else?" placeholderTextColor={c.mutedForeground} style={[styles.otherInput,{borderColor:c.foreground,color:c.foreground}]}/>} 
     </View>
 
     <View style={[styles.section,{borderBottomColor:c.foreground}]}>
       <Text style={[styles.sectionTitle,{color:c.foreground}]}>YOUR{"\n"}MILESTONES.</Text>
-      <View style={styles.milestones}>{MILESTONES.map(item=>{
+      <View style={styles.progressTrack}><View style={[styles.progressFill,{backgroundColor:c.foreground,width:`${Math.min(100,(time.days/1825)*100)}%`}]}/></View><View style={styles.milestones}>{MILESTONES.map(item=>{
         const reached=time.days>=item.days;
         return <View key={item.days} style={[styles.milestone,{borderColor:c.foreground,opacity:reached?1:.42}]}>
           <Text style={[styles.milestoneNumber,{color:c.foreground}]}>{item.days}</Text>
@@ -102,5 +102,5 @@ const styles=StyleSheet.create({
  date:{fontSize:28,lineHeight:32,fontWeight:"800",letterSpacing:-.5},subtext:{marginTop:10,fontSize:10,letterSpacing:2,fontWeight:"700"},timeGrid:{flexDirection:"row",marginTop:20},
  timeCell:{flex:1,minHeight:94,borderWidth:2,marginRight:-2,alignItems:"center",justifyContent:"center"},timeValue:{fontSize:29,fontWeight:"900",lineHeight:31},timeLabel:{fontSize:9,fontWeight:"800",letterSpacing:2,marginTop:5},
  chips:{flexDirection:"row",flexWrap:"wrap",gap:8,marginTop:18},chip:{borderWidth:2,paddingHorizontal:10,paddingVertical:9},milestones:{marginTop:18,flexDirection:"row",flexWrap:"wrap",gap:8},
- milestone:{width:"31.5%",minHeight:92,borderWidth:2,padding:10},otherInput:{borderWidth:2,padding:12,marginTop:12,fontSize:14},progressTrack:{height:8,borderWidth:2,borderColor:"#0A0A0A",marginTop:18,marginBottom:16},progressFill:{height:4}milestoneNumber:{fontSize:23,fontWeight:"900"},milestoneLabel:{fontSize:9,fontWeight:"800",letterSpacing:1.2,marginTop:4}
+ milestone:{width:"31.5%",minHeight:92,borderWidth:2,padding:10},otherInput:{borderWidth:2,padding:12,marginTop:12,fontSize:14},progressTrack:{height:8,borderWidth:2,borderColor:"#0A0A0A",marginTop:18,marginBottom:16},progressFill:{height:4},milestoneNumber:{fontSize:23,fontWeight:"900"},milestoneLabel:{fontSize:9,fontWeight:"800",letterSpacing:1.2,marginTop:4}
 });
