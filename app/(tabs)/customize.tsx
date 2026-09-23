@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import * as ImagePicker from "expo-image-picker";
-import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { useRouter } from "expo-router";
 import { useAuth } from "@/context/AuthContext";
 import { useColors } from "@/hooks/useColors";
@@ -27,6 +27,7 @@ export default function Customize() {
   const [numberColor, setNumberColor] = useState(profile?.coin_number_color || "");
   const [coinPhoto, setCoinPhoto] = useState(profile?.coin_photo || "");
   const [saving, setSaving] = useState(false);
+  const [customHex, setCustomHex] = useState(/^#[0-9A-Fa-f]{6}$/.test(profile?.coin_color || "") ? profile?.coin_color || "" : "");
 
   useEffect(() => {
     const id = setInterval(() => setWordIndex((value) => (value + 1) % ROTATING_WORDS.length), 1500);
@@ -45,6 +46,7 @@ export default function Customize() {
     setBorderColor(profile.coin_border_color || "");
     setNumberColor(profile.coin_number_color || "");
     setCoinPhoto(profile.coin_photo || "");
+    setCustomHex(/^#[0-9A-Fa-f]{6}$/.test(profile.coin_color || "") ? profile.coin_color || "" : "");
   }, [profile]);
 
   const days = profile?.sobriety_date
@@ -139,7 +141,7 @@ export default function Customize() {
         </View>
       </Section>
 
-      <Section title="BORDER" c={c}>
+      <Section title="CUSTOM COLOR" c={c}>\n        <Text style={[styles.micro, { color: c.mutedForeground }]}>HEX</Text>\n        <TextInput value={customHex} onChangeText={(value) => { const next = value.startsWith("#") ? value : `#${value}`; setCustomHex(next.slice(0, 7)); if (/^#[0-9A-Fa-f]{6}$/.test(next)) setColor(next); }} autoCapitalize="characters" placeholder="#F5D680" placeholderTextColor={c.mutedForeground} style={[styles.input, { color: c.foreground, borderColor: c.foreground }]} />\n      </Section>\n\n      <Section title="BORDER" c={c}>
         <TouchableOpacity onPress={() => setBorder(!border)} style={[styles.toggle, { borderColor: c.foreground }]}>
           <Text style={{ color: c.foreground, fontWeight: "800", letterSpacing: 1 }}>BORDER: {border ? "ON" : "OFF"}</Text>
         </TouchableOpacity>
