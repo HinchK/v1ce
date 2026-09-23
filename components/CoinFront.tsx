@@ -18,38 +18,75 @@ const PATHS: Record<string,string> = {
   arrow:"M0 35 L55 35 L55 10 L100 50 L55 90 L55 65 L0 65 Z",
 };
 
-const BOUNDS: Record<string,{width:number;height:number}> = {
-  circle:{width:.92,height:.92},hexagon:{width:.94,height:.96},octagon:{width:.96,height:.96},
-  shield:{width:.94,height:.96},diamond:{width:.92,height:.94},star:{width:.96,height:.96},
-  cross:{width:1,height:1},badge:{width:.96,height:.96},arrow:{width:1,height:.30},
+const BOUNDS: Record<string,{minX:number;maxX:number;minY:number;maxY:number;width:number;height:number}> = {
+  circle:{minX:.04,maxX:.96,minY:.04,maxY:.96,width:.92,height:.92},
+  hexagon:{minX:.03,maxX:.97,minY:.02,maxY:.98,width:.94,height:.96},
+  octagon:{minX:.02,maxX:.98,minY:.02,maxY:.98,width:.96,height:.96},
+  shield:{minX:.03,maxX:.97,minY:.02,maxY:.98,width:.94,height:.96},
+  diamond:{minX:.04,maxX:.96,minY:.03,maxY:.97,width:.92,height:.94},
+  star:{minX:.02,maxX:.98,minY:.02,maxY:.98,width:.96,height:.96},
+  cross:{minX:0,maxX:1,minY:0,maxY:1,width:1,height:1},
+  badge:{minX:.02,maxX:.98,minY:.02,maxY:.98,width:.96,height:.96},
+  arrow:{minX:0,maxX:1,minY:.35,maxY:.65,width:1,height:.30},
 };
 
-const NATIVE_FONT_FAMILIES: Record<string,string> = {
-  Cinzel:"Cinzel_700Bold",Poppins:"Poppins_700Bold","Space Mono":"SpaceMono_700Bold",
-  "Fredoka One":"Fredoka_400Regular","IBM Plex Serif":"IBMPlexSerif_700Bold",
-  "DM Sans":"DMSans_700Bold","Courier Prime":"CourierPrime_700Bold",
-  "Bodoni Moda":"BodoniModa_700Bold",Syne:"Syne_700Bold",Pacifico:"Pacifico_400Regular",
-  "Bebas Neue":"BebasNeue_400Regular",Inter:"Inter_700Bold",
+const FONT_FAMILIES: Record<string,string> = {
+  Cinzel:"Cinzel_700Bold",
+  Poppins:"Poppins_700Bold",
+  "Space Mono":"SpaceMono_700Bold",
+  "Fredoka One":"Fredoka_400Regular",
+  "IBM Plex Serif":"IBMPlexSerif_700Bold",
+  "DM Sans":"DMSans_700Bold",
+  "Courier Prime":"CourierPrime_700Bold",
+  "Bodoni Moda":"BodoniModa_700Bold",
+  Syne:"Syne_700Bold",
+  Pacifico:"Pacifico_400Regular",
+  "Bebas Neue":"BebasNeue_400Regular",
+  Inter:"Inter_700Bold",
 };
 
 function parseCustomPolygon(value?:string){
-  if(!value)return null;
-  const points=value.split(/\s+/).map(p=>p.trim()).filter(Boolean)
-    .map(p=>p.replace(/%/g,"").split(",")).filter(p=>p.length===2)
-    .map(([x,y])=>`${parseFloat(x)},${parseFloat(y)}`).filter(p=>!p.includes("NaN")).join(" ");
-  return points||null;
+  if(!value) return null;
+  const points=value.split(/\s+/)
+    .map((p)=>p.trim().replace(/%/g,"").split(","))
+    .filter((p)=>p.length===2)
+    .map(([x,y])=>`${parseFloat(x)},${parseFloat(y)}`)
+    .filter((p)=>!p.includes("NaN"))
+    .join(" ");
+  return points || null;
 }
 
 type Props={
-  days?:number; shape?:string; color?:string; numberStyle?:string; size?:number;
-  displayName?:string; motto?:string; showBorder?:boolean; coinPhoto?:string;
-  imageOnlyMode?:boolean; borderColor?:string; numberColor?:string;
-  customShapePath?:string; onPress?:()=>void;
+  days?:number;
+  shape?:string;
+  color?:string;
+  numberStyle?:string;
+  size?:number;
+  displayName?:string;
+  motto?:string;
+  customShapePath?:string;
+  showBorder?:boolean;
+  coinPhoto?:string;
+  borderColor?:string;
+  numberColor?:string;
+  imageOnlyMode?:boolean;
+  onPress?:()=>void;
 };
 
 export default function CoinFront({
-  days=0,shape="circle",color="gold",numberStyle="classic",size=260,
-  displayName,showBorder=true,coinPhoto,imageOnlyMode=false,borderColor,numberColor,customShapePath
+  days=0,
+  shape="circle",
+  color="gold",
+  numberStyle="classic",
+  size=260,
+  displayName,
+  customShapePath,
+  showBorder=true,
+  coinPhoto,
+  borderColor,
+  numberColor,
+  imageOnlyMode=false,
+  onPress,
 }:Props){
   const colors=resolveCoinColor(color);
   const numStyle=NUMBER_STYLES[numberStyle as keyof typeof NUMBER_STYLES]||NUMBER_STYLES.classic;
@@ -63,44 +100,60 @@ export default function CoinFront({
   else if(months>=1){mainNumber=months;label=months===1?"MONTH":"MONTHS";}
 
   const customPoints=shape==="drawn"?parseCustomPolygon(customShapePath):null;
-  const narrow=["star","cross","arrow"].includes(shape);
   const bounds=BOUNDS[shape]||BOUNDS.circle;
+  const narrow=["star","cross","arrow"].includes(shape);
   const maxWidth=size*bounds.width*(narrow?.6:.8);
   const numberFontSize=size*(narrow?.25:.32);
   const verticalOffset=["arrow","badge"].includes(shape)?size*.05:0;
-  const svgPath=PATHS[shape]||PATHS.hexagon;
+  const path=PATHS[shape]||PATHS.hexagon;
 
-  return <View style={[styles.wrap,{width:size,height:size}]}>
-    <Svg width={size} height={size} viewBox="0 0 100 100">
-      {shape==="circle" ? <>
-        <Circle cx="50" cy="50" r="48" fill={colors.bg}/>
-        {coinPhoto && <Image href={{uri:coinPhoto}} x="2" y="2" width="96" height="96" preserveAspectRatio="xMidYMid slice" opacity={imageOnlyMode?1:.35}/>} 
-        {showBorder && <Circle cx="50" cy="50" r="48" fill="none" stroke={resolvedBorderColor} strokeWidth="3"/>}
-      </> : <>
-        {customPoints ? <Polygon points={customPoints} fill={colors.bg}/> : <Path d={svgPath} fill={colors.bg}/>}
-        {coinPhoto && <Image href={{uri:coinPhoto}} x="0" y="0" width="100" height="100" preserveAspectRatio="xMidYMid slice" opacity={imageOnlyMode?1:.35}/>} 
-        {showBorder && (customPoints
-          ? <Polygon points={customPoints} fill="none" stroke={resolvedBorderColor} strokeWidth="3"/>
-          : <Path d={svgPath} fill="none" stroke={resolvedBorderColor} strokeWidth="3"/>
+  const content=(
+    <View style={[styles.wrap,{width:size,height:size}]}>
+      <Svg width={size} height={size} viewBox="0 0 100 100">
+        {shape==="circle" ? (
+          <>
+            <Circle cx="50" cy="50" r="48" fill={colors.bg}/>
+            {coinPhoto && <Image href={{uri:coinPhoto}} x="2" y="2" width="96" height="96" preserveAspectRatio="xMidYMid slice" opacity={imageOnlyMode?1:.35}/>}
+            {showBorder && <Circle cx="50" cy="50" r="48" fill="none" stroke={resolvedBorderColor} strokeWidth="3"/>}
+          </>
+        ) : (
+          <>
+            {customPoints ? <Polygon points={customPoints} fill={colors.bg}/> : <Path d={path} fill={colors.bg}/>}
+            {coinPhoto && <Image href={{uri:coinPhoto}} x="0" y="0" width="100" height="100" preserveAspectRatio="xMidYMid slice" opacity={imageOnlyMode?1:.35}/>}
+            {showBorder && (customPoints
+              ? <Polygon points={customPoints} fill="none" stroke={resolvedBorderColor} strokeWidth="3"/>
+              : <Path d={path} fill="none" stroke={resolvedBorderColor} strokeWidth="3"/>
+            )}
+          </>
         )}
-      </>}
-    </Svg>
-    {!imageOnlyMode && <View pointerEvents="none" style={[styles.content,{width:maxWidth,top:size*.5-numberFontSize*.52+verticalOffset}]}>
-      <Text numberOfLines={1} style={[styles.number,{
-        color:resolvedNumberColor,fontSize:numberFontSize,lineHeight:numberFontSize*.9,
-        letterSpacing:numberFontSize*(numStyle.letterSpacing??0),fontWeight:numStyle.fontWeight,
-        fontFamily:NATIVE_FONT_FAMILIES[numStyle.fontFamily]||undefined,maxWidth
-      }]}>{mainNumber}</Text>
-      <Text style={[styles.label,{color:resolvedNumberColor,fontSize:size*.09}]}> {label}</Text>
-      {displayName && <Text numberOfLines={1} style={[styles.name,{color:resolvedNumberColor,fontSize:size*.04,maxWidth}]}>{displayName}</Text>}
-    </View>}
-  </View>;
+      </Svg>
+      {!imageOnlyMode && (
+        <View pointerEvents="none" style={[styles.content,{width:maxWidth,top:size*.5-numberFontSize*.52+verticalOffset}]}>
+          <Text numberOfLines={1} style={[styles.number,{
+            color:resolvedNumberColor,
+            fontSize:numberFontSize,
+            lineHeight:numberFontSize*.9,
+            letterSpacing:numberFontSize*(numStyle.letterSpacing??0),
+            fontWeight:numStyle.fontWeight,
+            fontFamily:FONT_FAMILIES[numStyle.fontFamily]||undefined,
+            maxWidth,
+          }]}>{mainNumber}</Text>
+          <Text style={[styles.label,{color:resolvedNumberColor,fontSize:size*.09,fontFamily:"BebasNeue_400Regular"}]}>{label}</Text>
+          {displayName && (
+            <Text numberOfLines={1} style={[styles.name,{color:resolvedNumberColor,fontSize:size*.04,maxWidth}]}>{displayName}</Text>
+          )}
+        </View>
+      )}
+    </View>
+  );
+
+  return onPress ? <View onTouchEnd={onPress}>{content}</View> : content;
 }
 
 const styles=StyleSheet.create({
   wrap:{alignItems:"center",justifyContent:"center",aspectRatio:1},
   content:{position:"absolute",alignItems:"center",justifyContent:"center",alignSelf:"center"},
-  number:{fontWeight:"700",includeFontPadding:false,textAlign:"center"},
-  label:{fontWeight:"700",letterSpacing:3,opacity:.7,textAlign:"center"},
+  number:{includeFontPadding:false,textAlign:"center"},
+  label:{fontWeight:"400",letterSpacing:3,opacity:.7,textAlign:"center",marginTop:2},
   name:{fontWeight:"500",letterSpacing:2,opacity:.4,marginTop:8,textAlign:"center",textTransform:"uppercase"},
 });
