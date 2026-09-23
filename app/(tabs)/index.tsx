@@ -6,11 +6,11 @@ import { useColors } from "@/hooks/useColors";
 import CoinFront from "@/components/CoinFront";
 
 const WORDS = ["SOBER","UNBOTHERED","HYDRATED","EMPLOYABLE","ASCENDING","CRAZY","SLAYING","FEELING","EXPERIENCING","SHOWING UP","CAFFEINATED","UNHINGED","VALID","VIBING","GRATEFUL","GAY","PROUD","CLEAN","HAPPY","RICH","LOVED"];
-const SUBSTANCES = ["Alcohol","Cannabis","Cocaine","Opioids","Meth","Benzodiazepines","Nicotine","Sugar","Gambling","Other"];
+const SUBSTANCES = ["Alcohol","Benzodiazepines","Caffeine","Cannabis","Cocaine","Gambling","Methamphetamine","Nicotine","OCD Compulsions","Opioids","Prescription Drugs","Social Media","Sugar","Other"];
 const MILESTONES = [
   { days: 1, label: "1 DAY" }, { days: 7, label: "1 WEEK" }, { days: 30, label: "1 MONTH" },
   { days: 60, label: "2 MONTHS" }, { days: 90, label: "90 DAYS" }, { days: 180, label: "6 MONTHS" },
-  { days: 365, label: "1 YEAR" }, { days: 730, label: "2 YEARS" },
+  { days: 365, label: "1 YEAR" }, { days: 730, label: "2 YEARS" }, { days: 1095, label: "3 YEARS" }, { days: 1825, label: "5 YEARS" },
 ];
 
 function getElapsed(start?: string) {
