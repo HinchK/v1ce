@@ -1,5 +1,4 @@
 import { BlurView } from "expo-blur";
-import { isLiquidGlassAvailable } from "expo-glass-effect";
 import { Tabs } from "expo-router";
 import { Icon, Label, NativeTabs } from "expo-router/unstable-native-tabs";
 import { SymbolView } from "expo-symbols";
@@ -13,7 +12,7 @@ function NativeTabLayout() {
     <NativeTabs>
       <NativeTabs.Trigger name="index"><Icon sf={{ default: "house", selected: "house.fill" }} /><Label>HOME</Label></NativeTabs.Trigger>
       <NativeTabs.Trigger name="customize"><Icon sf={{ default: "circle", selected: "circle.fill" }} /><Label>CUSTOMIZE</Label></NativeTabs.Trigger>
-      <NativeTabs.Trigger name="lounge"><Icon sf={{ default: "person.2", selected: "person.2.fill" }} /><Label>LOUNGE</Label></NativeTabs.Trigger>
+      <NativeTabs.Trigger name="lounge"><Icon sf={{ default: "person.2", selected: "person.2.fill" }} /><Label>LOUNGE</Label></Tabs.Trigger>
       <NativeTabs.Trigger name="friends"><Icon sf={{ default: "person.2", selected: "person.2.fill" }} /><Label>FRIENDS</Label></NativeTabs.Trigger>
       <NativeTabs.Trigger name="widget"><Icon sf={{ default: "square.and.arrow.up", selected: "square.and.arrow.up.fill" }} /><Label>SHARE</Label></NativeTabs.Trigger>
     </NativeTabs>
@@ -42,5 +41,5 @@ function ClassicTabLayout() {
   );
 }
 
-export default function TabLayout(){return isLiquidGlassAvailable()?<NativeTabLayout/>:<ClassicTabLayout/>}
+export default function TabLayout(){return Platform.OS==="ios"?<NativeTabLayout/>:<ClassicTabLayout/>}
 const styles=StyleSheet.create({tabBar:{height:72,paddingTop:6,paddingBottom:8}});
