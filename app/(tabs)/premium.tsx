@@ -3,7 +3,7 @@ import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-nati
 import { useAuth } from "@/context/AuthContext";
 import { useColors } from "@/hooks/useColors";
 
-const FEATURES = ["More coin customization", "Premium lounge access", "Extra milestone options", "Profile enhancements", "Exclusive games", "Priority features"];
+const FEATURES = [["GOLD & BLUE COINS","Unlock the Gold trophy color and Blue prestige color for your coin."],["ALL SHAPES","Hexagon, Octagon, Shield, Diamond, Star, Cross, Badge, Arrow — all yours."],["8 FRIEND SLOTS","Connect with up to 8 people on their sobriety journeys."],["LOUNGE ACCESS","Join the community chat and connect with others in real-time."],["COIN PHOTO","Upload a personal photo to display on your coin face."]];
 
 export default function Premium() {
   const { profile } = useAuth();
@@ -13,12 +13,12 @@ export default function Premium() {
     <ScrollView style={{ backgroundColor: c.background }} contentContainerStyle={s.container}>
       <Text style={[s.kicker, { color: c.mutedForeground }]}>V1CE</Text>
       <Text style={[s.title, { color: c.foreground }]}>PREMIUM.</Text>
-      <Text style={[s.price, { color: c.gold }]}>$3.99 / MONTH</Text>
-      {FEATURES.map((feature, i) => <View key={feature} style={[s.feature, { borderBottomColor: c.border }]}><View style={[s.icon, { borderColor: c.foreground }]}><Text style={{ color: c.foreground }}>{i + 1}</Text></View><Text style={[s.featureText, { color: c.foreground }]}>{feature}</Text></View>)}
+      <Text style={[s.price, { color: c.gold }]}>LIFETIME ACCESS</Text><Text style={[s.note,{color:c.mutedForeground}]}>ONE-TIME PURCHASE · LIFETIME ACCESS</Text>
+      {FEATURES.map(([title,desc], i) => <View key={title} style={[s.feature, { borderBottomColor: c.border }]}><View style={[s.icon, { borderColor: c.foreground }]}><Text style={{ color: c.foreground }}>{i + 1}</Text></View><View style={{flex:1}}><Text style={[s.featureText, { color: c.foreground }]}>{title}</Text><Text style={[s.note,{color:c.mutedForeground,marginTop:4}]}>{desc}</Text></View></View>)}
       <TouchableOpacity disabled={premium} style={[s.button, { backgroundColor: premium ? c.border : c.gold }]}>
         <Text style={{ color: premium ? c.mutedForeground : c.background, fontWeight: "900", letterSpacing: 2 }}>{premium ? "YOU ARE PREMIUM" : "UPGRADE NOW"}</Text>
       </TouchableOpacity>
-      {!premium && <Text style={[s.note, { color: c.mutedForeground }]}>Purchase processing is not connected yet; the native screen is ready for the subscription integration.</Text>}
+      {!premium && <Text style={[s.note, { color: c.mutedForeground }]}>Checkout is routed through the native backend integration; Stripe credentials and the original Base44 price configuration remain required for live purchases.</Text>}
     </ScrollView>
   );
 }
