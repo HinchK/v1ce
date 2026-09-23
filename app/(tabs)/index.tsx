@@ -9,7 +9,7 @@ import { supabase } from "@/lib/supabase";
 const ROTATING_WORDS = ["SOBER","UNBOTHERED","HYDRATED","EMPLOYABLE","ASCENDING","CRAZY","SLAYING","FEELING","EXPERIENCING","SHOWING UP","CAFFEINATED","UNHINGED","VALID","VIBING","GRATEFUL","GAY","PROUD","CLEAN","HAPPY","RICH","LOVED"];
 const SUBSTANCES = ["Alcohol","Benzodiazepines","Caffeine","Cannabis","Cocaine","Gambling","Methamphetamine","Nicotine","OCD Compulsions","Opioids","Prescription Drugs","Social Media","Sugar","Other"];
 const MILESTONES = [
-  {days:1,label:"1 DAY"},{days:7,label:"1 WEEK"},{days:30,label:"1 MONTH"},{days:90,label:"90 DAYS"},
+  {days:1,label:"1 DAY"},{days:7,label:"1 WEEK"},{days:30,label:"1 MONTH"},{days:60,label:"60 DAYS"},{days:90,label:"90 DAYS"},
   {days:180,label:"6 MONTHS"},{days:365,label:"1 YEAR"},{days:730,label:"2 YEARS"},{days:1095,label:"3 YEARS"},{days:1825,label:"5 YEARS"},
 ];
 
@@ -30,7 +30,7 @@ function formatDate(value?:string){
 
 export default function Home(){
   const{profile}=useAuth();const c=useColors();const router=useRouter();
-  const[now,setNow]=useState(Date.now());const[substances,setSubstances]=useState<string[]>(profile?.substances||[]);
+  const[now,setNow]=useState(Date.now());const[substances,setSubstances]=useState<string[]>(profile?.substances||[]);const[other,setOther]=useState("");
   useEffect(()=>{const id=setInterval(()=>setNow(Date.now()),1000);return()=>clearInterval(id)},[]);
   useEffect(()=>{setSubstances(profile?.substances||[])},[profile?.substances]);
   const time=useMemo(()=>getElapsed(profile?.sobriety_date),[profile?.sobriety_date,now]);
@@ -102,5 +102,5 @@ const styles=StyleSheet.create({
  date:{fontSize:28,lineHeight:32,fontWeight:"800",letterSpacing:-.5},subtext:{marginTop:10,fontSize:10,letterSpacing:2,fontWeight:"700"},timeGrid:{flexDirection:"row",marginTop:20},
  timeCell:{flex:1,minHeight:94,borderWidth:2,marginRight:-2,alignItems:"center",justifyContent:"center"},timeValue:{fontSize:29,fontWeight:"900",lineHeight:31},timeLabel:{fontSize:9,fontWeight:"800",letterSpacing:2,marginTop:5},
  chips:{flexDirection:"row",flexWrap:"wrap",gap:8,marginTop:18},chip:{borderWidth:2,paddingHorizontal:10,paddingVertical:9},milestones:{marginTop:18,flexDirection:"row",flexWrap:"wrap",gap:8},
- milestone:{width:"31.5%",minHeight:92,borderWidth:2,padding:10},milestoneNumber:{fontSize:23,fontWeight:"900"},milestoneLabel:{fontSize:9,fontWeight:"800",letterSpacing:1.2,marginTop:4}
+ milestone:{width:"31.5%",minHeight:92,borderWidth:2,padding:10},otherInput:{borderWidth:2,padding:12,marginTop:12,fontSize:14},progressTrack:{height:8,borderWidth:2,borderColor:"#0A0A0A",marginTop:18,marginBottom:16},progressFill:{height:4}milestoneNumber:{fontSize:23,fontWeight:"900"},milestoneLabel:{fontSize:9,fontWeight:"800",letterSpacing:1.2,marginTop:4}
 });
