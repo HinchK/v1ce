@@ -1,5 +1,5 @@
 import React from "react";
-import { Image, StyleSheet } from "react-native";
+import { Image } from "react-native";
 
 export default function V1ceLogo({ height = 28 }: { height?: number }) {
   return (
@@ -10,5 +10,3 @@ export default function V1ceLogo({ height = 28 }: { height?: number }) {
     />
   );
 }
-
-const styles = StyleSheet.create({});

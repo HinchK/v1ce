@@ -2,7 +2,7 @@ import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { BACKGROUNDS } from "@/constants/app";
 import { useColors } from "@/hooks/useColors";
-import CoinBackground from "@/components/coin/CoinBackground";
+import { CoinBackground } from "@/components/coin/CoinBackground";
 
 export default function BackgroundPicker({ value, onChange }: { value: string; onChange: (value: string) => void }) {
   const colors = useColors();
