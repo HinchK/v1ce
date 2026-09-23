@@ -4,6 +4,7 @@ import { useRouter } from "expo-router";
 import { useAuth } from "@/context/AuthContext";
 import { useColors } from "@/hooks/useColors";
 import CoinFront from "@/components/CoinFront";
+import { supabase } from "@/lib/supabase";
 
 const WORDS = ["SOBER","UNBOTHERED","HYDRATED","EMPLOYABLE","ASCENDING","CRAZY","SLAYING","FEELING","EXPERIENCING","SHOWING UP","CAFFEINATED","UNHINGED","VALID","VIBING","GRATEFUL","GAY","PROUD","CLEAN","HAPPY","RICH","LOVED"];
 const SUBSTANCES = ["Alcohol","Benzodiazepines","Caffeine","Cannabis","Cocaine","Gambling","Methamphetamine","Nicotine","OCD Compulsions","Opioids","Prescription Drugs","Social Media","Sugar","Other"];
@@ -34,13 +35,23 @@ export default function Home() {
   const c = useColors();
   const router = useRouter();
   const [now, setNow] = useState(Date.now());
+  const [substances, setSubstances] = useState<string[]>(profile?.substances || []);
 
   useEffect(() => {
     const id = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(id);
   }, []);
 
+  useEffect(() => { setSubstances(profile?.substances || []); }, [profile?.substances]);
+
   const time = useMemo(() => getElapsed(profile?.sobriety_date), [profile?.sobriety_date, now]);
+  const toggleSubstance = async (item: string) => {
+    if (!profile?.id) return;
+    const next = substances.includes(item) ? substances.filter((value) => value !== item) : [...substances, item];
+    setSubstances(next);
+    const { error } = await supabase.from("profiles").update({ substances: next }).eq("id", profile.id);
+    if (error) setSubstances(substances);
+  };
   const word = WORDS[Math.floor(now / 1500) % WORDS.length];
 
   return (
@@ -91,9 +102,9 @@ export default function Home() {
         <Text style={[styles.subtext, { color: c.mutedForeground }]}>WHAT YOU'RE STAYING FREE FROM</Text>
         <View style={styles.chips}>
           {SUBSTANCES.map((item) => {
-            const active = profile?.substances?.includes(item);
+            const active = substances.includes(item);
             return (
-              <View key={item} style={[styles.chip, { backgroundColor: active ? c.foreground : c.background, borderColor: c.foreground }]}>
+              <Pressable key={item} onPress={() => toggleSubstance(item)} style={[styles.chip, { backgroundColor: active ? c.foreground : c.background, borderColor: c.foreground }]}>
                 <Text style={{ color: active ? c.background : c.foreground, fontSize: 11, fontWeight: "700", letterSpacing: 1 }}>{item.toUpperCase()}</Text>
               </View>
             );
