@@ -1,7 +1,7 @@
 import { BlurView } from "expo-blur";
 import { isLiquidGlassAvailable } from "expo-glass-effect";
 import { Tabs } from "expo-router";
-import { Icon, Label, NativeTabs } from "expo-router/unstable-native-tabs";
+import { NativeTabs } from "expo-router/unstable-native-tabs";
 import { SymbolView } from "expo-symbols";
 import { Feather } from "@expo/vector-icons";
 import React from "react";
@@ -14,32 +14,32 @@ function NativeTabLayout() {
   return (
     <NativeTabs>
       <NativeTabs.Trigger name="index">
-        <Icon sf={{ default: "house", selected: "house.fill" }} />
-        <Label>{t("nav.home")}</Label>
+        <NativeTabs.Trigger.Icon sf={{ default: "house", selected: "house.fill" }} md={{ default: "home", selected: "home_filled" }} />
+        <NativeTabs.Trigger.Label>{t("nav.home")}</NativeTabs.Trigger.Label>
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="customize">
-        <Icon sf={{ default: "circle", selected: "circle.fill" }} />
-        <Label>{t("nav.coin")}</Label>
+        <NativeTabs.Trigger.Icon sf={{ default: "circle", selected: "circle.fill" }} md={{ default: "circle", selected: "circle" }} />
+        <NativeTabs.Trigger.Label>{t("nav.coin")}</NativeTabs.Trigger.Label>
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="analytics">
-        <Icon sf={{ default: "chart.bar", selected: "chart.bar.fill" }} />
-        <Label>{t("nav.stats")}</Label>
+        <NativeTabs.Trigger.Icon sf={{ default: "chart.bar", selected: "chart.bar.fill" }} md={{ default: "bar_chart", selected: "bar_chart" }} />
+        <NativeTabs.Trigger.Label>{t("nav.stats")}</NativeTabs.Trigger.Label>
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="lounge">
-        <Icon sf={{ default: "person.2", selected: "person.2.fill" }} />
-        <Label>{t("nav.lounge")}</Label>
+        <NativeTabs.Trigger.Icon sf={{ default: "person.2", selected: "person.2.fill" }} md={{ default: "group", selected: "group" }} />
+        <NativeTabs.Trigger.Label>{t("nav.lounge")}</NativeTabs.Trigger.Label>
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="friends">
-        <Icon sf={{ default: "person", selected: "person.fill" }} />
-        <Label>{t("nav.friends")}</Label>
+        <NativeTabs.Trigger.Icon sf={{ default: "person", selected: "person.fill" }} md={{ default: "person", selected: "person" }} />
+        <NativeTabs.Trigger.Label>{t("nav.friends")}</NativeTabs.Trigger.Label>
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="profile">
-        <Icon sf={{ default: "gearshape", selected: "gearshape.fill" }} />
-        <Label>{t("nav.profile")}</Label>
+        <NativeTabs.Trigger.Icon sf={{ default: "gearshape", selected: "gearshape.fill" }} md={{ default: "settings", selected: "settings" }} />
+        <NativeTabs.Trigger.Label>{t("nav.profile")}</NativeTabs.Trigger.Label>
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="premium">
-        <Icon sf={{ default: "star", selected: "star.fill" }} />
-        <Label>{t("nav.premium")}</Label>
+        <NativeTabs.Trigger.Icon sf={{ default: "star", selected: "star.fill" }} md={{ default: "star", selected: "star" }} />
+        <NativeTabs.Trigger.Label>{t("nav.premium")}</NativeTabs.Trigger.Label>
       </NativeTabs.Trigger>
     </NativeTabs>
   );
