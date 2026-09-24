@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { Alert, Linking, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Feather } from "@expo/vector-icons";
+import { useFocusEffect } from "expo-router";
 import { useAuth } from "@/context/AuthContext";
 import { useColors } from "@/hooks/useColors";
 import { supabase } from "@/lib/supabase";
@@ -10,12 +11,20 @@ import { fonts } from "@/constants/typography";
 const PERK_ICONS = ["award", "circle", "users", "message-circle", "image"] as const;
 
 export default function Premium() {
-  const { profile } = useAuth();
+  const { profile, refreshProfile } = useAuth();
   const colors = useColors();
   const { t } = useTranslation();
   const [plan, setPlan] = useState<"monthly" | "yearly">("yearly");
   const [loading, setLoading] = useState(false);
   const isPremium = !!profile?.is_premium;
+
+  // Stripe returns to v1ce://premium. Refresh whenever this route regains focus
+  // so webhook-applied entitlement changes appear without restarting the app.
+  useFocusEffect(
+    useCallback(() => {
+      void refreshProfile();
+    }, [refreshProfile])
+  );
 
   const checkout = async () => {
     if (isPremium || loading) return;
@@ -43,7 +52,7 @@ export default function Premium() {
         <>
           <View style={styles.plans}>
             <TouchableOpacity onPress={() => setPlan("monthly")} style={[styles.plan, { borderColor: plan === "monthly" ? colors.foreground : colors.border }]}>
-              <Text style={[styles.planTitle, { color: colors.foreground }]}>$3.99/MO</Text>
+              <Text style={[styles.planTitle, { color: colors.foreground }]}>$2.99/MO</Text>
               <Text style={[styles.planSub, { color: colors.mutedForeground }]}>Monthly access</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => setPlan("yearly")} style={[styles.plan, { borderColor: plan === "yearly" ? colors.foreground : colors.border }]}>

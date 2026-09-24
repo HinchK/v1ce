@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, useMemo, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useState, useEffect, useMemo, type ReactNode } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { supabase, TABLES, type SobrietyProfile } from "@/lib/supabase";
 
@@ -39,11 +39,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [profile, setProfile] = useState<SobrietyProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const refreshProfile = async () => {
+  const refreshProfile = useCallback(async () => {
     const email = user?.email || (await AsyncStorage.getItem("v1ce_email")) || "";
     const loaded = await loadProfileByIdentity(user?.id, email);
     setProfile(loaded);
-  };
+  }, [user?.email, user?.id]);
 
   useEffect(() => {
     let mounted = true;
@@ -100,7 +100,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const value = useMemo(
     () => ({ user, profile, isLoading, setProfile, signOut, refreshProfile }),
-    [user, profile, isLoading]
+    [user, profile, isLoading, refreshProfile]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

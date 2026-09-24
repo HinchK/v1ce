@@ -56,7 +56,7 @@ export default function AppChrome() {
         </TouchableOpacity>
         <View style={[styles.logoWrap, { pointerEvents: "none" }]}>
           <Image
-            source={{ uri: "https://media.base44.com/images/public/69fd9ed0922dc60247de8924/7e6c269c0_vice__1_.png" }}
+            source={require("../../assets/images/v1ce-logo.png")}
             style={[styles.logo, isDark ? { tintColor: colors.foreground } : null]}
             resizeMode="contain"
           />

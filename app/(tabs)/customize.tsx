@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Alert, Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import * as ImagePicker from "expo-image-picker";
 import { useAuth } from "@/context/AuthContext";
 import { useColors } from "@/hooks/useColors";
 import { usePremium } from "@/context/PremiumContext";
@@ -8,6 +9,7 @@ import { supabase, TABLES } from "@/lib/supabase";
 import ShapePicker from "@/components/customize/ShapePicker";
 import ColorPicker from "@/components/customize/ColorPicker";
 import NumberStylePicker from "@/components/customize/NumberStylePicker";
+import BackgroundPicker from "@/components/customize/BackgroundPicker";
 import MiniColorInput from "@/components/customize/MiniColorInput";
 import DrawShapePicker from "@/components/customize/DrawShapePicker";
 import { daysSince } from "@/constants/app";
@@ -48,6 +50,9 @@ export default function Customize() {
   const [border, setBorder] = useState(profile?.coin_show_border ?? true);
   const [borderColor, setBorderColor] = useState(profile?.coin_border_color || "");
   const [numberColor, setNumberColor] = useState(profile?.coin_number_color || "");
+  const [background, setBackground] = useState(profile?.coin_background || "solid");
+  const [coinPhoto, setCoinPhoto] = useState(profile?.coin_photo || "");
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     if (!profile) return;
@@ -61,9 +66,49 @@ export default function Customize() {
     setBorder(profile.coin_show_border ?? true);
     setBorderColor(profile.coin_border_color || "");
     setNumberColor(profile.coin_number_color || "");
+    setBackground(profile.coin_background || "solid");
+    setCoinPhoto(profile.coin_photo || "");
   }, [profile]);
 
   const days = daysSince(profile?.sobriety_date);
+  const pickCoinPhoto = async () => {
+    if (!profile?.id || uploading) return;
+    if (!isPremium) {
+      router.push("/(tabs)/premium");
+      return;
+    }
+    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!permission.granted) {
+      Alert.alert("V1CE", "Photo access is required to choose a coin photo.");
+      return;
+    }
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ["images"],
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.85,
+    });
+    if (result.canceled || !result.assets[0]) return;
+    setUploading(true);
+    try {
+      const asset = result.assets[0];
+      const response = await fetch(asset.uri);
+      const body = await response.arrayBuffer();
+      const extension = (asset.fileName?.split(".").pop() || asset.mimeType?.split("/").pop() || "jpg").toLowerCase();
+      const path = `${profile.id}/${Date.now()}.${extension}`;
+      const { error } = await supabase.storage
+        .from("coin-photos")
+        .upload(path, body, { contentType: asset.mimeType || "image/jpeg", upsert: false });
+      if (error) throw error;
+      const { data } = supabase.storage.from("coin-photos").getPublicUrl(path);
+      setCoinPhoto(data.publicUrl);
+    } catch (error: any) {
+      Alert.alert("V1CE", error?.message || "Couldn't upload that photo.");
+    } finally {
+      setUploading(false);
+    }
+  };
+
   const save = async () => {
     if (!profile?.id || saving) return;
     setSaving(true);
@@ -78,6 +123,8 @@ export default function Customize() {
       coin_border_color: borderColor || null,
       coin_number_color: numberColor || null,
       coin_image_only: imageOnlyMode,
+      coin_background: background,
+      coin_photo: coinPhoto,
     };
     const { data, error } = await supabase.from(TABLES.SobrietyProfile).update(values).eq("id", profile.id).select().single();
     if (!error) setProfile(data || { ...profile, ...values });
@@ -100,6 +147,8 @@ export default function Customize() {
           borderColor={borderColor || undefined}
           numberColor={numberColor || undefined}
           imageOnlyMode={imageOnlyMode}
+          coinPhoto={coinPhoto}
+          background={background}
           substances={profile?.substances}
         />
       </View>
@@ -113,17 +162,27 @@ export default function Customize() {
         ) : null}
       </View>
 
-      <View style={[styles.section, { borderBottomColor: colors.foreground, opacity: 0.6 }]}>
+      <View style={[styles.section, { borderBottomColor: colors.foreground }]}>
         <View style={styles.row}>
           <Text style={[styles.sectionTitle, { color: colors.foreground }]}>COIN PHOTO</Text>
-          <View style={[styles.badge, { borderColor: colors.foreground }]}>
-            <Text style={[styles.badgeText, { color: colors.foreground }]}>COMING SOON</Text>
-          </View>
+          {!isPremium ? (
+            <View style={[styles.badge, { borderColor: colors.foreground }]}>
+              <Text style={[styles.badgeText, { color: colors.foreground }]}>PREMIUM</Text>
+            </View>
+          ) : null}
         </View>
         <Text style={[styles.sub, { color: colors.mutedForeground }]}>Upload a photo to appear on your coin face</Text>
-        <View style={[styles.dashed, { borderColor: colors.foreground }]}>
-          <Text style={[styles.dashedText, { color: colors.foreground }]}>+ UPLOAD PHOTO</Text>
-        </View>
+        {coinPhoto ? <Image source={{ uri: coinPhoto }} style={styles.photoPreview} /> : null}
+        <TouchableOpacity onPress={pickCoinPhoto} disabled={uploading} style={[styles.dashed, { borderColor: colors.foreground }]}>
+          <Text style={[styles.dashedText, { color: colors.foreground }]}>
+            {uploading ? "UPLOADING..." : coinPhoto ? "CHANGE PHOTO" : "+ UPLOAD PHOTO"}
+          </Text>
+        </TouchableOpacity>
+        {coinPhoto ? (
+          <TouchableOpacity onPress={() => { setCoinPhoto(""); setImageOnlyMode(false); }}>
+            <Text style={[styles.removePhoto, { color: colors.mutedForeground }]}>REMOVE</Text>
+          </TouchableOpacity>
+        ) : null}
       </View>
 
       <View style={[styles.section, { borderBottomColor: colors.foreground }]}>
@@ -170,6 +229,11 @@ export default function Customize() {
       <View style={[styles.section, { borderBottomColor: colors.foreground }]}>
         <Text style={[styles.sectionTitle, { color: colors.foreground }]}>COLOR</Text>
         <ColorPicker value={/^#[0-9A-Fa-f]{6}$/.test(color) ? color : "#E0E0E0"} onChange={setColor} />
+
+        <View style={[styles.inner, { borderTopColor: colors.foreground }]}>
+          <Text style={[styles.subhead, { color: colors.foreground }]}>BACKGROUND</Text>
+          <BackgroundPicker value={background} onChange={setBackground} />
+        </View>
 
         <View style={[styles.inner, { borderTopColor: colors.foreground }]}>
           <Text style={[styles.subhead, { color: colors.foreground }]}>BORDER</Text>
@@ -219,6 +283,8 @@ const styles = StyleSheet.create({
   sub: { fontSize: 13, lineHeight: 18, fontFamily: fonts.body, marginBottom: 14 },
   dashed: { height: 52, borderWidth: 2, borderStyle: "dashed", alignItems: "center", justifyContent: "center" },
   dashedText: { fontSize: 18, fontFamily: fonts.display, letterSpacing: 2 },
+  photoPreview: { width: 112, height: 112, alignSelf: "center", marginBottom: 14 },
+  removePhoto: { textAlign: "center", fontSize: 10, fontFamily: fonts.bodyBold, letterSpacing: 2, marginTop: 10 },
   toggleRow: { flexDirection: "row", alignItems: "center", gap: 12 },
   track: { width: 56, height: 32, borderRadius: 16, justifyContent: "center" },
   knob: { width: 26, height: 26, borderRadius: 13 },
