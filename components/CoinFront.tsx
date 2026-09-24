@@ -29,6 +29,7 @@ const BOUNDS: Record<string,{minX:number;maxX:number;minY:number;maxY:number;wid
 };
 
 const FONT_FAMILIES: Record<string,string> = {
+  "Big Shoulders Stencil":"BigShouldersStencilDisplayRegular",
   "Roboto Mono":"RobotoMonoWidget",
   "Oswald":"OswaldWidget",
   "Raleway":"RalewayWidget",
