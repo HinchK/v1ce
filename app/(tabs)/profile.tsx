@@ -8,11 +8,13 @@ import { supabase, TABLES } from "@/lib/supabase";
 import { useColors } from "@/hooks/useColors";
 import GifterBadge from "@/components/GifterBadge";
 import LanguageSwitcher from "@/components/layout/LanguageSwitcher";
+import { useTranslation } from "@/lib/i18n";
 
 export default function Profile() {
   const { profile, user, setProfile, signOut } = useAuth();
   const colors = useColors();
   const { toggleTheme, isDark } = useTheme();
+  const { t } = useTranslation();
   const router = useRouter();
   const [name, setName] = useState(profile?.display_name || "");
   const [birthday, setBirthday] = useState(profile?.birthday || "");
@@ -72,7 +74,7 @@ export default function Profile() {
 
   return (
     <ScrollView style={{ backgroundColor: colors.background }} contentContainerStyle={styles.container}>
-      <Text style={[styles.title, { color: colors.foreground }]}>YOUR{"\n"}PROFILE.</Text>
+      <Text style={[styles.title, { color: colors.foreground }]}>{t("profile.title")}</Text>
       <View style={styles.avatarWrap}>
         {avatarUrl ? (
           <Image source={{ uri: avatarUrl }} style={styles.avatar} />
@@ -86,12 +88,12 @@ export default function Profile() {
           <Text style={[styles.avatarAction, { color: colors.foreground }]}>{uploading ? "UPLOADING..." : avatarUrl ? "CHANGE PFP" : "ADD PFP"}</Text>
         </TouchableOpacity>
       </View>
-      <Text style={[styles.label, { color: colors.mutedForeground }]}>DISPLAY NAME</Text>
-      <TextInput value={name} onChangeText={setName} maxLength={20} placeholder="Your name" placeholderTextColor={colors.mutedForeground} style={[styles.input, { borderColor: colors.foreground, color: colors.foreground }]} />
+      <Text style={[styles.label, { color: colors.mutedForeground }]}>{t("profile.displayName")}</Text>
+      <TextInput value={name} onChangeText={setName} maxLength={20} placeholder={t("profile.namePlaceholder")} placeholderTextColor={colors.mutedForeground} style={[styles.input, { borderColor: colors.foreground, color: colors.foreground }]} />
       <Text style={[styles.label, { color: colors.mutedForeground, marginTop: 18 }]}>BIRTHDAY</Text>
       <TextInput value={birthday || ""} onChangeText={setBirthday} placeholder="YYYY-MM-DD" placeholderTextColor={colors.mutedForeground} style={[styles.input, { borderColor: colors.foreground, color: colors.foreground }]} />
       <TouchableOpacity disabled={saving} onPress={save} style={[styles.button, { backgroundColor: colors.foreground }]}>
-        <Text style={{ color: colors.background, fontWeight: "800" }}>{saving ? "SAVING..." : "SAVE"}</Text>
+        <Text style={{ color: colors.background, fontWeight: "800" }}>{saving ? t("profile.saving") : t("profile.save")}</Text>
       </TouchableOpacity>
       <Text style={[styles.label, { color: colors.mutedForeground, marginTop: 28 }]}>THEME</Text>
       <TouchableOpacity onPress={toggleTheme} style={[styles.outline, { borderColor: colors.foreground }]}>
@@ -111,7 +113,7 @@ export default function Profile() {
             router.replace("/onboarding");
           }}
         >
-          <Text style={{ color: colors.destructive, fontWeight: "900", letterSpacing: 2 }}>SIGN OUT</Text>
+          <Text style={{ color: colors.destructive, fontWeight: "900", letterSpacing: 2 }}>{t("profile.logOut").toUpperCase()}</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>

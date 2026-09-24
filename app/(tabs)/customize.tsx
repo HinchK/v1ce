@@ -16,6 +16,7 @@ import { daysSince } from "@/constants/app";
 import { fonts } from "@/constants/typography";
 import { Crosshair } from "@/components/ui/RetroAccents";
 import SobrietyCoin from "@/components/coin/SobrietyCoin";
+import { useTranslation } from "@/lib/i18n";
 
 function Switch({ on, onToggle, label }: { on: boolean; onToggle: () => void; label: string }) {
   const colors = useColors();
@@ -38,6 +39,7 @@ export default function Customize() {
   const { profile, setProfile } = useAuth();
   const colors = useColors();
   const { isPremium } = usePremium();
+  const { t } = useTranslation();
   const router = useRouter();
   const [saving, setSaving] = useState(false);
   const [color, setColor] = useState(profile?.coin_color || "#E0E0E0");
@@ -164,23 +166,23 @@ export default function Customize() {
 
       <View style={[styles.section, { borderBottomColor: colors.foreground }]}>
         <View style={styles.row}>
-          <Text style={[styles.sectionTitle, { color: colors.foreground }]}>COIN PHOTO</Text>
+          <Text style={[styles.sectionTitle, { color: colors.foreground }]}>{t("customize.coinPhoto")}</Text>
           {!isPremium ? (
             <View style={[styles.badge, { borderColor: colors.foreground }]}>
               <Text style={[styles.badgeText, { color: colors.foreground }]}>PREMIUM</Text>
             </View>
           ) : null}
         </View>
-        <Text style={[styles.sub, { color: colors.mutedForeground }]}>Upload a photo to appear on your coin face</Text>
+        <Text style={[styles.sub, { color: colors.mutedForeground }]}>{t("customize.coinPhotoSub")}</Text>
         {coinPhoto ? <Image source={{ uri: coinPhoto }} style={styles.photoPreview} /> : null}
         <TouchableOpacity onPress={pickCoinPhoto} disabled={uploading} style={[styles.dashed, { borderColor: colors.foreground }]}>
           <Text style={[styles.dashedText, { color: colors.foreground }]}>
-            {uploading ? "UPLOADING..." : coinPhoto ? "CHANGE PHOTO" : "+ UPLOAD PHOTO"}
+            {uploading ? t("customize.uploading") : coinPhoto ? "CHANGE PHOTO" : `+ ${t("customize.coinPhotoUpload")}`}
           </Text>
         </TouchableOpacity>
         {coinPhoto ? (
           <TouchableOpacity onPress={() => { setCoinPhoto(""); setImageOnlyMode(false); }}>
-            <Text style={[styles.removePhoto, { color: colors.mutedForeground }]}>REMOVE</Text>
+            <Text style={[styles.removePhoto, { color: colors.mutedForeground }]}>{t("customize.coinPhotoRemove")}</Text>
           </TouchableOpacity>
         ) : null}
       </View>
@@ -205,29 +207,29 @@ export default function Customize() {
       </View>
 
       <View style={[styles.section, { borderBottomColor: colors.foreground }]}>
-        <Text style={[styles.sectionTitle, { color: colors.foreground }]}>PERSONALIZE</Text>
-        <Text style={[styles.micro, { color: colors.mutedForeground }]}>DISPLAY NAME</Text>
+        <Text style={[styles.sectionTitle, { color: colors.foreground }]}>{t("customize.personalize")}</Text>
+        <Text style={[styles.micro, { color: colors.mutedForeground }]}>{t("customize.displayName").toUpperCase()}</Text>
         <TextInput
           value={displayName}
           onChangeText={(v) => setDisplayName(v.slice(0, 20))}
           maxLength={20}
-          placeholder="Your name"
+          placeholder={t("customize.displayNamePlaceholder")}
           placeholderTextColor={colors.mutedForeground}
           style={[styles.input, { color: colors.foreground, borderColor: colors.foreground }]}
         />
-        <Text style={[styles.micro, { color: colors.mutedForeground, marginTop: 16 }]}>PERSONAL MOTTO</Text>
+        <Text style={[styles.micro, { color: colors.mutedForeground, marginTop: 16 }]}>{t("customize.motto").toUpperCase()}</Text>
         <TextInput
           value={motto}
           onChangeText={(v) => setMotto(v.slice(0, 30))}
           maxLength={30}
-          placeholder="Your personal motto"
+          placeholder={t("customize.mottoPlaceholder")}
           placeholderTextColor={colors.mutedForeground}
           style={[styles.input, { color: colors.foreground, borderColor: colors.foreground }]}
         />
       </View>
 
       <View style={[styles.section, { borderBottomColor: colors.foreground }]}>
-        <Text style={[styles.sectionTitle, { color: colors.foreground }]}>COLOR</Text>
+        <Text style={[styles.sectionTitle, { color: colors.foreground }]}>{t("customize.color")}</Text>
         <ColorPicker value={/^#[0-9A-Fa-f]{6}$/.test(color) ? color : "#E0E0E0"} onChange={setColor} />
 
         <View style={[styles.inner, { borderTopColor: colors.foreground }]}>
@@ -236,8 +238,8 @@ export default function Customize() {
         </View>
 
         <View style={[styles.inner, { borderTopColor: colors.foreground }]}>
-          <Text style={[styles.subhead, { color: colors.foreground }]}>BORDER</Text>
-          <Switch on={border} onToggle={() => setBorder(!border)} label={border ? "Show" : "Hide"} />
+          <Text style={[styles.subhead, { color: colors.foreground }]}>{t("customize.border")}</Text>
+          <Switch on={border} onToggle={() => setBorder(!border)} label={border ? t("customize.show") : t("customize.hide")} />
           {border ? (
             <View style={{ marginTop: 16 }}>
               <Text style={[styles.micro, { color: colors.mutedForeground }]}>
@@ -259,13 +261,13 @@ export default function Customize() {
         <View style={styles.crosshair}>
           <Crosshair size={44} color={colors.foreground} opacity={0.18} />
         </View>
-        <Text style={[styles.sectionTitle, { color: colors.foreground }]}>NUMBER STYLE</Text>
+        <Text style={[styles.sectionTitle, { color: colors.foreground }]}>{t("customize.numberStyle")}</Text>
         <NumberStylePicker value={style} onChange={setStyle} />
       </View>
 
       <TouchableOpacity onPress={save} disabled={saving} style={[styles.save, { backgroundColor: colors.foreground, opacity: saving ? 0.45 : 1 }]}>
         <Text style={{ color: colors.background, fontSize: 22, fontFamily: fonts.display, letterSpacing: 2 }}>
-          {saving ? "SAVING..." : "SAVE CHANGES →"}
+          {saving ? t("customize.saving") : t("customize.save")}
         </Text>
       </TouchableOpacity>
     </ScrollView>

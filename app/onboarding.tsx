@@ -9,8 +9,23 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ONBOARDING_SUBSTANCES } from "@/constants/app";
 import { fonts } from "@/constants/typography";
 import CalendarField from "@/components/onboarding/CalendarField";
+import { useTranslation } from "@/lib/i18n";
+
+const SUBSTANCE_KEYS: Record<string, string> = {
+  Alcohol: "alcohol",
+  Cannabis: "cannabis",
+  Cocaine: "cocaine",
+  Opioids: "opioids",
+  Meth: "methamphetamine",
+  Benzodiazepines: "benzodiazepines",
+  Nicotine: "nicotine",
+  Sugar: "sugar",
+  Gambling: "gambling",
+  Other: "other",
+};
 
 export default function Onboarding() {
+  const { t } = useTranslation();
   const [step, setStep] = useState(0);
   const [name, setName] = useState("");
   const [eula, setEula] = useState(false);
@@ -66,15 +81,15 @@ export default function Onboarding() {
       >
         {step === 0 && (
           <>
-            <Text style={styles.title}>WELCOME{"\n"}TO V1CE.</Text>
-            <Text style={styles.subtitle}>Your sobriety, your coin. Let&apos;s get you set up — no account needed.</Text>
-            <Text style={styles.label}>YOUR NAME OR NICKNAME</Text>
+            <Text style={styles.title}>{t("onboarding.welcome")}</Text>
+            <Text style={styles.subtitle}>{t("onboarding.welcomeSub")}</Text>
+            <Text style={styles.label}>{t("onboarding.nameLabel").toUpperCase()}</Text>
             <TextInput
               value={name}
               onChangeText={setName}
               maxLength={20}
               style={styles.input}
-              placeholder="e.g. Alex"
+              placeholder={t("onboarding.namePlaceholder")}
               placeholderTextColor="#A3A3A3"
               autoCapitalize="words"
             />
@@ -82,36 +97,34 @@ export default function Onboarding() {
               <View style={[styles.checkbox, eula && styles.checkboxOn]}>
                 {eula ? <Feather name="check" size={14} color="#F3F3F3" /> : null}
               </View>
-              <Text style={styles.checkboxText}>
-                I agree to the Terms of Use & Community Guidelines. I understand V1CE has a zero tolerance policy for harassment, abuse, or harmful content.
-              </Text>
+              <Text style={styles.checkboxText}>{t("onboarding.eulaText")}</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.button, !step0Valid && styles.buttonDisabled]}
               disabled={!step0Valid}
               onPress={() => setStep(1)}
             >
-              <Text style={styles.buttonText}>NEXT →</Text>
+              <Text style={styles.buttonText}>{t("onboarding.next")}</Text>
             </TouchableOpacity>
           </>
         )}
 
         {step === 1 && (
           <>
-            <Text style={styles.title}>WHEN DID{"\n"}YOU START?</Text>
-            <Text style={styles.subtitle}>Enter the first day of your sobriety journey.</Text>
-            <Text style={styles.label}>SOBRIETY DATE</Text>
+            <Text style={styles.title}>{t("onboarding.whenDidYouStart")}</Text>
+            <Text style={styles.subtitle}>{t("onboarding.whenSub")}</Text>
+            <Text style={styles.label}>{t("onboarding.sobrietyDate").toUpperCase()}</Text>
             <CalendarField value={date} onChange={setDate} />
             <View style={styles.buttonRow}>
               <TouchableOpacity style={styles.backButton} onPress={() => setStep(0)}>
-                <Text style={styles.backButtonText}>← BACK</Text>
+                <Text style={styles.backButtonText}>{t("onboarding.back")}</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.button, styles.buttonFlex, !date && styles.buttonDisabled]}
                 disabled={!date}
                 onPress={() => setStep(2)}
               >
-                <Text style={styles.buttonText}>NEXT →</Text>
+                <Text style={styles.buttonText}>{t("onboarding.next")}</Text>
               </TouchableOpacity>
             </View>
           </>
@@ -119,8 +132,8 @@ export default function Onboarding() {
 
         {step === 2 && (
           <>
-            <Text style={styles.title}>WHAT&apos;S{"\n"}YOUR DOC?</Text>
-            <Text style={styles.subtitle}>Select what you&apos;re staying free from. (optional)</Text>
+            <Text style={styles.title}>{t("onboarding.whatsYourDoc")}</Text>
+            <Text style={styles.subtitle}>{t("onboarding.whatsYourDocSub")}</Text>
             <View style={styles.grid}>
               {ONBOARDING_SUBSTANCES.map((s) => {
                 const selected = substances.includes(s);
@@ -130,21 +143,23 @@ export default function Onboarding() {
                     style={[styles.subCell, selected && styles.subCellOn]}
                     onPress={() => toggleSubstance(s)}
                   >
-                    <Text style={[styles.subText, selected && styles.subTextOn]}>{s}</Text>
+                    <Text style={[styles.subText, selected && styles.subTextOn]}>
+                      {t(`substances.${SUBSTANCE_KEYS[s] || s.toLowerCase()}`)}
+                    </Text>
                   </TouchableOpacity>
                 );
               })}
             </View>
             <View style={styles.buttonRow}>
               <TouchableOpacity style={styles.backButton} onPress={() => setStep(1)}>
-                <Text style={styles.backButtonText}>← BACK</Text>
+                <Text style={styles.backButtonText}>{t("onboarding.back")}</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.button, styles.buttonFlex, isSaving && styles.buttonDisabled]}
                 disabled={isSaving}
                 onPress={handleSave}
               >
-                <Text style={styles.journey}>{isSaving ? "SAVING..." : "START MY\nJOURNEY →"}</Text>
+                <Text style={styles.journey}>{isSaving ? "..." : t("onboarding.startJourney")}</Text>
               </TouchableOpacity>
             </View>
           </>
