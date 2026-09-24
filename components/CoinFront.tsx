@@ -5,7 +5,7 @@ import { COIN_COLORS, NUMBER_STYLES, resolveCoinColor } from "@/constants/coin";
 
 export { COIN_COLORS, NUMBER_STYLES };
 
-export const SHAPES = ["circle","hexagon","octagon","shield","diamond","star","cross","badge","arrow"] as const;
+export const SHAPES = ["circle","hexagon","octagon","shield","diamond","star","badge","arrow","drawn"] as const;
 
 const PATHS: Record<string,string> = {
   hexagon:"M25 2 L75 2 L100 50 L75 98 L25 98 L0 50 Z",
@@ -103,7 +103,7 @@ export default function CoinFront({
 
   const customPoints=shape==="drawn"?parseCustomPolygon(customShapePath):null;
   const bounds=BOUNDS[shape]||BOUNDS.circle;
-  const narrow=["star","cross","arrow"].includes(shape);
+  const narrow=["star","arrow"].includes(shape);
   const maxWidth=size*bounds.width*(narrow?.6:.8);
   const numberFontSize=size*(narrow?.25:.32);
   const verticalOffset=["arrow","badge"].includes(shape)?size*.05:0;
