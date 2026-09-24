@@ -38,9 +38,9 @@ private fun luminance(c:Color):Float=0.299f*c.red+0.587f*c.green+0.114f*c.blue
 private fun contrast(c:Color):Color=if(luminance(c)>0.6f)Color.Black else if(luminance(c)>0.5f)Color(0xFF0A0A0A) else Color.White
 private fun shapeName(raw:String)=when(raw){"circle","hexagon","octagon","shield","diamond","star","badge","arrow"->raw else->"hexagon"}
 private fun fontFamily(style:String)=when(style){
- "monospace","roboto_mono","geist_pixel","courier"->FontFamily.Monospace
- "serif","fraunces","bodoni"->FontFamily.Serif
- "pacifico","caveat","edu_qld_hand","sedgwick_ave_display"->FontFamily.Cursive
+ "roboto_mono"->FontFamily.Monospace
+ "fraunces"->FontFamily.Serif
+ "caveat","dyna_puff"->FontFamily.Cursive
  else->FontFamily.SansSerif
 }
 
