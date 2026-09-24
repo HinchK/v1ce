@@ -45,7 +45,7 @@ function download(url,dest){
 }
 
 module.exports=function(config){
- return withDangerousMod(config,["ios",async c=>{
+ config=withDangerousMod(config,["ios",async c=>{
   const projectRoot=c.modRequest.projectRoot;
   const target=path.join(projectRoot,"targets","v1ce-widget","assets");
   const appFonts=path.join(projectRoot,"assets","fonts","native");
@@ -64,4 +64,12 @@ module.exports=function(config){
    if(fs.existsSync(dest))fs.copyFileSync(dest,path.join(appFonts,outName));
   }
   return c;
- }]).then(config=>withDangerousMod(config,["android",async c=>{\n  const projectRoot=c.modRequest.projectRoot;\n  const appFonts=path.join(projectRoot,"assets","fonts","native");\n  fs.mkdirSync(appFonts,{recursive:true});\n  for(const [pkg,outName,weight] of expoFonts){const source=findTtf(path.join(projectRoot,"node_modules",pkg),weight);if(source)fs.copyFileSync(source,path.join(appFonts,outName));}\n  for(const [url,outName] of remoteFonts){const dest=path.join(appFonts,outName);if(!fs.existsSync(dest))await download(url,dest);}\n  return c;\n } ]));\n};
+ }]);
+ return withDangerousMod(config,["android",async c=>{
+  const projectRoot=c.modRequest.projectRoot;
+  const appFonts=path.join(projectRoot,"assets","fonts","native");
+  fs.mkdirSync(appFonts,{recursive:true});
+  for(const [pkg,outName,weight] of expoFonts){const source=findTtf(path.join(projectRoot,"node_modules",pkg),weight);if(source)fs.copyFileSync(source,path.join(appFonts,outName));}
+  for(const [url,outName] of remoteFonts){const dest=path.join(appFonts,outName);if(!fs.existsSync(dest))await download(url,dest);}
+  return c;
+ }]);\n};
