@@ -130,6 +130,17 @@ private let shapePoints: [String: String] = [
   "arrow": "0,35 55,35 55,10 100,50 55,90 55,65 0,65"
 ]
 
+private extension View {
+  @ViewBuilder
+  func v1ceWidgetBackground(_ background: Color) -> some View {
+    if #available(iOS 17.0, *) {
+      self.containerBackground(for: .widget) { background }
+    } else {
+      self.background(background)
+    }
+  }
+}
+
 private struct CoinShape: Shape {
   let name: String
   let custom: String?
@@ -220,7 +231,7 @@ struct V1CEWidgetView: View {
       .foregroundStyle(text)
       .padding(10)
     }
-    .containerBackground(for: .widget) { bg }
+    .v1ceWidgetBackground(bg)
     .widgetURL(URL(string: "v1ce://home"))
   }
 }
