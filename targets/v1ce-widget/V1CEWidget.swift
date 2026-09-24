@@ -90,17 +90,14 @@ private func customColor(_ value: String?, fallback: Color) -> Color {
 }
 
 private let fontNames: [String: String] = [
-  "classic": "Cinzel", "poppins": "Poppins", "monospace": "Roboto Mono",
-  "fredoka": "Fredoka One", "serif": "IBM Plex Serif", "dmsans": "DM Sans",
-  "courier": "Courier Prime", "bodoni": "Bodoni Moda", "syne": "Syne",
-  "pacifico": "Pacifico", "bebas": "Bebas Neue", "inter": "Inter",
-  "big_shoulders_stencil": "Big Shoulders Stencil",
-  "sedgwick_ave_display": "Sedgwick Ave Display",
-  "roboto_mono": "Roboto Mono", "arimo": "Arimo", "oswald": "Oswald",
-  "raleway": "Raleway", "saira": "Saira", "edu_qld_hand": "Edu QLD Hand",
-  "josefin_sans": "Josefin Sans", "fraunces": "Fraunces", "caveat": "Caveat",
-  "geist_pixel": "Geist Pixel", "dyna_puff": "DynaPuff"
+  "roboto_mono": "Roboto Mono",
+  "oswald": "Oswald",
+  "raleway": "Raleway",
+  "fraunces": "Fraunces",
+  "caveat": "Caveat",
+  "dyna_puff": "DynaPuff"
 ]
+
 
 private func widgetFont(_ style: String, size: CGFloat) -> Font {
   Font.custom(fontNames[style] ?? "Cinzel", size: size)
@@ -145,11 +142,8 @@ private struct CoinShape: Shape {
 
 private func registerWidgetFonts() {
   let names = [
-    "BigShouldersStencilDisplay-Regular", "SedgwickAveDisplay-Regular",
-    "RobotoMono-Variable", "Arimo-Variable", "Oswald-Variable",
-    "Raleway-Variable", "Saira-Variable", "JosefinSans-Variable",
-    "Fraunces-Variable", "Caveat-Regular", "DynaPuff-Variable",
-    "GeistPixel-Variable", "EduQLDHand-Variable"
+    "RobotoMono-Variable", "Oswald-Variable", "Raleway-Variable",
+    "Fraunces-Variable", "Caveat-Regular", "DynaPuff-Variable"
   ]
   for name in names {
     guard let url = Bundle.main.url(forResource: name, withExtension: "ttf") else { continue }
