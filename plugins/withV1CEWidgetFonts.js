@@ -2,7 +2,18 @@ const {withDangerousMod}=require("expo/config-plugins");
 const fs=require("fs"),path=require("path"),https=require("https");
 
 const expoFonts=[
- ["@expo-google-fonts/roboto-mono","RobotoMono-Variable.ttf","700Bold"],
+ ["@expo-google-fonts/bebas-neue","BebasNeue-400.ttf","400Regular"],
+ ["@expo-google-fonts/bodoni-moda","BodoniModa-700.ttf","700Bold"],
+ ["@expo-google-fonts/cinzel","Cinzel-700.ttf","700Bold"],
+ ["@expo-google-fonts/courier-prime","CourierPrime-700.ttf","700Bold"],
+ ["@expo-google-fonts/dm-sans","DMSans-700.ttf","700Bold"],
+ ["@expo-google-fonts/fredoka","Fredoka-400.ttf","400Regular"],
+ ["@expo-google-fonts/ibm-plex-serif","IBMPlexSerif-700.ttf","700Bold"],
+ ["@expo-google-fonts/inter","Inter-700.ttf","700Bold"],
+ ["@expo-google-fonts/pacifico","Pacifico-400.ttf","400Regular"],
+ ["@expo-google-fonts/poppins","Poppins-700.ttf","700Bold"],
+ ["@expo-google-fonts/space-mono","SpaceMono-700.ttf","700Bold"],
+ ["@expo-google-fonts/syne","Syne-700.ttf","700Bold"], ["@expo-google-fonts/roboto-mono","RobotoMono-Variable.ttf","700Bold"],
  ["@expo-google-fonts/arimo","Arimo-Variable.ttf","700Bold"],
  ["@expo-google-fonts/oswald","Oswald-Variable.ttf","600SemiBold"],
  ["@expo-google-fonts/raleway","Raleway-Variable.ttf","700Bold"],
