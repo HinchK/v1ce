@@ -90,6 +90,7 @@ private func customColor(_ value: String?, fallback: Color) -> Color {
 }
 
 private let fontNames: [String: String] = [
+  "big_shoulders_stencil": "Big Shoulders Stencil",
   "roboto_mono": "Roboto Mono",
   "oswald": "Oswald",
   "raleway": "Raleway",
@@ -142,6 +143,7 @@ private struct CoinShape: Shape {
 
 private func registerWidgetFonts() {
   let names = [
+    "BigShouldersStencilDisplay-Regular",
     "RobotoMono-Variable", "Oswald-Variable", "Raleway-Variable",
     "Fraunces-Variable", "Caveat-Regular", "DynaPuff-Variable"
   ]
