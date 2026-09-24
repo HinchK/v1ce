@@ -40,6 +40,7 @@ private fun shapeName(raw:String)=when(raw){"circle","hexagon","octagon","shield
 private fun fontFamily(style:String)=when(style){
  "roboto_mono"->FontFamily.Monospace
  "big_shoulders_stencil"->FontFamily.SansSerif
+ "oswald","raleway"->FontFamily.SansSerif
  "fraunces"->FontFamily.Serif
  "caveat","dyna_puff"->FontFamily.Cursive
  else->FontFamily.SansSerif
