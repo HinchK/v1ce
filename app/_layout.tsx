@@ -20,7 +20,7 @@ import { Saira_700Bold } from "@expo-google-fonts/saira";
 import { JosefinSans_600SemiBold } from "@expo-google-fonts/josefin-sans";
 import { Fraunces_700Bold } from "@expo-google-fonts/fraunces";
 import { Caveat_400Regular } from "@expo-google-fonts/caveat";
-import { DynaPuff_600SemiBold } from "@expo-google-fonts/dyna-puff";
+import { DynaPuff_600SemiBold } from "@expo-google-fonts/dynapuff";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Redirect, Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";

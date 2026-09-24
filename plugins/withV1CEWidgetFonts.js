@@ -7,7 +7,7 @@ const expoFonts=[
  ["@expo-google-fonts/raleway","Raleway-Variable.ttf","700Bold"],
  ["@expo-google-fonts/fraunces","Fraunces-Variable.ttf","700Bold"],
  ["@expo-google-fonts/caveat","Caveat-Regular.ttf","400Regular"],
- ["@expo-google-fonts/dyna-puff","DynaPuff-Variable.ttf","600SemiBold"]
+ ["@expo-google-fonts/dynapuff","DynaPuff-Variable.ttf","600SemiBold"]
 ];
 
 const localFonts=[
