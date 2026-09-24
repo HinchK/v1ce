@@ -36,11 +36,18 @@ Copyright 2026 The Geist-Pixel-Font.Git Project Authors (https://github.com/verc
 DynaPuff
 Copyright 2021 The DynaPuff Project Authors (https://github.com/googlefonts/dynapuff)
 
-All eleven font families above are licensed under the SIL Open Font License, Version 1.1.
+Big Shoulders Stencil
+Copyright House of Pretty, Ltd. (https://github.com/xotypeco/big_shoulders)
+Includes the Big Shoulders Stencil Text and Big Shoulders Stencil Display families.
+
+Sedgwick Ave Display
+Copyright Kevin Burke and Pedro Vergani (https://github.com/googlefonts/sedgwickave)
+
+All thirteen font families above are licensed under the SIL Open Font License, Version 1.1.
 The same license applies to their use in the iOS and Android application bundles.
 
 Note: "Josefine Sans" in the original request is the font family "Josefin Sans".
-Geist Pixel is not a Google Fonts family; it is distributed from Vercel's official repository, but its font software is also licensed under SIL OFL 1.1.
+Geist Pixel is available through Google Fonts and is also distributed from Vercel's official repository; its font software is licensed under SIL OFL 1.1.
 
 SOURCE LICENSES
 ---------------
@@ -55,6 +62,8 @@ Fraunces: https://github.com/undercasetype/Fraunces/blob/master/OFL.txt
 Caveat: https://github.com/googlefonts/caveat/blob/main/OFL.txt
 Geist Pixel: https://github.com/vercel/geist-pixel-font/blob/main/OFL.txt
 DynaPuff: https://github.com/googlefonts/dynapuff/blob/main/OFL.txt
+Big Shoulders Stencil: https://github.com/xotypeco/big_shoulders/blob/master/OFL.txt
+Sedgwick Ave Display: https://github.com/googlefonts/sedgwickave/blob/main/OFL.txt
 
 FULL SIL OPEN FONT LICENSE
 ==========================
