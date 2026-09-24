@@ -4,6 +4,8 @@ This directory preserves source artifacts retrievable from the V1CE conversation
 
 ## Archived source
 
+- `V1CE_17ab.pdf` — original source PDF supplied by the project owner; preserved byte-for-byte.
+- `V1CE_daea.txt` — text/chat export of the same Base44 source inventory for searchable reference.
 - `V1CE_Code.txt` — existing source archive already present in the repository; verified during this pass.
 - `Pasted code.js`
 - `Pasted code(1).js`
