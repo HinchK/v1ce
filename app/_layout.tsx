@@ -39,6 +39,8 @@ export default function RootLayout() {
     BebasNeue_400Regular, BodoniModa_700Bold, Cinzel_700Bold, CourierPrime_700Bold,
     DMSans_700Bold, Fredoka_400Regular, IBMPlexSerif_700Bold, Pacifico_400Regular,
     Poppins_700Bold, SpaceMono_700Bold, Syne_700Bold,
+    BigShouldersStencilDisplayRegular: require("../assets/fonts/BigShouldersStencilDisplay-Regular.ttf"),
+    SedgwickAveDisplayRegular: require("../assets/fonts/SedgwickAveDisplay-Regular.ttf"),
   });
 
   useEffect(() => { if (loaded || error) SplashScreen.hideAsync(); }, [loaded, error]);

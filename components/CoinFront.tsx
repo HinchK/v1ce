@@ -43,6 +43,8 @@ const FONT_FAMILIES: Record<string,string> = {
   Pacifico:"Pacifico_400Regular",
   "Bebas Neue":"BebasNeue_400Regular",
   Inter:"Inter_700Bold",
+  "Big Shoulders Stencil":"BigShouldersStencilDisplayRegular",
+  "Sedgwick Ave Display":"SedgwickAveDisplayRegular",
 };
 
 function parseCustomPolygon(value?:string){

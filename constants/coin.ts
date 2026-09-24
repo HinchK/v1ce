@@ -20,6 +20,8 @@ export const NUMBER_STYLES = {
   pacifico: { fontFamily: "Pacifico", fontWeight: "400" as const, letterSpacing: 0.01 },
   bebas: { fontFamily: "Bebas Neue", fontWeight: "400" as const, letterSpacing: 0.08 },
   inter: { fontFamily: "Inter", fontWeight: "700" as const, letterSpacing: -0.02 },
+  big_shoulders_stencil: { fontFamily: "Big Shoulders Stencil", fontWeight: "400" as const, letterSpacing: 0.02 },
+  sedgwick_ave_display: { fontFamily: "Sedgwick Ave Display", fontWeight: "400" as const, letterSpacing: 0.01 },
 } as const;
 
 export const SHAPE_POLYGONS: Record<string, string> = {
