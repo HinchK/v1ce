@@ -8,7 +8,6 @@ import androidx.glance.action.actionStartActivity
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.SizeMode
-import androidx.glance.LocalSize
 import androidx.glance.appwidget.provideContent
 import androidx.glance.layout.*
 import androidx.glance.text.FontFamily
@@ -55,8 +54,7 @@ class V1CEWidget:GlanceAppWidget(){
    val date=d?.optString("sobrietyDate","")?:""
    val name=d?.optString("displayName","")?:""
    val bg=coinColor(d?.optString("coinColor","#F5D680")?:"#F5D680")
-   val size=LocalSize.current
-   val isLarge=size.width>=250.dp && size.height>=250.dp
+   val isLarge=false
    val numberOverride=d?.optString("coinNumberColor","")?:""
    val borderOverride=d?.optString("coinBorderColor","")?:""
    val numberColor=if(numberOverride.isNotBlank())parseColor(numberOverride,contrast(bg)) else contrast(bg)
@@ -79,7 +77,7 @@ class V1CEWidget:GlanceAppWidget(){
      Text(label,style=TextStyle(color=ColorProvider(numberColor),fontSize=9.sp,fontWeight=FontWeight.Bold,textAlign=TextAlign.Center))
      if(name.isNotBlank()) Text(name.uppercase(),style=TextStyle(color=ColorProvider(numberColor),fontSize=7.sp,fontWeight=FontWeight.Medium,textAlign=TextAlign.Center),maxLines=1)
      val motto=d?.optString("coinMotto","")?:""
-     if(isLarge && motto.isNotBlank()) Text(motto,style=TextStyle(color=ColorProvider(numberColor),fontSize=8.sp,textAlign=TextAlign.Center),maxLines=3)
+     if(motto.isNotBlank()) Text(motto,style=TextStyle(color=ColorProvider(numberColor),fontSize=8.sp,textAlign=TextAlign.Center),maxLines=2)
     }
    }
   }
