@@ -45,6 +45,9 @@ const FONT_FAMILIES: Record<string,string> = {
   Inter:"Inter_700Bold",
   "Big Shoulders Stencil":"BigShouldersStencilDisplayRegular",
   "Sedgwick Ave Display":"SedgwickAveDisplayRegular",
+  "Roboto Mono":"RobotoMonoWidget","Arimo":"ArimoWidget","Oswald":"OswaldWidget","Raleway":"RalewayWidget","Saira":"SairaWidget",
+  "Edu QLD Hand":"EduQLDHandWidget","Josefin Sans":"JosefinSansWidget","Fraunces":"FrauncesWidget","Caveat":"CaveatWidget",
+  "Geist Pixel":"GeistPixelWidget","DynaPuff":"DynaPuffWidget",
 };
 
 function parseCustomPolygon(value?:string){
