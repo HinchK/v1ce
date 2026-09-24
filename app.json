@@ -26,6 +26,7 @@
       [
         "@bacons/apple-targets"
       ],
+      "./plugins/withV1CEWidgetFonts.js",
       "./plugins/app.plugin.js"
     ],
     "experiments": {
