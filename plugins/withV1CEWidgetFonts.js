@@ -8,72 +8,13 @@ const expoFonts=[
  ["@expo-google-fonts/fraunces","Fraunces-Variable.ttf","700Bold"],
  ["@expo-google-fonts/caveat","Caveat-Regular.ttf","400Regular"],
  ["@expo-google-fonts/dyna-puff","DynaPuff-Variable.ttf","600SemiBold"]
-];nst {withDangerousMod}=require("expo/config-plugins");
-const fs=require("fs"),path=require("path"),https=require("https");
-
-const expoFonts=[
- ["@expo-google-fonts/bebas-neue","BebasNeue-400.ttf","400Regular"],
- ["@expo-google-fonts/bodoni-moda","BodoniModa-700.ttf","700Bold"],
- ["@expo-google-fonts/cinzel","Cinzel-700.ttf","700Bold"],
- ["@expo-google-fonts/courier-prime","CourierPrime-700.ttf","700Bold"],
- ["@expo-google-fonts/dm-sans","DMSans-700.ttf","700Bold"],
- ["@expo-google-fonts/fredoka","Fredoka-400.ttf","400Regular"],
- ["@expo-google-fonts/ibm-plex-serif","IBMPlexSerif-700.ttf","700Bold"],
- ["@expo-google-fonts/inter","Inter-700.ttf","700Bold"],
- ["@expo-google-fonts/pacifico","Pacifico-400.ttf","400Regular"],
- ["@expo-google-fonts/poppins","Poppins-700.ttf","700Bold"],
- ["@expo-google-fonts/space-mono","SpaceMono-700.ttf","700Bold"],
- ["@expo-google-fonts/syne","Syne-700.ttf","700Bold"], ["@expo-google-fonts/roboto-mono","RobotoMono-Variable.ttf","700Bold"],
- ["@expo-google-fonts/arimo","Arimo-Variable.ttf","700Bold"],
- ["@expo-google-fonts/oswald","Oswald-Variable.ttf","600SemiBold"],
- ["@expo-google-fonts/raleway","Raleway-Variable.ttf","700Bold"],
- ["@expo-google-fonts/saira","Saira-Variable.ttf","700Bold"],
- ["@expo-google-fonts/josefin-sans","JosefinSans-Variable.ttf","600SemiBold"],
- ["@expo-google-fonts/fraunces","Fraunces-Variable.ttf","700Bold"],
- ["@expo-google-fonts/caveat","Caveat-Regular.ttf","400Regular"],
- ["@expo-google-fonts/dyna-puff","DynaPuff-Variable.ttf","600SemiBold"]
 ];
 
-const remoteFonts=[];nst {withDangerousMod}=require("expo/config-plugins");
-const fs=require("fs"),path=require("path"),https=require("https");
-
-const expoFonts=[
- ["@expo-google-fonts/roboto-mono","RobotoMono-Variable.ttf","700Bold"],
- ["@expo-google-fonts/oswald","Oswald-Variable.ttf","600SemiBold"],
- ["@expo-google-fonts/raleway","Raleway-Variable.ttf","700Bold"],
- ["@expo-google-fonts/fraunces","Fraunces-Variable.ttf","700Bold"],
- ["@expo-google-fonts/caveat","Caveat-Regular.ttf","400Regular"],
- ["@expo-google-fonts/dyna-puff","DynaPuff-Variable.ttf","600SemiBold"]
-];nst {withDangerousMod}=require("expo/config-plugins");
-const fs=require("fs"),path=require("path"),https=require("https");
-
-const expoFonts=[
- ["@expo-google-fonts/bebas-neue","BebasNeue-400.ttf","400Regular"],
- ["@expo-google-fonts/bodoni-moda","BodoniModa-700.ttf","700Bold"],
- ["@expo-google-fonts/cinzel","Cinzel-700.ttf","700Bold"],
- ["@expo-google-fonts/courier-prime","CourierPrime-700.ttf","700Bold"],
- ["@expo-google-fonts/dm-sans","DMSans-700.ttf","700Bold"],
- ["@expo-google-fonts/fredoka","Fredoka-400.ttf","400Regular"],
- ["@expo-google-fonts/ibm-plex-serif","IBMPlexSerif-700.ttf","700Bold"],
- ["@expo-google-fonts/inter","Inter-700.ttf","700Bold"],
- ["@expo-google-fonts/pacifico","Pacifico-400.ttf","400Regular"],
- ["@expo-google-fonts/poppins","Poppins-700.ttf","700Bold"],
- ["@expo-google-fonts/space-mono","SpaceMono-700.ttf","700Bold"],
- ["@expo-google-fonts/syne","Syne-700.ttf","700Bold"], ["@expo-google-fonts/roboto-mono","RobotoMono-Variable.ttf","700Bold"],
- ["@expo-google-fonts/arimo","Arimo-Variable.ttf","700Bold"],
- ["@expo-google-fonts/oswald","Oswald-Variable.ttf","600SemiBold"],
- ["@expo-google-fonts/raleway","Raleway-Variable.ttf","700Bold"],
- ["@expo-google-fonts/saira","Saira-Variable.ttf","700Bold"],
- ["@expo-google-fonts/josefin-sans","JosefinSans-Variable.ttf","600SemiBold"],
- ["@expo-google-fonts/fraunces","Fraunces-Variable.ttf","700Bold"],
- ["@expo-google-fonts/caveat","Caveat-Regular.ttf","400Regular"],
- ["@expo-google-fonts/dyna-puff","DynaPuff-Variable.ttf","600SemiBold"]
+const localFonts=[
+ ["assets/fonts/BigShouldersStencilDisplay-Regular.ttf","BigShouldersStencilDisplay-Regular.ttf"]
 ];
 
-const remoteFonts=[
- ["https://raw.githubusercontent.com/google/fonts/main/ofl/geistpixel/GeistPixel%5BELSH%5D.ttf","GeistPixel-Variable.ttf"],
- ["https://raw.githubusercontent.com/SorkinType/QLDSchoolHandAustralia/main/fonts/variable/EduQLDHand%5Bwght%5D.ttf","EduQLDHand-Variable.ttf"]
-];
+const remoteFonts=[];
 
 function findTtf(root,weight){
  const found=[];
@@ -88,16 +29,25 @@ function findTtf(root,weight){
  walk(root);
  return found.find(x=>x.includes(weight))||found[0]||null;
 }
+
 function download(url,dest){
  return new Promise((resolve,reject)=>{
   const file=fs.createWriteStream(dest);
   https.get(url,res=>{
    if(res.statusCode>=300&&res.statusCode<400&&res.headers.location){
-    file.close();fs.unlinkSync(dest);return download(res.headers.location,dest).then(resolve,reject);
+    file.close();fs.unlinkSync(dest);
+    return download(res.headers.location,dest).then(resolve,reject);
    }
-   if(res.statusCode!==200){file.close();fs.unlinkSync(dest);return reject(new Error("HTTP "+res.statusCode+" for "+url));}
-   res.pipe(file);file.on("finish",()=>file.close(resolve));
-  }).on("error",e=>{try{file.close();fs.unlinkSync(dest)}catch{};reject(e)});
+   if(res.statusCode!==200){
+    file.close();fs.unlinkSync(dest);
+    return reject(new Error("HTTP "+res.statusCode+" for "+url));
+   }
+   res.pipe(file);
+   file.on("finish",()=>file.close(resolve));
+  }).on("error",e=>{
+   try{file.close();fs.unlinkSync(dest)}catch{}
+   reject(e);
+  });
  });
 }
 
@@ -109,10 +59,20 @@ module.exports=function(config){
   fs.mkdirSync(target,{recursive:true});
   fs.mkdirSync(appFonts,{recursive:true});
 
+  for(const [relativePath,outName] of localFonts){
+   const source=path.join(projectRoot,relativePath);
+   if(fs.existsSync(source)){
+    fs.copyFileSync(source,path.join(target,outName));
+    fs.copyFileSync(source,path.join(appFonts,outName));
+   }
+  }
+
   for(const [pkg,outName,weight] of expoFonts){
-   const pkgRoot=path.join(projectRoot,"node_modules",pkg);
-   const source=findTtf(pkgRoot,weight);
-   if(source){fs.copyFileSync(source,path.join(target,outName));fs.copyFileSync(source,path.join(appFonts,outName));}
+   const source=findTtf(path.join(projectRoot,"node_modules",pkg),weight);
+   if(source){
+    fs.copyFileSync(source,path.join(target,outName));
+    fs.copyFileSync(source,path.join(appFonts,outName));
+   }
   }
 
   for(const [url,outName] of remoteFonts){
@@ -122,11 +82,26 @@ module.exports=function(config){
   }
   return c;
  }]);
+
  return withDangerousMod(config,["android",async c=>{
   const projectRoot=c.modRequest.projectRoot;
   const appFonts=path.join(projectRoot,"assets","fonts","native");
   fs.mkdirSync(appFonts,{recursive:true});
-  for(const [pkg,outName,weight] of expoFonts){const source=findTtf(path.join(projectRoot,"node_modules",pkg),weight);if(source)fs.copyFileSync(source,path.join(appFonts,outName));}
-  for(const [url,outName] of remoteFonts){const dest=path.join(appFonts,outName);if(!fs.existsSync(dest))await download(url,dest);}
+
+  for(const [relativePath,outName] of localFonts){
+   const source=path.join(projectRoot,relativePath);
+   if(fs.existsSync(source))fs.copyFileSync(source,path.join(appFonts,outName));
+  }
+
+  for(const [pkg,outName,weight] of expoFonts){
+   const source=findTtf(path.join(projectRoot,"node_modules",pkg),weight);
+   if(source)fs.copyFileSync(source,path.join(appFonts,outName));
+  }
+
+  for(const [url,outName] of remoteFonts){
+   const dest=path.join(appFonts,outName);
+   if(!fs.existsSync(dest))await download(url,dest);
+  }
   return c;
- }]);\n};
+ }]);
+};
