@@ -22,6 +22,18 @@ export const NUMBER_STYLES = {
   inter: { fontFamily: "Inter", fontWeight: "700" as const, letterSpacing: -0.02 },
   big_shoulders_stencil: { fontFamily: "Big Shoulders Stencil", fontWeight: "400" as const, letterSpacing: 0.02 },
   sedgwick_ave_display: { fontFamily: "Sedgwick Ave Display", fontWeight: "400" as const, letterSpacing: 0.01 },
+
+  roboto_mono: { fontFamily: "Roboto Mono", fontWeight: "700" as const, letterSpacing: -0.03 },
+  arimo: { fontFamily: "Arimo", fontWeight: "700" as const, letterSpacing: -0.01 },
+  oswald: { fontFamily: "Oswald", fontWeight: "600" as const, letterSpacing: 0.02 },
+  raleway: { fontFamily: "Raleway", fontWeight: "700" as const, letterSpacing: 0.01 },
+  saira: { fontFamily: "Saira", fontWeight: "700" as const, letterSpacing: -0.01 },
+  edu_qld_hand: { fontFamily: "Edu QLD Hand", fontWeight: "500" as const, letterSpacing: 0.01 },
+  josefin_sans: { fontFamily: "Josefin Sans", fontWeight: "600" as const, letterSpacing: 0.01 },
+  fraunces: { fontFamily: "Fraunces", fontWeight: "700" as const, letterSpacing: 0.01 },
+  caveat: { fontFamily: "Caveat", fontWeight: "400" as const, letterSpacing: 0.01 },
+  geist_pixel: { fontFamily: "Geist Pixel", fontWeight: "400" as const, letterSpacing: 0 },
+  dyna_puff: { fontFamily: "DynaPuff", fontWeight: "600" as const, letterSpacing: 0.01 },
 } as const;
 
 export const SHAPE_POLYGONS: Record<string, string> = {
@@ -30,7 +42,6 @@ export const SHAPE_POLYGONS: Record<string, string> = {
   shield: "50,0 100,15 100,65 50,100 0,65 0,15",
   diamond: "50,0 95,50 50,100 5,50",
   star: "50,0 61,35 98,35 68,57 79,91 50,70 21,91 32,57 2,35 39,35",
-  cross: "33,0 67,0 67,33 100,33 100,67 67,67 67,100 33,100 33,67 0,67 0,33 33,33",
   badge: "50,0 65,10 82,5 90,20 100,30 95,50 100,70 90,80 82,95 65,90 50,100 35,90 18,95 10,80 0,70 5,50 0,30 10,20 18,5 35,10",
   arrow: "0,35 55,35 55,10 100,50 55,90 55,65 0,65",
 };
