@@ -1,5 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import type { SobrietyProfile } from "@/lib/supabase";
+import V1CEWidgetData from "@/modules/v1ce-widget-data/src";
 
 export const V1CE_WIDGET_CACHE_KEY = "v1ce_widget_profile_v1";
 
@@ -42,12 +43,12 @@ export function toWidgetProfileSnapshot(profile: SobrietyProfile): WidgetProfile
 export async function writeWidgetProfileSnapshot(profile: SobrietyProfile | null) {
   if (!profile?.sobriety_date) {
     await AsyncStorage.removeItem(V1CE_WIDGET_CACHE_KEY);
+    try { V1CEWidgetData.clearSnapshot(); } catch {}
     return;
   }
-  await AsyncStorage.setItem(
-    V1CE_WIDGET_CACHE_KEY,
-    JSON.stringify(toWidgetProfileSnapshot(profile)),
-  );
+  const snapshot = JSON.stringify(toWidgetProfileSnapshot(profile));
+  await AsyncStorage.setItem(V1CE_WIDGET_CACHE_KEY, snapshot);
+  try { V1CEWidgetData.setSnapshot(snapshot); } catch {}
 }
 
 export function getDaysSober(sobrietyDate: string, now = Date.now()) {
