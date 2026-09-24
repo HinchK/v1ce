@@ -39,6 +39,7 @@ private fun contrast(c:Color):Color=if(luminance(c)>0.6f)Color.Black else if(lum
 private fun shapeName(raw:String)=when(raw){"circle","hexagon","octagon","shield","diamond","star","badge","arrow"->raw else->"hexagon"}
 private fun fontFamily(style:String)=when(style){
  "roboto_mono"->FontFamily.Monospace
+ "big_shoulders_stencil"->FontFamily.SansSerif
  "fraunces"->FontFamily.Serif
  "caveat","dyna_puff"->FontFamily.Cursive
  else->FontFamily.SansSerif
