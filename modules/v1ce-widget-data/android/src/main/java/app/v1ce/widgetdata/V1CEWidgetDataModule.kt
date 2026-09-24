@@ -6,6 +6,7 @@ import expo.modules.kotlin.modules.Module
 import expo.modules.kotlin.modules.ModuleDefinition
 import kotlinx.coroutines.runBlocking
 import app.v1ce.widget.V1CEWidget
+import androidx.glance.appwidget.updateAll
 private val android.content.Context.v1ceWidgetStore by preferencesDataStore(name = "v1ce_widget")
 class V1CEWidgetDataModule : Module() {
   override fun definition() = ModuleDefinition {
