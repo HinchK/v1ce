@@ -8,6 +8,7 @@ export const COIN_COLORS = {
 } as const;
 
 export const NUMBER_STYLES = {
+  big_shoulders_stencil: { fontFamily: "Big Shoulders Stencil", fontWeight: "400" as const, letterSpacing: 0.02 },
   roboto_mono: { fontFamily: "Roboto Mono", fontWeight: "700" as const, letterSpacing: -0.03 },
   oswald: { fontFamily: "Oswald", fontWeight: "600" as const, letterSpacing: 0.02 },
   raleway: { fontFamily: "Raleway", fontWeight: "700" as const, letterSpacing: 0.01 },
