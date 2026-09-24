@@ -5,10 +5,12 @@ import { useAuth } from "@/context/AuthContext";
 import { useColors } from "@/hooks/useColors";
 import { supabase } from "@/lib/supabase";
 import { fonts } from "@/constants/typography";
+import { useTranslation } from "@/lib/i18n";
 
 export default function ShareScreen() {
   const { profile, user } = useAuth();
   const c = useColors();
+  const { t } = useTranslation();
   const [giftEmail, setGiftEmail] = useState("");
   const [giveawayEmail, setGiveawayEmail] = useState(user?.email || "");
   const [plan, setPlan] = useState<"monthly" | "yearly">("monthly");
@@ -53,6 +55,8 @@ export default function ShareScreen() {
 
   return (
     <ScrollView style={{ backgroundColor: c.background }} contentContainerStyle={styles.page} keyboardShouldPersistTaps="handled">
+      <Text style={[styles.pageTitle, { color: c.foreground }]}>{t("widget.title")}</Text>
+      <Text style={[styles.pageSub, { color: c.mutedForeground }]}>{t("widget.shareAndInstallSub")}</Text>
       <View style={[styles.pwa, { backgroundColor: c.isDark ? "#D7E8FF" : "#E8F1FF", borderColor: "#9BB7E0" }]}>
         <Text style={styles.pwaTitle}>Add V1CE to Home Screen:</Text>
         <Text style={styles.pwaStep}>
@@ -71,12 +75,12 @@ export default function ShareScreen() {
       </View>
 
       <View style={styles.widgetHead}>
-        <Text style={[styles.section, { color: c.foreground }]}>WIDGET LINK</Text>
+        <Text style={[styles.section, { color: c.foreground }]}>{t("widget.widgetLink")}</Text>
         <TouchableOpacity
           onPress={() => Share.share({ message: widgetUrl || "My V1CE sobriety coin." })}
           style={[styles.previewBtn, { borderColor: c.foreground }]}
         >
-          <Text style={[styles.previewBtnText, { color: c.foreground }]}>Show Preview</Text>
+          <Text style={[styles.previewBtnText, { color: c.foreground }]}>{t("widget.showPreview")}</Text>
         </TouchableOpacity>
       </View>
       <View style={[styles.linkRow, { borderColor: c.foreground }]}>
@@ -160,6 +164,8 @@ export default function ShareScreen() {
 
 const styles = StyleSheet.create({
   page: { padding: 16, paddingBottom: 48, gap: 0 },
+  pageTitle: { fontFamily: fonts.display, fontSize: 52, lineHeight: 50, marginBottom: 8 },
+  pageSub: { fontFamily: fonts.body, fontSize: 14, lineHeight: 20, marginBottom: 16 },
   pwa: { borderWidth: 1, borderRadius: 8, padding: 16, marginBottom: 22 },
   pwaTitle: { fontFamily: fonts.bodyBold, fontSize: 15, color: "#1E3A5F", marginBottom: 10 },
   pwaStep: { fontFamily: fonts.body, fontSize: 14, color: "#1E3A5F", lineHeight: 22, marginBottom: 4 },

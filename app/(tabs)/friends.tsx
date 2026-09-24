@@ -5,10 +5,12 @@ import { useAuth } from "@/context/AuthContext";
 import { supabase, TABLES, type BlockedUser, type FriendConnection } from "@/lib/supabase";
 import { useColors } from "@/hooks/useColors";
 import { fonts } from "@/constants/typography";
+import { useTranslation } from "@/lib/i18n";
 
 export default function Friends() {
   const { user } = useAuth();
   const colors = useColors();
+  const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [friends, setFriends] = useState<FriendConnection[]>([]);
   const [pending, setPending] = useState<FriendConnection[]>([]);
@@ -94,7 +96,7 @@ export default function Friends() {
     f.requester_id === user?.id ? f.recipient_name || f.recipient_email || "Friend" : f.requester_name || f.requester_email || "Friend";
   const activeCount = friends.filter((f) => f.is_active_in_lounge).length;
   const toggleLounge = async (id: string, current: boolean) => {
-    if (!current && activeCount >= 8) return Alert.alert("V1CE", "You can have up to 8 friends active in the lounge.");
+    if (!current && activeCount >= 8) return Alert.alert("V1CE", t("friends.maxFriends"));
     const { error } = await supabase.from(TABLES.FriendConnection).update({ is_active_in_lounge: !current }).eq("id", id);
     if (error) Alert.alert("V1CE", error.message);
     else load();
@@ -102,11 +104,11 @@ export default function Friends() {
 
   return (
     <ScrollView style={{ backgroundColor: colors.background }} contentContainerStyle={styles.page} keyboardShouldPersistTaps="handled">
-      <Text style={[styles.title, { color: colors.foreground }]}>MANAGE{"\n"}FRIENDS</Text>
-      <Text style={[styles.sub, { color: colors.mutedForeground }]}>Send requests, manage your top 8, and block users.</Text>
+      <Text style={[styles.title, { color: colors.foreground }]}>{t("friends.manageFriends")}</Text>
+      <Text style={[styles.sub, { color: colors.mutedForeground }]}>{t("friends.yourFriends")}</Text>
       <View style={[styles.rule, { backgroundColor: colors.foreground }]} />
 
-      <Text style={[styles.heading, { color: colors.foreground }]}>SEND FRIEND REQUEST</Text>
+      <Text style={[styles.heading, { color: colors.foreground }]}>{t("friends.sendRequest")}</Text>
       <View style={styles.row}>
         <View style={[styles.inputWrap, { borderColor: colors.foreground }]}>
           <Feather name="mail" size={18} color={colors.foreground} style={{ marginRight: 8 }} />
@@ -115,7 +117,7 @@ export default function Friends() {
             onChangeText={setEmail}
             autoCapitalize="none"
             keyboardType="email-address"
-            placeholder="Enter email"
+            placeholder={t("friends.enterEmail")}
             placeholderTextColor={colors.mutedForeground}
             style={[styles.input, { color: colors.foreground }]}
           />
@@ -127,17 +129,17 @@ export default function Friends() {
       <View style={[styles.rule, { backgroundColor: colors.foreground }]} />
 
       {pending.length === 0 ? (
-        <Text style={[styles.empty, { color: colors.mutedForeground }]}>No pending requests</Text>
+        <Text style={[styles.empty, { color: colors.mutedForeground }]}>{t("friends.noPendingRequests")}</Text>
       ) : (
         pending.map((f) => (
           <View key={f.id} style={[styles.card, { borderColor: colors.border }]}>
             <Text style={{ color: colors.foreground, fontFamily: fonts.bodySemi }}>{f.requester_name || f.requester_email || "Friend"}</Text>
             <View style={styles.actions}>
               <TouchableOpacity onPress={() => action(f.id, "accepted")}>
-                <Text style={{ color: colors.foreground, fontFamily: fonts.extraBold }}>ACCEPT</Text>
+                <Text style={{ color: colors.foreground, fontFamily: fonts.extraBold }}>{t("friends.accept")}</Text>
               </TouchableOpacity>
               <TouchableOpacity onPress={() => action(f.id, "rejected")}>
-                <Text style={{ color: colors.mutedForeground }}>REJECT</Text>
+                <Text style={{ color: colors.mutedForeground }}>{t("friends.reject")}</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -145,20 +147,20 @@ export default function Friends() {
       )}
 
       {friends.length === 0 ? (
-        <Text style={[styles.foot, { color: colors.mutedForeground }]}>No friends yet. Send a friend request to get started!</Text>
+        <Text style={[styles.foot, { color: colors.mutedForeground }]}>{t("friends.noFriendsYet")}</Text>
       ) : (
         friends.map((f) => (
           <View key={f.id} style={[styles.card, { borderColor: colors.border }]}>
             <Text style={{ color: colors.foreground, fontFamily: fonts.bodyBold, flex: 1 }}>{friendName(f)}</Text>
             <View style={styles.actions}>
               <TouchableOpacity onPress={() => toggleLounge(f.id, !!f.is_active_in_lounge)}>
-                <Text style={{ color: colors.foreground, fontFamily: fonts.extraBold }}>{f.is_active_in_lounge ? "LOUNGE ON" : "LOUNGE"}</Text>
+                <Text style={{ color: colors.foreground, fontFamily: fonts.extraBold }}>{f.is_active_in_lounge ? t("friends.active") : t("friends.inactive")}</Text>
               </TouchableOpacity>
               <TouchableOpacity onPress={() => remove(f.id)}>
                 <Text style={{ color: colors.mutedForeground, fontSize: 18, fontFamily: fonts.extraBold }}>X</Text>
               </TouchableOpacity>
               <TouchableOpacity onPress={() => block(f.id)}>
-                <Text style={{ color: colors.mutedForeground }}>BLOCK</Text>
+                <Text style={{ color: colors.mutedForeground }}>{t("friends.blockUser")}</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -167,12 +169,12 @@ export default function Friends() {
 
       {blocked.length > 0 ? (
         <>
-          <Text style={[styles.heading, { color: colors.foreground, marginTop: 28 }]}>BLOCKED USERS</Text>
+          <Text style={[styles.heading, { color: colors.foreground, marginTop: 28 }]}>{t("friends.blockedUsers")}</Text>
           {blocked.map((b) => (
             <View key={b.id} style={[styles.card, { borderColor: colors.border }]}>
               <Text style={{ color: colors.foreground }}>{b.blocked_email || "BLOCKED USER"}</Text>
               <TouchableOpacity onPress={() => unblock(b.id)}>
-                <Text style={{ color: colors.mutedForeground }}>UNBLOCK</Text>
+                <Text style={{ color: colors.mutedForeground }}>{t("friends.unblock")}</Text>
               </TouchableOpacity>
             </View>
           ))}

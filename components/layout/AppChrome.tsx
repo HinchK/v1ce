@@ -10,11 +10,11 @@ import { fonts } from "@/constants/typography";
 import Svg, { Circle, Path } from "react-native-svg";
 
 const TABS = [
-  { label: "HOME", path: "/" },
-  { label: "CUSTOMIZE", path: "/customize" },
-  { label: "LOUNGE", path: "/lounge" },
-  { label: "FRIENDS", path: "/friends" },
-  { label: "SHARE", path: "/share" },
+  { key: "nav.home", path: "/" },
+  { key: "nav.customize", path: "/customize" },
+  { key: "nav.lounge", path: "/lounge" },
+  { key: "nav.friends", path: "/friends" },
+  { key: "nav.share", path: "/share" },
 ] as const;
 
 const MENU = [
@@ -35,7 +35,7 @@ function ThemeGlyph({ color, fill }: { color: string; fill: string }) {
 export default function AppChrome() {
   const colors = useColors();
   const { isDark, toggleTheme } = useTheme();
-  const { lang, setLang } = useTranslation();
+  const { lang, setLang, t } = useTranslation();
   const insets = useSafeAreaInsets();
   const pathname = usePathname();
   const router = useRouter();
@@ -83,7 +83,7 @@ export default function AppChrome() {
               onPress={() => go(tab.path)}
               style={[styles.tab, active && { backgroundColor: colors.foreground }]}
             >
-              <Text style={[styles.tabLabel, { color: active ? colors.background : colors.foreground }]}>{tab.label}</Text>
+              <Text style={[styles.tabLabel, { color: active ? colors.background : colors.foreground }]}>{t(tab.key)}</Text>
             </TouchableOpacity>
           );
         })}

@@ -4,19 +4,15 @@ import { Feather } from "@expo/vector-icons";
 import { useAuth } from "@/context/AuthContext";
 import { useColors } from "@/hooks/useColors";
 import { supabase } from "@/lib/supabase";
+import { useTranslation } from "@/lib/i18n";
+import { fonts } from "@/constants/typography";
 
-const PERKS = [
-  ["award", "GOLD & BLUE COINS", "Unlock trophy Gold and prestige Blue coin colors."],
-  ["circle", "ALL SHAPES", "Hexagon, octagon, shield, diamond, star, and more."],
-  ["users", "8 FRIEND SLOTS", "Connect with up to 8 people on their journeys."],
-  ["message-circle", "LOUNGE ACCESS", "Join community chat in real time."],
-  ["image", "COIN PHOTO", "Upload a photo to your coin face."],
-  ["bar-chart-2", "ADVANCED STATS", "Weekly charts, streaks, and milestone tracking."],
-] as const;
+const PERK_ICONS = ["award", "circle", "users", "message-circle", "image"] as const;
 
 export default function Premium() {
   const { profile } = useAuth();
   const colors = useColors();
+  const { t } = useTranslation();
   const [plan, setPlan] = useState<"monthly" | "yearly">("yearly");
   const [loading, setLoading] = useState(false);
   const isPremium = !!profile?.is_premium;
@@ -37,11 +33,11 @@ export default function Premium() {
 
   return (
     <ScrollView style={{ backgroundColor: colors.background }} contentContainerStyle={styles.container}>
-      <Text style={[styles.title, { color: colors.foreground }]}>PREMIUM{"\n"}HUB.</Text>
-      <Text style={[styles.subtitle, { color: colors.mutedForeground }]}>$3.99/mo · everything unlocked.</Text>
+      <Text style={[styles.title, { color: colors.foreground }]}>{t("premium.title")}</Text>
+      <Text style={[styles.subtitle, { color: colors.mutedForeground }]}>{t("premium.subtitle")}</Text>
       {isPremium ? (
         <View style={[styles.badge, { borderColor: colors.gold, backgroundColor: colors.gold }]}>
-          <Text style={{ color: colors.goldForeground, fontWeight: "900", letterSpacing: 2 }}>YOU ARE PREMIUM</Text>
+          <Text style={{ color: colors.goldForeground, fontFamily: fonts.black, letterSpacing: 2 }}>{t("premium.youre")}</Text>
         </View>
       ) : (
         <>
@@ -56,21 +52,26 @@ export default function Premium() {
             </TouchableOpacity>
           </View>
           <TouchableOpacity onPress={checkout} style={[styles.button, { backgroundColor: colors.gold, opacity: loading ? 0.5 : 1 }]}>
-            <Text style={{ color: colors.goldForeground, fontWeight: "900", letterSpacing: 2 }}>{loading ? "OPENING..." : "UPGRADE NOW"}</Text>
+            <Text style={{ color: colors.goldForeground, fontFamily: fonts.black, letterSpacing: 2 }}>{loading ? "..." : t("premium.unlock")}</Text>
           </TouchableOpacity>
         </>
       )}
-      {PERKS.map(([icon, title, desc], i) => (
-        <View key={title} style={[styles.perk, { borderBottomColor: colors.border }]}>
-          <View style={[styles.icon, { borderColor: colors.foreground }]}>
-            <Feather name={icon} size={16} color={colors.foreground} />
+      {PERK_ICONS.map((icon, i) => {
+        const n = i + 1;
+        const title = t(`premium.perk${n}Title`);
+        const desc = t(`premium.perk${n}Desc`);
+        return (
+          <View key={title} style={[styles.perk, { borderBottomColor: colors.border }]}>
+            <View style={[styles.icon, { borderColor: colors.foreground }]}>
+              <Feather name={icon} size={16} color={colors.foreground} />
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={[styles.perkTitle, { color: colors.foreground }]}>{n}. {title}</Text>
+              <Text style={[styles.desc, { color: colors.mutedForeground }]}>{desc}</Text>
+            </View>
           </View>
-          <View style={{ flex: 1 }}>
-            <Text style={[styles.perkTitle, { color: colors.foreground }]}>{i + 1}. {title}</Text>
-            <Text style={[styles.desc, { color: colors.mutedForeground }]}>{desc}</Text>
-          </View>
-        </View>
-      ))}
+        );
+      })}
     </ScrollView>
   );
 }
