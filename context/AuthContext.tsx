@@ -1,12 +1,14 @@
 import React,{createContext,useContext,useEffect,useMemo,useState,type ReactNode} from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {supabase,type SobrietyProfile} from "@/lib/supabase";
+import {writeWidgetProfileSnapshot} from "@/lib/widgetCache";
 type User={email:string;id:string};
 type AuthContextType={user:User|null;profile:SobrietyProfile|null;isLoading:boolean;setProfile:(p:SobrietyProfile|null)=>void;signOut:()=>Promise<void>;refreshProfile:()=>Promise<void>};
 const AuthContext=createContext<AuthContextType>({user:null,profile:null,isLoading:true,setProfile:()=>{},signOut:async()=>{},refreshProfile:async()=>{}});
 export const useAuth=()=>useContext(AuthContext);
 export function AuthProvider({children}:{children:ReactNode}){
- const [user,setUser]=useState<User|null>(null),[profile,setProfile]=useState<SobrietyProfile|null>(null),[isLoading,setIsLoading]=useState(true);
+ const [user,setUser]=useState<User|null>(null),[profile,setProfileState]=useState<SobrietyProfile|null>(null),[isLoading,setIsLoading]=useState(true);
+ const setProfile=(next:SobrietyProfile|null)=>{setProfileState(next);void writeWidgetProfileSnapshot(next);};
  const loadProfile=async(userId:string)=>{const{data}=await supabase.from("profiles").select("*").eq("id",userId).maybeSingle();setProfile(data as SobrietyProfile|null)};
  const refreshProfile=async()=>{if(user?.id)await loadProfile(user.id)};
  useEffect(()=>{let mounted=true;const initialize=async()=>{let{data:{session}}=await supabase.auth.getSession();const storedEmail=await AsyncStorage.getItem("v1ce_email");if(!session){const{data,error}=await supabase.auth.signInAnonymously();if(!error)session=data.session}if(!mounted)return;const email=storedEmail||"";if(session?.user?.id){setUser({email,id:session.user.id});await loadProfile(session.user.id)}if(mounted)setIsLoading(false)};initialize();const{data:{subscription}}=supabase.auth.onAuthStateChange((_,session)=>{if(!mounted)return;if(!session?.user?.id){setUser(null);setProfile(null);return;}AsyncStorage.getItem("v1ce_email").then((storedEmail)=>{if(mounted)setUser({email:storedEmail||"",id:session.user.id})});});return()=>{mounted=false;subscription.unsubscribe()}},[]);
