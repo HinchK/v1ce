@@ -12,6 +12,11 @@
       "bundleIdentifier": "app.v1ce",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
+      },
+      "entitlements": {
+        "com.apple.security.application-groups": [
+          "group.app.v1ce"
+        ]
       }
     },
     "android": {
@@ -45,7 +50,12 @@
           "imageWidth": 200
         }
       ],
-      "expo-status-bar"
+      "expo-status-bar",
+      [
+        "@bacons/apple-targets"
+      ],
+      "./plugins/withV1CEWidgetFonts.js",
+      "./plugins/app.plugin.js"
     ],
     "experiments": {
       "typedRoutes": true,

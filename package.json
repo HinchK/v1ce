@@ -53,7 +53,19 @@
     "react-native-screens": "~4.26.0",
     "react-native-svg": "15.15.4",
     "react-native-web": "^0.21.2",
-    "react-native-worklets": "0.10.1"
+    "react-native-worklets": "0.10.1",
+    "@bacons/apple-targets": "5.0.0",
+    "@expo-google-fonts/roboto-mono": "^0.4.2",
+    "@expo-google-fonts/arimo": "^0.4.3",
+    "@expo-google-fonts/oswald": "^0.4.2",
+    "@expo-google-fonts/raleway": "^0.4.2",
+    "@expo-google-fonts/saira": "^0.4.2",
+    "@expo-google-fonts/josefin-sans": "^0.4.2",
+    "@expo-google-fonts/fraunces": "^0.4.1",
+    "@expo-google-fonts/caveat": "^0.4.1",
+    "@expo-google-fonts/dynapuff": "^0.4.1",
+    "@fontsource-variable/edu-qld-hand": "^5.3.0",
+    "@fontsource-variable/geist-pixel": "^5.3.1"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

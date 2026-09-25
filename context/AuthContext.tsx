@@ -1,6 +1,7 @@
 import { createContext, useCallback, useContext, useState, useEffect, useMemo, type ReactNode } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { supabase, TABLES, type SobrietyProfile } from "@/lib/supabase";
+import { writeWidgetProfileSnapshot } from "@/lib/widgetCache";
 
 interface AuthContextType {
   user: { email: string; id: string } | null;
@@ -36,8 +37,12 @@ async function loadProfileByIdentity(userId?: string, email?: string) {
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<{ email: string; id: string } | null>(null);
-  const [profile, setProfile] = useState<SobrietyProfile | null>(null);
+  const [profile, setProfileState] = useState<SobrietyProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const setProfile = useCallback((next: SobrietyProfile | null) => {
+    setProfileState(next);
+    void writeWidgetProfileSnapshot(next);
+  }, []);
 
   const refreshProfile = useCallback(async () => {
     const email = user?.email || (await AsyncStorage.getItem("v1ce_email")) || "";

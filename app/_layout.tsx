@@ -19,6 +19,12 @@ import { Pacifico_400Regular } from "@expo-google-fonts/pacifico";
 import { Poppins_700Bold } from "@expo-google-fonts/poppins";
 import { SpaceMono_700Bold } from "@expo-google-fonts/space-mono";
 import { Syne_700Bold } from "@expo-google-fonts/syne";
+import { RobotoMono_700Bold } from "@expo-google-fonts/roboto-mono";
+import { Oswald_600SemiBold } from "@expo-google-fonts/oswald";
+import { Raleway_700Bold } from "@expo-google-fonts/raleway";
+import { Fraunces_700Bold } from "@expo-google-fonts/fraunces";
+import { Caveat_400Regular } from "@expo-google-fonts/caveat";
+import { DynaPuff_600SemiBold } from "@expo-google-fonts/dynapuff";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
@@ -71,6 +77,13 @@ export default function RootLayout() {
     Poppins_700Bold,
     SpaceMono_700Bold,
     Syne_700Bold,
+    RobotoMono_700Bold,
+    Oswald_600SemiBold,
+    Raleway_700Bold,
+    Fraunces_700Bold,
+    Caveat_400Regular,
+    DynaPuff_600SemiBold,
+    BigShouldersStencilDisplayRegular: require("../assets/fonts/BigShouldersStencilDisplay-Regular.ttf"),
   });
 
   useEffect(() => {

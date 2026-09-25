@@ -111,7 +111,6 @@ export default function Home() {
     </ScrollView>
   );
 }
-
 const styles = StyleSheet.create({
   page: { paddingBottom: 48 },
   hero: { paddingHorizontal: 20, paddingTop: 18, paddingBottom: 36, borderBottomWidth: 2, overflow: "visible" },
