@@ -1,11 +1,12 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
-import Svg, { Circle, Image, Path, Polygon } from "react-native-svg";
+import Svg, { Circle, Image as SvgImage, Path, Polygon } from "react-native-svg";
 import { COIN_COLORS, NUMBER_STYLES, resolveCoinColor } from "@/constants/coin";
 
 export { COIN_COLORS, NUMBER_STYLES };
 
 export const SHAPES = ["circle","hexagon","octagon","shield","diamond","star","badge","arrow","drawn"] as const;
+type Shape = typeof SHAPES[number];
 
 const PATHS: Record<string,string> = {
   hexagon:"M25 2 L75 2 L100 50 L75 98 L25 98 L0 50 Z",
@@ -17,17 +18,6 @@ const PATHS: Record<string,string> = {
   arrow:"M0 35 L55 35 L55 10 L100 50 L55 90 L55 65 L0 65 Z",
 };
 
-const BOUNDS: Record<string,{minX:number;maxX:number;minY:number;maxY:number;width:number;height:number}> = {
-  circle:{minX:.04,maxX:.96,minY:.04,maxY:.96,width:.92,height:.92},
-  hexagon:{minX:.03,maxX:.97,minY:.02,maxY:.98,width:.94,height:.96},
-  octagon:{minX:.02,maxX:.98,minY:.02,maxY:.98,width:.96,height:.96},
-  shield:{minX:.03,maxX:.97,minY:.02,maxY:.98,width:.94,height:.96},
-  diamond:{minX:.04,maxX:.96,minY:.03,maxY:.97,width:.92,height:.94},
-  star:{minX:.02,maxX:.98,minY:.02,maxY:.98,width:.96,height:.96},
-  badge:{minX:.02,maxX:.98,minY:.02,maxY:.98,width:.96,height:.96},
-  arrow:{minX:0,maxX:1,minY:.35,maxY:.65,width:1,height:.30},
-};
-
 const FONT_FAMILIES: Record<string,string> = {
   "Big Shoulders Stencil":"BigShouldersStencilDisplayRegular",
   "Roboto Mono":"RobotoMonoWidget",
@@ -37,3 +27,87 @@ const FONT_FAMILIES: Record<string,string> = {
   "Caveat":"CaveatWidget",
   "DynaPuff":"DynaPuffWidget",
 };
+
+type CoinFrontProps = {
+  days: number;
+  shape?: string;
+  color?: string;
+  numberStyle?: string;
+  size?: number;
+  displayName?: string;
+  motto?: string;
+  customShapePath?: string;
+  showBorder?: boolean;
+  coinPhoto?: string;
+  imageOnlyMode?: boolean;
+  borderColor?: string;
+  numberColor?: string;
+};
+
+export default function CoinFront({
+  days,
+  shape = "circle",
+  color = "gold",
+  numberStyle = "classic",
+  size = 240,
+  displayName = "",
+  motto = "",
+  customShapePath = "",
+  showBorder = true,
+  coinPhoto,
+  imageOnlyMode = false,
+  borderColor,
+  numberColor,
+}: CoinFrontProps) {
+  const coin = resolveCoinColor(color);
+  const textColor = numberColor || coin.text;
+  const outline = borderColor || coin.border;
+  const safeShape = (SHAPES as readonly string[]).includes(shape) ? shape as Shape : "circle";
+  const style = NUMBER_STYLES[numberStyle as keyof typeof NUMBER_STYLES];
+  const fontFamily = style?.fontFamily ? FONT_FAMILIES[style.fontFamily] : undefined;
+  const fontWeight = style?.fontWeight === "700" || style?.fontWeight === "600" ? "800" : "500";
+  const photo = coinPhoto && /^https?:\/\//.test(coinPhoto) ? coinPhoto : undefined;
+  const borderWidth = showBorder ? 3 : 0;
+  const number = Math.max(0, Math.floor(days)).toLocaleString();
+
+  const renderShape = () => {
+    if (safeShape === "circle") return <Circle cx="50" cy="50" r="47" fill={coin.bg} stroke={outline} strokeWidth={borderWidth / 2} />;
+    if (safeShape === "drawn" && customShapePath) return <Path d={customShapePath} fill={coin.bg} stroke={outline} strokeWidth={borderWidth / 2} />;
+    if (safeShape === "drawn") return <Circle cx="50" cy="50" r="47" fill={coin.bg} stroke={outline} strokeWidth={borderWidth / 2} />;
+    return <Path d={PATHS[safeShape]} fill={coin.bg} stroke={outline} strokeWidth={borderWidth / 2} />;
+  };
+
+  return (
+    <View style={[styles.container, { width: size, height: size }]}>
+      <Svg width={size} height={size} viewBox="0 0 100 100">
+        {renderShape()}
+        {photo && imageOnlyMode ? (
+          <SvgImage href={{ uri: photo }} x="4" y="4" width="92" height="92" preserveAspectRatio="xMidYMid slice" clipPath="url(#coinClip)" />
+        ) : null}
+        {!imageOnlyMode ? (
+          <>
+            <Polygon points="18,15 82,15 86,19 14,19" fill={coin.accent} opacity={0.45} />
+            <View />
+          </>
+        ) : null}
+      </Svg>
+      {!imageOnlyMode ? (
+        <View pointerEvents="none" style={styles.content}>
+          <Text numberOfLines={1} adjustsFontSizeToFit style={[styles.number, { color: textColor, fontFamily, fontWeight: fontWeight as any }]}>
+            {number}
+          </Text>
+          {displayName ? <Text numberOfLines={1} style={[styles.name, { color: textColor }]}>{displayName}</Text> : null}
+          {motto ? <Text numberOfLines={2} style={[styles.motto, { color: textColor }]}>{motto}</Text> : null}
+        </View>
+      ) : null}
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: { alignItems: "center", justifyContent: "center" },
+  content: { position: "absolute", left: 12, right: 12, top: "28%", alignItems: "center", justifyContent: "center" },
+  number: { fontSize: 58, lineHeight: 64, letterSpacing: -1, textAlign: "center" },
+  name: { marginTop: 4, fontSize: 12, lineHeight: 15, fontWeight: "800", letterSpacing: 1.5, textTransform: "uppercase", textAlign: "center" },
+  motto: { marginTop: 5, fontSize: 10, lineHeight: 13, fontWeight: "600", textAlign: "center" },
+});
