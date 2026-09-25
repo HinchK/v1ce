@@ -58,7 +58,7 @@ export default function AppChrome() {
           <Image
             source={require("../../assets/images/v1ce-logo.png")}
             style={styles.logo}
-            tintColor={isDark ? colors.foreground : undefined}
+            tintColor={colors.foreground}
             resizeMode="contain"
           />
         </View>
@@ -148,7 +148,7 @@ const styles = StyleSheet.create({
     zIndex: 2,
   },
   logoWrap: { position: "absolute", left: 0, right: 0, top: 0, bottom: 0, alignItems: "center", justifyContent: "center" },
-  logo: { height: 38, width: 38 },
+  logo: { height: 22, width: 86 },
   right: { marginLeft: "auto", flexDirection: "row", alignItems: "center", gap: 8, zIndex: 3 },
   iconBtn: { padding: 6, zIndex: 3 },
   v1: { borderWidth: 1.5, paddingHorizontal: 6, paddingVertical: 2, minWidth: 28, alignItems: "center" },
