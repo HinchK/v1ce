@@ -17,6 +17,7 @@ import { daysSince } from "@/constants/app";
 import { fonts } from "@/constants/typography";
 import SobrietyCoin from "@/components/coin/SobrietyCoin";
 import ShapePicker from "@/components/customize/ShapePicker";
+import DrawShapePicker from "@/components/customize/DrawShapePicker";
 import ColorPicker from "@/components/customize/ColorPicker";
 import NumberStylePicker from "@/components/customize/NumberStylePicker";
 import { AsteriskStar, Crosshair, DiamondGrid, Starburst } from "@/components/ui/RetroAccents";
@@ -242,6 +243,12 @@ export default function Customize() {
         </View>
         <Text style={[styles.sectionTitle, { color: colors.foreground, marginBottom: 16 }]}>{t("customize.shape")}</Text>
         <ShapePicker value={shape} onChange={setShape} />
+        {shape === "drawn" ? (
+          <View style={[styles.inner, { borderTopColor: colors.border }]}>
+            <Text style={[styles.subhead, { color: colors.foreground }]}>DRAW YOUR SHAPE</Text>
+            <DrawShapePicker value={customShapePath} onChange={setCustomShapePath} />
+          </View>
+        ) : null}
       </View>
 
       <View style={[styles.section, { borderBottomColor: colors.foreground, opacity: 0.6 }]}>

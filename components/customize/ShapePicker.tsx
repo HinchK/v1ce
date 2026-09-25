@@ -15,9 +15,10 @@ const PATHS: Record<string, string> = {
   cross: "M9 2 H15 V9 H22 V15 H15 V22 H9 V15 H2 V9 H9 Z",
   badge: "M12 1 L16 4 L21 3 L22 8 L24 12 L22 16 L21 21 L16 20 L12 23 L8 20 L3 21 L2 16 L0 12 L2 8 L3 3 L8 4 Z",
   arrow: "M4 9 H13 V5 L22 12 L13 19 V15 H4 Z",
+  drawn: "M3 16 C5 4 10 3 12 10 C14 17 18 20 21 7",
 };
 
-const VISIBLE_ORDER = ["star", "cross", "badge", "arrow", "circle", "hexagon", "octagon", "shield", "diamond"] as const;
+const VISIBLE_ORDER = ["star", "cross", "badge", "arrow", "circle", "hexagon", "octagon", "shield", "diamond", "drawn"] as const;
 
 const COMING_SOON: { key: string; path?: string; circle?: boolean }[] = [
   { key: "circle", circle: true },
