@@ -8,6 +8,18 @@ export const COIN_COLORS = {
 } as const;
 
 export const NUMBER_STYLES = {
+  classic: { fontFamily: "Cinzel", fontWeight: "700" as const, letterSpacing: 0.02 },
+  poppins: { fontFamily: "Poppins", fontWeight: "700" as const, letterSpacing: -0.01 },
+  monospace: { fontFamily: "Space Mono", fontWeight: "700" as const, letterSpacing: -0.03 },
+  fredoka: { fontFamily: "Fredoka One", fontWeight: "400" as const, letterSpacing: 0.02 },
+  serif: { fontFamily: "IBM Plex Serif", fontWeight: "700" as const, letterSpacing: 0.01 },
+  dmsans: { fontFamily: "DM Sans", fontWeight: "700" as const, letterSpacing: -0.02 },
+  courier: { fontFamily: "Courier Prime", fontWeight: "700" as const, letterSpacing: 0.05 },
+  bodoni: { fontFamily: "Bodoni Moda", fontWeight: "700" as const, letterSpacing: 0.03 },
+  syne: { fontFamily: "Syne", fontWeight: "700" as const, letterSpacing: -0.02 },
+  pacifico: { fontFamily: "Pacifico", fontWeight: "400" as const, letterSpacing: 0.01 },
+  bebas: { fontFamily: "Bebas Neue", fontWeight: "400" as const, letterSpacing: 0.08 },
+  inter: { fontFamily: "Inter", fontWeight: "700" as const, letterSpacing: -0.02 },
   big_shoulders_stencil: { fontFamily: "Big Shoulders Stencil", fontWeight: "400" as const, letterSpacing: 0.02 },
   roboto_mono: { fontFamily: "Roboto Mono", fontWeight: "700" as const, letterSpacing: -0.03 },
   oswald: { fontFamily: "Oswald", fontWeight: "600" as const, letterSpacing: 0.02 },
