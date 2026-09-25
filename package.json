@@ -4,8 +4,10 @@
   "private": true,
   "main": "expo-router/entry",
   "scripts": {
-    "dev": "expo start",
-    "start": "expo start",
+    "dev": "expo start --dev-client --lan",
+    "start": "expo start --dev-client --lan",
+    "dev:device": "expo start --dev-client --lan --clear",
+    "dev:tunnel": "expo start --dev-client --tunnel --clear",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "web": "expo start --web"
   },
