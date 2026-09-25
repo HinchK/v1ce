@@ -15,6 +15,7 @@ import SubstanceChecklist from "@/components/home/SubstanceChecklist";
 import MilestoneTimeline from "@/components/home/MilestoneTimeline";
 import MilestoneCalendarExport from "@/components/home/MilestoneCalendarExport";
 import CalendarField from "@/components/onboarding/CalendarField";
+import Animated, { FadeInDown } from "react-native-reanimated";
 import {
   AsteriskStar,
   BlobSplat,
@@ -55,32 +56,34 @@ export default function Home() {
         <View style={styles.burst}>
           <Starburst size={64} color={colors.foreground} opacity={0.06} />
         </View>
-        <Text style={[styles.days, { color: colors.foreground }]}>{days}</Text>
-        <RotatingLabel />
-        <View style={styles.coinWrap}>
-          <SobrietyCoin
-            days={days}
-            shape={profile?.coin_shape || "circle"}
-            color={profile?.coin_color || "#F5D680"}
-            numberStyle={profile?.number_style || "classic"}
-            size={250}
-            displayName={profile?.display_name || ""}
-            motto={profile?.coin_motto}
-            customShapePath={profile?.coin_shape_path || undefined}
-            showBorder={profile?.coin_show_border ?? true}
-            coinPhoto={profile?.coin_photo || undefined}
-            borderColor={profile?.coin_border_color || undefined}
-            numberColor={profile?.coin_number_color || undefined}
-            imageOnlyMode={profile?.coin_image_only || false}
-            background={profile?.coin_background}
-            substances={substances}
-          />
-        </View>
-        <Pressable onPress={() => router.push("/(tabs)/customize")} style={styles.customizeWrap}>
-          <Text style={[styles.link, { color: colors.mutedForeground, borderBottomColor: colors.mutedForeground }]}>
-            {t("home.customize")}
-          </Text>
-        </Pressable>
+        <Animated.View entering={FadeInDown.duration(400).withInitialValues({ opacity: 0, transform: [{ translateY: 12 }] })}>
+          <Text style={[styles.days, { color: colors.foreground }]}>{days}</Text>
+          <RotatingLabel />
+          <View style={styles.coinWrap}>
+            <SobrietyCoin
+              days={days}
+              shape={profile?.coin_shape || "circle"}
+              color={profile?.coin_color || "#F5D680"}
+              numberStyle={profile?.number_style || "classic"}
+              size={250}
+              displayName={profile?.display_name || ""}
+              motto={profile?.coin_motto}
+              customShapePath={profile?.coin_shape_path || undefined}
+              showBorder={profile?.coin_show_border ?? true}
+              coinPhoto={profile?.coin_photo || undefined}
+              borderColor={profile?.coin_border_color || undefined}
+              numberColor={profile?.coin_number_color || undefined}
+              imageOnlyMode={profile?.coin_image_only || false}
+              background={profile?.coin_background}
+              substances={substances}
+            />
+          </View>
+          <Pressable onPress={() => router.push("/(tabs)/customize")} style={styles.customizeWrap}>
+            <Text style={[styles.link, { color: colors.mutedForeground, borderBottomColor: colors.mutedForeground }]}>
+              {t("home.customize")}
+            </Text>
+          </Pressable>
+        </Animated.View>
         <View style={styles.splat}>
           <BlobSplat size={90} color={colors.foreground} opacity={0.05} />
         </View>
