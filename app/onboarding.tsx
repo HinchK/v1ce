@@ -28,6 +28,7 @@ export default function Onboarding() {
   const { t } = useTranslation();
   const [step, setStep] = useState(0);
   const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
   const [eula, setEula] = useState(false);
   const [date, setDate] = useState("");
   const [substances, setSubstances] = useState<string[]>([]);
@@ -56,7 +57,10 @@ export default function Onboarding() {
   const handleSave = async () => {
     if (!date || isSaving) return;
     setIsSaving(true);
-    const guestEmail = user?.email || `${name.trim().toLowerCase().replace(/\s+/g, ".")}.${Date.now()}@guest.v1ce.app`;
+    const guestEmail =
+      email.trim().toLowerCase() ||
+      user?.email ||
+      `${name.trim().toLowerCase().replace(/\s+/g, ".")}.${Date.now()}@guest.v1ce.app`;
     await persistProfile(
       {
         display_name: name.trim(),
@@ -71,6 +75,7 @@ export default function Onboarding() {
   };
 
   const step0Valid = name.trim().length > 0 && eula;
+  const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
 
   return (
     <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined}>
@@ -111,17 +116,26 @@ export default function Onboarding() {
 
         {step === 1 && (
           <>
-            <Text style={styles.title}>{t("onboarding.whenDidYouStart")}</Text>
-            <Text style={styles.subtitle}>{t("onboarding.whenSub")}</Text>
-            <Text style={styles.label}>{t("onboarding.sobrietyDate").toUpperCase()}</Text>
-            <CalendarField value={date} onChange={setDate} />
+            <Text style={styles.title}>{t("onboarding.emailTitle")}</Text>
+            <Text style={styles.subtitle}>{t("onboarding.emailSub")}</Text>
+            <Text style={styles.label}>{t("onboarding.emailLabel").toUpperCase()}</Text>
+            <TextInput
+              value={email}
+              onChangeText={setEmail}
+              style={styles.input}
+              placeholder={t("onboarding.emailPlaceholder")}
+              placeholderTextColor="#A3A3A3"
+              autoCapitalize="none"
+              autoCorrect={false}
+              keyboardType="email-address"
+            />
             <View style={styles.buttonRow}>
               <TouchableOpacity style={styles.backButton} onPress={() => setStep(0)}>
                 <Text style={styles.backButtonText}>{t("onboarding.back")}</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[styles.button, styles.buttonFlex, !date && styles.buttonDisabled]}
-                disabled={!date}
+                style={[styles.button, styles.buttonFlex, !emailValid && styles.buttonDisabled]}
+                disabled={!emailValid}
                 onPress={() => setStep(2)}
               >
                 <Text style={styles.buttonText}>{t("onboarding.next")}</Text>
@@ -131,6 +145,27 @@ export default function Onboarding() {
         )}
 
         {step === 2 && (
+          <>
+            <Text style={styles.title}>{t("onboarding.whenDidYouStart")}</Text>
+            <Text style={styles.subtitle}>{t("onboarding.whenSub")}</Text>
+            <Text style={styles.label}>{t("onboarding.sobrietyDate").toUpperCase()}</Text>
+            <CalendarField value={date} onChange={setDate} />
+            <View style={styles.buttonRow}>
+              <TouchableOpacity style={styles.backButton} onPress={() => setStep(1)}>
+                <Text style={styles.backButtonText}>{t("onboarding.back")}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.button, styles.buttonFlex, !date && styles.buttonDisabled]}
+                disabled={!date}
+                onPress={() => setStep(3)}
+              >
+                <Text style={styles.buttonText}>{t("onboarding.next")}</Text>
+              </TouchableOpacity>
+            </View>
+          </>
+        )}
+
+        {step === 3 && (
           <>
             <Text style={styles.title}>{t("onboarding.whatsYourDoc")}</Text>
             <Text style={styles.subtitle}>{t("onboarding.whatsYourDocSub")}</Text>
@@ -151,7 +186,7 @@ export default function Onboarding() {
               })}
             </View>
             <View style={styles.buttonRow}>
-              <TouchableOpacity style={styles.backButton} onPress={() => setStep(1)}>
+              <TouchableOpacity style={styles.backButton} onPress={() => setStep(2)}>
                 <Text style={styles.backButtonText}>{t("onboarding.back")}</Text>
               </TouchableOpacity>
               <TouchableOpacity
