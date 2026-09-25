@@ -57,7 +57,8 @@ export default function AppChrome() {
         <View style={[styles.logoWrap, { pointerEvents: "none" }]}>
           <Image
             source={require("../../assets/images/v1ce-logo.png")}
-            style={[styles.logo, isDark ? { tintColor: colors.foreground } : null]}
+            style={styles.logo}
+            tintColor={isDark ? colors.foreground : undefined}
             resizeMode="contain"
           />
         </View>
