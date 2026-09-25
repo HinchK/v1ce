@@ -7,7 +7,7 @@ This is the authoritative map of the V1CE source supplied for the port.
 | Source | Contents | Native treatment |
 |---|---|---|
 | `V1CE_Code.txt` | Native Expo/React Native project source and configuration | Ported into `app/`, `components/`, `context/`, `constants/`, `hooks/`, `lib/` |
-| Complete Base44 dump (`V1CE_daea.txt`) | Full web app: pages, components, entities, Deno functions, i18n | Ported into matching native modules below |
+| Base44 inventory (`V1CE_daea.txt`) | Full file inventory, tokens, Home source, selected snippets, entities, backend notes; most secondary screen bodies are summarized rather than embedded | Ported into matching native modules below, with exact parity asserted only where source bodies are present |
 | `Pasted code.js` | Coin colors, 12 number styles, 9 shapes, bounds, borders, CoinFront | Ported into `constants/coin.ts` + `components/CoinFront.tsx` |
 | `Pasted code(1).js` | Radix/Base44 web sidebar | Archived; web-only infrastructure |
 | `Pasted code(2).js` | i18next web localization infrastructure | Native `lib/i18n.ts` + `LanguageSwitcher` |
@@ -15,6 +15,12 @@ This is the authoritative map of the V1CE source supplied for the port.
 | `Pasted code(4).js` | Base44 MCP OAuth consent UI | Archived; not part of native V1CE app UX |
 | `Pasted code(5).js` | Lounge/grid game | Ported to native game UI |
 | `Pasted code(6).js` | Sobriety Run canvas game | Ported to native game UI |
+
+## Source coverage boundary
+
+`V1CE_17ab.pdf` and `V1CE_daea.txt` contain the same exported conversation material. They are not pixel-reference files, and many catalog entries say “full content shown above” without including that component body. Exact source is present for the global tokens, Home, Customize, CoinFront, localization, and the two games. For Profile, Lounge, Friends, Premium, Widget, Analytics, CoinBack, onboarding, and several shared components, the archive supplies structure, behavior, and copy summaries but not the complete original JSX.
+
+Native files in those summarized areas preserve the archived information and working application behavior, but must not be described as line-for-line Base44 translations unless the missing original JSX is recovered.
 
 ## Coin source of truth
 
