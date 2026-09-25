@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import { Animated, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useRouter } from "expo-router";
 import { useAuth } from "@/context/AuthContext";
 import { useCoinContext } from "@/context/CoinContext";
@@ -15,7 +15,6 @@ import SubstanceChecklist from "@/components/home/SubstanceChecklist";
 import MilestoneTimeline from "@/components/home/MilestoneTimeline";
 import MilestoneCalendarExport from "@/components/home/MilestoneCalendarExport";
 import CalendarField from "@/components/onboarding/CalendarField";
-import Animated, { FadeInDown } from "react-native-reanimated";
 import {
   AsteriskStar,
   BlobSplat,
@@ -33,8 +32,17 @@ export default function Home() {
   const { t } = useTranslation();
   const router = useRouter();
   const [substances, setSubstances] = useState<string[]>(profile?.substances || []);
+  const entrance = useRef(new Animated.Value(0)).current;
   const sobrietyDate = profile?.sobriety_date || "";
   const days = daysSince(sobrietyDate);
+
+  useEffect(() => {
+    Animated.timing(entrance, {
+      toValue: 1,
+      duration: 400,
+      useNativeDriver: true,
+    }).start();
+  }, [entrance]);
 
   useEffect(() => {
     setSubstances(profile?.substances || []);
@@ -56,7 +64,12 @@ export default function Home() {
         <View style={styles.burst}>
           <Starburst size={64} color={colors.foreground} opacity={0.06} />
         </View>
-        <Animated.View entering={FadeInDown.duration(400).withInitialValues({ opacity: 0, transform: [{ translateY: 12 }] })}>
+        <Animated.View
+          style={{
+            opacity: entrance,
+            transform: [{ translateY: entrance.interpolate({ inputRange: [0, 1], outputRange: [12, 0] }) }],
+          }}
+        >
           <Text style={[styles.days, { color: colors.foreground }]}>{days}</Text>
           <RotatingLabel />
           <View style={styles.coinWrap}>
