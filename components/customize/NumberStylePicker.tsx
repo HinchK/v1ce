@@ -20,6 +20,13 @@ const FONT_FAMILIES: Record<string, string> = {
   Pacifico: "Pacifico_400Regular",
   "Bebas Neue": "BebasNeue_400Regular",
   Inter: "Inter_700Bold",
+  "Big Shoulders Stencil": "BigShouldersStencilDisplayRegular",
+  "Roboto Mono": "RobotoMono_700Bold",
+  Oswald: "Oswald_600SemiBold",
+  Raleway: "Raleway_700Bold",
+  Fraunces: "Fraunces_700Bold",
+  Caveat: "Caveat_400Regular",
+  DynaPuff: "DynaPuff_600SemiBold",
 };
 
 const LABELS: Record<string, string> = {
@@ -35,9 +42,19 @@ const LABELS: Record<string, string> = {
   pacifico: "Pacifico",
   bebas: "Bebas",
   inter: "Inter",
+  big_shoulders_stencil: "Big Shoulders",
+  roboto_mono: "Roboto Mono",
+  oswald: "Oswald",
+  raleway: "Raleway",
+  fraunces: "Fraunces",
+  caveat: "Caveat",
+  dyna_puff: "DynaPuff",
 };
 
-const ORDER = ["bebas", "bodoni", "courier", "classic", "poppins", "monospace", "fredoka", "serif", "dmsans", "syne", "pacifico", "inter"] as const;
+const ORDER = [
+  "big_shoulders_stencil", "roboto_mono", "oswald", "raleway", "fraunces", "caveat", "dyna_puff",
+  "bebas", "bodoni", "courier", "classic", "poppins", "monospace", "fredoka", "serif", "dmsans", "syne", "pacifico", "inter",
+] as const;
 
 export default function NumberStylePicker({ value, onChange }: { value: string; onChange: (value: string) => void }) {
   const colors = useColors();
@@ -47,7 +64,7 @@ export default function NumberStylePicker({ value, onChange }: { value: string; 
     <View style={styles.wrap}>
       {ORDER.map((key) => {
         const style = NUMBER_STYLES[key];
-        const locked = key !== "classic" && key !== "bebas" && key !== "bodoni" && !isPremium;
+        const locked = !["big_shoulders_stencil", "classic", "bebas", "bodoni"].includes(key) && !isPremium;
         const active = value === key;
         return (
           <TouchableOpacity
