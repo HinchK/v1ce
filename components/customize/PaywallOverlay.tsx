@@ -27,7 +27,7 @@ export default function PaywallOverlay({ children }: { children?: React.ReactNod
 
 const styles = StyleSheet.create({
   wrap: { position: "relative" },
-  overlay: { ...StyleSheet.absoluteFill, justifyContent: "flex-end", padding: 16 },
+  overlay: { ...StyleSheet.absoluteFillObject, justifyContent: "flex-end", padding: 16 },
   card: { borderWidth: 1, padding: 18, alignItems: "center" },
   title: { fontSize: 18, fontWeight: "800", marginBottom: 6 },
   body: { fontSize: 13, textAlign: "center", marginBottom: 14 },
