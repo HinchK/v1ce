@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Image, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useRouter } from "expo-router";
 import { useAuth } from "@/context/AuthContext";
 import { useCoinContext } from "@/context/CoinContext";
@@ -43,6 +43,9 @@ export default function Home() {
 
   return (
     <ScrollView style={{ backgroundColor: colors.background }} contentContainerStyle={styles.page} showsVerticalScrollIndicator={false}>
+      <View style={styles.header}>
+        <Image source={require("../../assets/images/v1ce-logo.png")} style={styles.wordmark} resizeMode="contain" />
+      </View>
       <View style={[styles.hero, { borderBottomColor: colors.foreground }]}>
         <View style={styles.burst}>
           <FilledStarburst size={72} color={colors.foreground} />
@@ -133,6 +136,8 @@ export default function Home() {
 }
 const styles = StyleSheet.create({
   page: { paddingBottom: 48 },
+  header: { height: 58, paddingHorizontal: 20, justifyContent: "center", alignItems: "flex-start" },
+  wordmark: { width: 128, height: 46 },
   hero: { paddingHorizontal: 20, paddingTop: 18, paddingBottom: 36, borderBottomWidth: 2, overflow: "visible" },
   days: {
     fontSize: 132,
