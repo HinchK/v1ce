@@ -19,14 +19,7 @@ import SobrietyCoin from "@/components/coin/SobrietyCoin";
 import ShapePicker from "@/components/customize/ShapePicker";
 import ColorPicker from "@/components/customize/ColorPicker";
 import NumberStylePicker from "@/components/customize/NumberStylePicker";
-import BackgroundPicker from "@/components/customize/BackgroundPicker";
-import MiniColorInput from "@/components/customize/MiniColorInput";
-import DrawShapePicker from "@/components/customize/DrawShapePicker";
-import { daysSince } from "@/constants/app";
-import { fonts } from "@/constants/typography";
 import { AsteriskStar, Crosshair, DiamondGrid, Starburst } from "@/components/ui/RetroAccents";
-import SobrietyCoin from "@/components/coin/SobrietyCoin";
-import { useTranslation } from "@/lib/i18n";
 import OutlineText from "@/components/ui/OutlineText";
 
 const ROTATING_WORDS = [
@@ -46,12 +39,6 @@ const ROTATING_WORDS = [
   "SOUVENIR",
   "OBJECT",
   "THINGY",
-];
-
-const ROTATING_WORDS = [
-  "COIN", "TOKEN", "CHIP", "V1CE", "JOURNEY", "PROGRESS", "BAGEL",
-  "SHINY CIRCLE", "NOT A NICKEL", "PIZZA FUND", "PET ROCK", "DOUBLOON",
-  "PAPERWEIGHT", "SOUVENIR", "OBJECT", "THINGY",
 ];
 
 function Switch({
@@ -139,18 +126,15 @@ export default function Customize() {
   const [saving, setSaving] = useState(false);
   const [color, setColor] = useState(profile?.coin_color || "#F5D680");
   const [shape, setShape] = useState(profile?.coin_shape || "circle");
-  const [style, setStyle] = useState(profile?.number_style || "classic");
+  const [numberStyle, setNumberStyle] = useState(profile?.number_style || "classic");
   const [displayName, setDisplayName] = useState(profile?.display_name || "");
   const [motto, setMotto] = useState(profile?.coin_motto || "");
   const [customShapePath, setCustomShapePath] = useState(profile?.coin_shape_path || "");
   const [imageOnlyMode, setImageOnlyMode] = useState(profile?.coin_image_only || false);
-  const [border, setBorder] = useState(profile?.coin_show_border ?? true);
+  const [showBorder, setShowBorder] = useState(profile?.coin_show_border ?? true);
   const [borderColor, setBorderColor] = useState(profile?.coin_border_color || "");
   const [numberColor, setNumberColor] = useState(profile?.coin_number_color || "");
-  const [background, setBackground] = useState(profile?.coin_background || "solid");
   const [coinPhoto, setCoinPhoto] = useState(profile?.coin_photo || "");
-  const [uploading, setUploading] = useState(false);
-  const [wordIndex, setWordIndex] = useState(0);
 
   useEffect(() => {
     const interval = setInterval(() => setWordIndex((index) => (index + 1) % ROTATING_WORDS.length), 1500);
@@ -159,7 +143,6 @@ export default function Customize() {
 
   useEffect(() => {
     if (!profile) return;
-    setColor(profile.coin_color || "#F5D680");
     setShape(profile.coin_shape || "circle");
     setColor(profile.coin_color || "#F5D680");
     setNumberStyle(profile.number_style || "classic");
@@ -257,26 +240,6 @@ export default function Customize() {
           <AsteriskStar size={36} color={colors.foreground} opacity={0.12} />
         </View>
         <Text style={[styles.sectionTitle, { color: colors.foreground, marginBottom: 16 }]}>{t("customize.shape")}</Text>
-        <ShapePicker value={shape} onChange={setShape} />
-        {shape === "drawn" ? (
-          <View style={{ marginTop: 16 }}>
-            <DrawShapePicker value={customShapePath} onChange={setCustomShapePath} />
-          </View>
-        ) : null}
-      </View>
-
-      <View style={[styles.section, { borderBottomColor: colors.foreground }]}>
-        <View style={styles.row}>
-          <Text style={[styles.sectionTitle, { color: colors.foreground }]}>{t("customize.coinPhoto")}</Text>
-          {!isPremium ? (
-            <View style={[styles.badge, { borderColor: colors.foreground }]}>
-              <Text style={[styles.badgeText, { color: colors.foreground }]}>PREMIUM</Text>
-            </View>
-          ) : null}
-        </View>
-        <Text style={[styles.sectionTitle, { color: colors.foreground }]}>
-          {t("customize.shape")}
-        </Text>
         <ShapePicker value={shape} onChange={setShape} />
       </View>
 
@@ -420,7 +383,8 @@ export default function Customize() {
 }
 
 const styles = StyleSheet.create({
-  page: { paddingBottom: 48 },
+  page: { paddingBottom: 64 },
+  loading: { flex: 1, alignItems: "center", justifyContent: "center" },
   header: { paddingHorizontal: 20, paddingTop: 32, paddingBottom: 24, borderBottomWidth: 2, position: "relative", overflow: "hidden" },
   headerBurst: { position: "absolute", right: 2, top: -8 },
   headerDiamond: { position: "absolute", right: 64, bottom: 2 },
@@ -429,23 +393,27 @@ const styles = StyleSheet.create({
   preview: { alignItems: "center", paddingVertical: 32, borderBottomWidth: 2 },
   section: { paddingHorizontal: 20, paddingVertical: 32, borderBottomWidth: 2, position: "relative", overflow: "hidden" },
   shapeAccent: { position: "absolute", right: 16, top: 16 },
-  sectionTitle: { fontSize: 26, fontFamily: fonts.display, letterSpacing: 1, marginBottom: 6 },
-  row: { flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 6 },
-  badge: { borderWidth: 1, paddingHorizontal: 6, paddingVertical: 2 },
-  badgeText: { fontSize: 8, fontFamily: fonts.bodyBold, letterSpacing: 1.2 },
-  sub: { fontSize: 13, lineHeight: 18, fontFamily: fonts.body, marginBottom: 14 },
-  dashed: { height: 52, borderWidth: 2, borderStyle: "dashed", alignItems: "center", justifyContent: "center" },
-  dashedText: { fontSize: 18, fontFamily: fonts.display, letterSpacing: 2 },
-  photoPreview: { width: 112, height: 112, alignSelf: "center", marginBottom: 14 },
-  removePhoto: { textAlign: "center", fontSize: 10, fontFamily: fonts.bodyBold, letterSpacing: 2, marginTop: 10 },
-  toggleRow: { flexDirection: "row", alignItems: "center", gap: 12 },
-  track: { width: 56, height: 32, borderRadius: 16, justifyContent: "center" },
-  knob: { width: 26, height: 26, borderRadius: 13 },
-  toggleLabel: { fontSize: 15, fontFamily: fonts.body },
-  micro: { fontSize: 9, letterSpacing: 1.6, fontFamily: fonts.bodyBold, marginBottom: 8 },
-  input: { borderWidth: 2, paddingHorizontal: 12, paddingVertical: 11, fontSize: 14, fontFamily: fonts.body, backgroundColor: "#FFFFFF" },
-  inner: { marginTop: 22, paddingTop: 22, borderTopWidth: 2 },
-  subhead: { fontSize: 20, fontFamily: fonts.display, letterSpacing: 1, marginBottom: 12 },
-  crosshair: { position: "absolute", right: 12, top: 18 },
-  save: { marginHorizontal: 20, marginTop: 26, height: 56, alignItems: "center", justifyContent: "center" },
+  decorTopRight: { position: "absolute", right: 16, top: 16 },
+  sectionTitle: { fontSize: 26, lineHeight: 30, fontFamily: fonts.display, letterSpacing: 1, marginBottom: 16 },
+  inlineTitle: { flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 6 },
+  badge: { borderWidth: 1, paddingHorizontal: 6, paddingVertical: 3 },
+  badgeText: { fontSize: 8, fontFamily: fonts.bodyBold, letterSpacing: 1.4 },
+  sub: { fontSize: 12, lineHeight: 18, fontFamily: fonts.body, marginBottom: 16 },
+  comingSoonButton: { height: 48, borderWidth: 2, borderStyle: "dashed", alignItems: "center", justifyContent: "center" },
+  comingSoonText: { fontSize: 18, fontFamily: fonts.display, letterSpacing: 2 },
+  switchRow: { flexDirection: "row", alignItems: "center", gap: 12 },
+  switchTrack: { width: 64, height: 40, borderRadius: 20, justifyContent: "center" },
+  switchKnob: { width: 32, height: 32, borderRadius: 16 },
+  switchLabel: { fontSize: 14, fontFamily: fonts.body },
+  micro: { fontSize: 10, letterSpacing: 2, fontFamily: fonts.bodyBold, marginBottom: 8 },
+  input: { width: "100%", borderWidth: 2, paddingHorizontal: 12, paddingVertical: 10, fontSize: 14, fontFamily: fonts.body, backgroundColor: "#FFFFFF" },
+  inner: { marginTop: 24, paddingTop: 24, borderTopWidth: 2 },
+  subhead: { fontSize: 19, fontFamily: fonts.display, letterSpacing: 1, marginBottom: 12 },
+  colorInputRow: { flexDirection: "row", alignItems: "center", gap: 8 },
+  colorDot: { width: 32, height: 32, borderRadius: 16, borderWidth: 2 },
+  colorInput: { flex: 1, height: 36, borderWidth: 2, backgroundColor: "#FFFFFF", paddingHorizontal: 8, fontFamily: fonts.body, fontSize: 12 },
+  autoText: { fontFamily: fonts.bodyBold, fontSize: 10, letterSpacing: 2 },
+  saveWrap: { paddingHorizontal: 20, paddingTop: 24 },
+  save: { height: 56, alignItems: "center", justifyContent: "center" },
+  saveText: { fontFamily: fonts.display, fontSize: 24, letterSpacing: 2 },
 });
