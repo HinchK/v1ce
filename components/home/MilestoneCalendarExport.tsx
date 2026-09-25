@@ -3,6 +3,8 @@ import { Share, StyleSheet, Text, TouchableOpacity } from "react-native";
 import { MILESTONES } from "@/constants/app";
 import { useColors } from "@/hooks/useColors";
 import { useTranslation } from "@/lib/i18n";
+import { fonts } from "@/constants/typography";
+import { Feather } from "@expo/vector-icons";
 
 function formatDate(date: Date) {
   const y = date.getUTCFullYear();
@@ -64,12 +66,13 @@ export default function MilestoneCalendarExport({
       onPress={() => Share.share({ message: generateICS(sobrietyDate, displayName), title: "v1ce-milestones.ics" })}
       style={[styles.button, { borderColor: colors.foreground }]}
     >
+      <Feather name="calendar" size={16} color={colors.foreground} />
       <Text style={[styles.label, { color: colors.foreground }]}>{t("calendar.addToCalendar")}</Text>
     </TouchableOpacity>
   );
 }
 
 const styles = StyleSheet.create({
-  button: { borderWidth: 2, height: 52, alignItems: "center", justifyContent: "center", marginTop: 8 },
-  label: { fontSize: 14, fontWeight: "800", letterSpacing: 2 },
+  button: { borderWidth: 2, height: 52, flexDirection: "row", gap: 8, alignItems: "center", justifyContent: "center", marginTop: 24 },
+  label: { fontSize: 18, fontFamily: fonts.display, letterSpacing: 2 },
 });

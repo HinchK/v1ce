@@ -2,6 +2,7 @@ import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { MILESTONES } from "@/constants/app";
 import { useColors } from "@/hooks/useColors";
+import { fonts } from "@/constants/typography";
 
 export default function MilestoneTimeline({ days }: { days: number }) {
   const colors = useColors();
@@ -31,6 +32,6 @@ const styles = StyleSheet.create({
   fill: { height: 4 },
   grid: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
   card: { width: "31.5%", minHeight: 92, borderWidth: 2, padding: 10 },
-  number: { fontSize: 23, fontWeight: "900" },
-  label: { fontSize: 9, fontWeight: "800", letterSpacing: 1.2, marginTop: 4 },
+  number: { fontSize: 23, fontFamily: fonts.display },
+  label: { fontSize: 9, fontFamily: fonts.bodyBold, letterSpacing: 1.2, marginTop: 4 },
 });

@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { getElapsed } from "@/constants/app";
 import { useColors } from "@/hooks/useColors";
+import { fonts } from "@/constants/typography";
 
 export default function SobrietyCounter({ sobrietyDate }: { sobrietyDate?: string }) {
   const colors = useColors();
@@ -31,6 +32,6 @@ export default function SobrietyCounter({ sobrietyDate }: { sobrietyDate?: strin
 const styles = StyleSheet.create({
   grid: { flexDirection: "row" },
   cell: { flex: 1, minHeight: 94, borderWidth: 2, marginRight: -2, alignItems: "center", justifyContent: "center" },
-  value: { fontSize: 29, fontWeight: "900", lineHeight: 31, fontFamily: "BebasNeue_400Regular" },
-  label: { fontSize: 9, fontWeight: "800", letterSpacing: 2, marginTop: 5 },
+  value: { fontSize: 29, lineHeight: 31, fontFamily: fonts.display },
+  label: { fontSize: 9, fontFamily: fonts.bodyBold, letterSpacing: 2, marginTop: 5 },
 });
