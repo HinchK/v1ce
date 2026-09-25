@@ -63,7 +63,7 @@ export default function CoinFront({
   const textColor = numberColor || coin.text;
   const outline = borderColor || coin.border;
   const safeShape = (SHAPES as readonly string[]).includes(shape) ? shape as Shape : "circle";
-  const style = NUMBER_STYLES[numberStyle as keyof typeof NUMBER_STYLES];
+  const style = NUMBER_STYLES[numberStyle as keyof typeof NUMBER_STYLES] || NUMBER_STYLES.big_shoulders_stencil;
   const fontFamily = style?.fontFamily ? FONT_FAMILIES[style.fontFamily] : undefined;
   const fontWeight = style?.fontWeight === "700" || style?.fontWeight === "600" ? "800" : "500";
   const photo = coinPhoto && /^https?:\/\//.test(coinPhoto) ? coinPhoto : undefined;
