@@ -36,8 +36,6 @@ type CoinFrontProps = {
   size?: number;
   displayName?: string;
   motto?: string;
-  periodLabel?: string;
-  periodValue?: number;
   customShapePath?: string;
   showBorder?: boolean;
   coinPhoto?: string;
@@ -54,8 +52,6 @@ export default function CoinFront({
   size = 240,
   displayName = "",
   motto = "",
-  periodLabel,
-  periodValue,
   customShapePath = "",
   showBorder = true,
   coinPhoto,
@@ -73,8 +69,6 @@ export default function CoinFront({
   const photo = coinPhoto && /^https?:\/\//.test(coinPhoto) ? coinPhoto : undefined;
   const borderWidth = showBorder ? 3 : 0;
   const number = Math.max(0, Math.floor(days)).toLocaleString();
-  const displayValue = periodValue ?? Math.max(0, Math.floor(days));
-  const displayLabel = periodLabel ?? "DAYS";
 
   const renderShape = () => {
     if (safeShape === "circle") return <Circle cx="50" cy="50" r="47" fill={coin.bg} stroke={outline} strokeWidth={borderWidth / 2} />;
@@ -91,15 +85,17 @@ export default function CoinFront({
           <SvgImage href={{ uri: photo }} x="4" y="4" width="92" height="92" preserveAspectRatio="xMidYMid slice" clipPath="url(#coinClip)" />
         ) : null}
         {!imageOnlyMode ? (
-          <Polygon points="18,15 82,15 86,19 14,19" fill={coin.accent} opacity={0.45} />
+          <>
+            <Polygon points="18,15 82,15 86,19 14,19" fill={coin.accent} opacity={0.45} />
+            <View />
+          </>
         ) : null}
       </Svg>
       {!imageOnlyMode ? (
         <View pointerEvents="none" style={styles.content}>
           <Text numberOfLines={1} adjustsFontSizeToFit style={[styles.number, { color: textColor, fontFamily, fontWeight: fontWeight as any }]}>
-            {periodValue == null ? number : String(displayValue)}
+            {number}
           </Text>
-          <Text numberOfLines={1} style={[styles.period, { color: textColor }]}>{displayLabel}</Text>
           {displayName ? <Text numberOfLines={1} style={[styles.name, { color: textColor }]}>{displayName}</Text> : null}
           {motto ? <Text numberOfLines={2} style={[styles.motto, { color: textColor }]}>{motto}</Text> : null}
         </View>
@@ -110,9 +106,8 @@ export default function CoinFront({
 
 const styles = StyleSheet.create({
   container: { alignItems: "center", justifyContent: "center" },
-  content: { position: "absolute", left: 12, right: 12, top: "27%", alignItems: "center", justifyContent: "center" },
+  content: { position: "absolute", left: 12, right: 12, top: "28%", alignItems: "center", justifyContent: "center" },
   number: { fontSize: 58, lineHeight: 64, letterSpacing: -1, textAlign: "center" },
-  period: { marginTop: 2, fontSize: 16, lineHeight: 20, fontWeight: "800", letterSpacing: 4, textAlign: "center" },
-  name: { marginTop: 12, fontSize: 12, lineHeight: 15, fontWeight: "800", letterSpacing: 1.5, textTransform: "uppercase", textAlign: "center" },
+  name: { marginTop: 4, fontSize: 12, lineHeight: 15, fontWeight: "800", letterSpacing: 1.5, textTransform: "uppercase", textAlign: "center" },
   motto: { marginTop: 5, fontSize: 10, lineHeight: 13, fontWeight: "600", textAlign: "center" },
 });
