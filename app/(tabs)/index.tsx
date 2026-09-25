@@ -3,6 +3,7 @@ import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-
 import { useRouter } from "expo-router";
 import { useAuth } from "@/context/AuthContext";
 import { useColors } from "@/hooks/useColors";
+import { useTheme } from "@/context/ThemeContext";
 import CoinFront from "@/components/CoinFront";
 import { supabase } from "@/lib/supabase";
 
@@ -21,6 +22,7 @@ function getElapsed(start?:string){
   const ms=Math.max(0,Date.now()-timestamp);
   return{days:Math.floor(ms/86400000),hours:Math.floor(ms/3600000)%24,minutes:Math.floor(ms/60000)%60,seconds:Math.floor(ms/1000)%60};
 }
+
 function formatDate(value?:string){
   if(!value)return "NOT SET";
   const date=new Date(value.includes("T")?value:value+"T00:00:00");
@@ -28,12 +30,33 @@ function formatDate(value?:string){
   return date.toLocaleDateString(undefined,{month:"short",day:"numeric",year:"numeric"}).toUpperCase();
 }
 
+function coinPeriod(days:number){
+  if(days>=365){
+    const years=Math.floor(days/365);
+    return {value:years,label:years===1?"YEAR":"YEARS"};
+  }
+  if(days>=30){
+    const months=Math.floor(days/30);
+    return {value:months,label:months===1?"MONTH":"MONTHS"};
+  }
+  return {value:days,label:"DAYS"};
+}
+
 export default function Home(){
-  const{profile}=useAuth();const c=useColors();const router=useRouter();
-  const[now,setNow]=useState(Date.now());const[substances,setSubstances]=useState<string[]>(profile?.substances||[]);const[other,setOther]=useState("");
+  const{profile}=useAuth();
+  const c=useColors();
+  const{isDark,toggleTheme}=useTheme();
+  const router=useRouter();
+  const[now,setNow]=useState(Date.now());
+  const[substances,setSubstances]=useState<string[]>(profile?.substances||[]);
+  const[other,setOther]=useState("");
+
   useEffect(()=>{const id=setInterval(()=>setNow(Date.now()),1000);return()=>clearInterval(id)},[]);
   useEffect(()=>{setSubstances(profile?.substances||[])},[profile?.substances]);
+
   const time=useMemo(()=>getElapsed(profile?.sobriety_date),[profile?.sobriety_date,now]);
+  const period=useMemo(()=>coinPeriod(time.days),[time.days]);
+
   const toggleSubstance=async(item:string)=>{
     if(!profile?.id)return;
     const next=substances.includes(item)?substances.filter(v=>v!==item):[...substances,item];
@@ -41,23 +64,55 @@ export default function Home(){
     const{error}=await supabase.from("profiles").update({substances:next}).eq("id",profile.id);
     if(error)setSubstances(substances);
   };
+
   const word=ROTATING_WORDS[Math.floor(now/1500)%ROTATING_WORDS.length];
 
-  return <ScrollView style={{backgroundColor:c.background}} contentContainerStyle={styles.page} showsVerticalScrollIndicator={false}>
-    <View style={[styles.hero,{borderBottomColor:c.foreground}]}>
-      <Text style={[styles.heroSmall,{color:c.foreground}]}>YOUR</Text>
-      <Text style={[styles.heroWord,{color:c.foreground}]}>{word}</Text>
-      <Pressable onPress={()=>router.push("/(tabs)/customize")} style={styles.customizeLink}><Text style={[styles.linkText,{color:c.foreground}]}>CUSTOMIZE →</Text></Pressable>
+  return <ScrollView style={[styles.page,{backgroundColor:c.background}]} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+    <View style={[styles.topBar,{borderBottomColor:c.border}]}>
+      <Text style={[styles.logo,{color:c.foreground}]}>V1CE</Text>
+      <View style={styles.topActions}>
+        <Pressable onPress={toggleTheme} accessibilityLabel="Toggle theme" style={[styles.iconButton,{borderColor:c.foreground}]}>
+          <Text style={[styles.iconText,{color:c.foreground}]}>{isDark?"○":"◐"}</Text>
+        </Pressable>
+        <Pressable onPress={()=>router.push("/(tabs)/profile")} accessibilityLabel="Open profile" style={[styles.versionButton,{borderColor:c.foreground}]}>
+          <Text style={[styles.versionText,{color:c.foreground}]}>V1</Text>
+        </Pressable>
+      </View>
     </View>
 
-    <View style={[styles.coinSection,{borderBottomColor:c.foreground}]}>
-      <CoinFront days={time.days} shape={profile?.coin_shape||"circle"} color={profile?.coin_color||"gold"} numberStyle={profile?.number_style||"classic"} size={292}
-        displayName={profile?.display_name||""} showBorder={profile?.coin_show_border??true} coinPhoto={profile?.coin_photo||undefined}
-        imageOnlyMode={profile?.coin_image_only||false} borderColor={profile?.coin_border_color||undefined} numberColor={profile?.coin_number_color||undefined}/>
+    <View style={styles.hero}>
+      <Text style={[styles.days,{color:c.foreground}]}>{time.days}</Text>
+      <View style={styles.daysLine}>
+        <Text style={[styles.daysLabel,{color:c.foreground}]}>DAYS</Text>
+        <Text style={[styles.word,{color:c.foreground}]}>{word}</Text>
+      </View>
     </View>
 
-    <View style={[styles.section,{borderBottomColor:c.foreground}]}>
-      <Text style={[styles.sectionTitle,{color:c.foreground}]}>TIME{"\n"}ELAPSED</Text>
+    <View style={styles.coinSection}>
+      <CoinFront
+        days={time.days}
+        shape={profile?.coin_shape||"circle"}
+        color={profile?.coin_color||"#D9D9D9"}
+        numberStyle={profile?.number_style||"classic"}
+        size={330}
+        displayName={profile?.display_name||""}
+        motto={profile?.coin_motto||""}
+        showBorder={profile?.coin_show_border??true}
+        coinPhoto={profile?.coin_photo||undefined}
+        imageOnlyMode={profile?.coin_image_only||false}
+        borderColor={profile?.coin_border_color||"#0A0A0A"}
+        numberColor={profile?.coin_number_color||"#0A0A0A"}
+        periodLabel={period.label}
+        periodValue={period.value}
+      />
+    </View>
+
+    <Pressable onPress={()=>router.push("/(tabs)/customize")} style={[styles.customize,{borderBottomColor:c.foreground}]}>
+      <Text style={[styles.customizeText,{color:c.foreground}]}>CUSTOMIZE →</Text>
+    </Pressable>
+
+    <View style={[styles.section,{borderTopColor:c.foreground,borderBottomColor:c.foreground}]}>
+      <Text style={[styles.sectionTitle,{color:c.foreground}]}>TIME ELAPSED</Text>
       <View style={styles.timeGrid}>
         <TimeCell value={time.days} label="DAYS" c={c}/><TimeCell value={time.hours} label="HRS" c={c}/>
         <TimeCell value={time.minutes} label="MIN" c={c}/><TimeCell value={time.seconds} label="SEC" c={c}/>
@@ -65,24 +120,26 @@ export default function Home(){
     </View>
 
     <View style={[styles.section,{borderBottomColor:c.foreground}]}>
-      <Text style={[styles.eyebrow,{color:c.mutedForeground}]}>Sober Since</Text>
+      <Text style={[styles.eyebrow,{color:c.mutedForeground}]}>SOBER SINCE</Text>
       <Text style={[styles.date,{color:c.foreground}]}>{formatDate(profile?.sobriety_date)}</Text>
     </View>
 
     <View style={[styles.section,{borderBottomColor:c.foreground}]}>
-      <Text style={[styles.sectionTitle,{color:c.foreground}]}>WHAT'S{"\n"}YOUR DOC?</Text>
+      <Text style={[styles.sectionTitle,{color:c.foreground}]}>WHAT'S YOUR DOC?</Text>
       <Text style={[styles.subtext,{color:c.mutedForeground}]}>WHAT YOU'RE STAYING FREE FROM</Text>
       <View style={styles.chips}>{SUBSTANCES.map(item=>{
         const active=substances.includes(item);
         return <Pressable key={item} onPress={()=>toggleSubstance(item)} style={[styles.chip,{backgroundColor:active?c.foreground:c.background,borderColor:c.foreground}]}>
           <Text style={{color:active?c.background:c.foreground,fontSize:11,fontWeight:"700",letterSpacing:1}}>{item.toUpperCase()}</Text>
         </Pressable>
-      })}</View>{substances.includes("Other")&&<TextInput value={other} onChangeText={setOther} placeholder="What else?" placeholderTextColor={c.mutedForeground} style={[styles.otherInput,{borderColor:c.foreground,color:c.foreground}]}/>} 
+      })}</View>
+      {substances.includes("Other")&&<TextInput value={other} onChangeText={setOther} placeholder="What else?" placeholderTextColor={c.mutedForeground} style={[styles.otherInput,{borderColor:c.foreground,color:c.foreground}]}/>}
     </View>
 
     <View style={[styles.section,{borderBottomColor:c.foreground}]}>
-      <Text style={[styles.sectionTitle,{color:c.foreground}]}>YOUR{"\n"}MILESTONES.</Text>
-      <View style={styles.progressTrack}><View style={[styles.progressFill,{backgroundColor:c.foreground,width:`${Math.min(100,(time.days/1825)*100)}%`}]}/></View><View style={styles.milestones}>{MILESTONES.map(item=>{
+      <Text style={[styles.sectionTitle,{color:c.foreground}]}>YOUR MILESTONES.</Text>
+      <View style={styles.progressTrack}><View style={[styles.progressFill,{backgroundColor:c.foreground,width:`${Math.min(100,(time.days/1825)*100)}%`}]}/></View>
+      <View style={styles.milestones}>{MILESTONES.map(item=>{
         const reached=time.days>=item.days;
         return <View key={item.days} style={[styles.milestone,{borderColor:c.foreground,opacity:reached?1:.42}]}>
           <Text style={[styles.milestoneNumber,{color:c.foreground}]}>{item.days}</Text>
@@ -92,15 +149,48 @@ export default function Home(){
     </View>
   </ScrollView>;
 }
+
 function TimeCell({value,label,c}:{value:number;label:string;c:any}){
-  return <View style={[styles.timeCell,{borderColor:c.foreground}]}><Text style={[styles.timeValue,{color:c.foreground}]}>{String(value).padStart(2,"0")}</Text><Text style={[styles.timeLabel,{color:c.mutedForeground}]}>{label}</Text></View>;
+  return <View style={[styles.timeCell,{borderColor:c.foreground}]}>
+    <Text style={[styles.timeValue,{color:c.foreground}]}>{String(value).padStart(2,"0")}</Text>
+    <Text style={[styles.timeLabel,{color:c.mutedForeground}]}>{label}</Text>
+  </View>;
 }
+
 const styles=StyleSheet.create({
- page:{paddingBottom:80},hero:{paddingHorizontal:20,paddingTop:28,paddingBottom:20,borderBottomWidth:2},heroSmall:{fontSize:34,lineHeight:34,fontWeight:"900",letterSpacing:-1},heroWord:{fontSize:58,lineHeight:58,fontWeight:"900",letterSpacing:-2},
- customizeLink:{marginTop:16,alignSelf:"flex-start"},linkText:{fontSize:12,fontWeight:"800",letterSpacing:2},coinSection:{minHeight:350,alignItems:"center",justifyContent:"center",paddingVertical:28,borderBottomWidth:2},
- section:{paddingHorizontal:20,paddingVertical:28,borderBottomWidth:2},sectionTitle:{fontSize:32,lineHeight:29,fontWeight:"900",letterSpacing:-1},eyebrow:{fontSize:11,fontWeight:"800",letterSpacing:3,marginBottom:8},
- date:{fontSize:28,lineHeight:32,fontWeight:"800",letterSpacing:-.5},subtext:{marginTop:10,fontSize:10,letterSpacing:2,fontWeight:"700"},timeGrid:{flexDirection:"row",marginTop:20},
- timeCell:{flex:1,minHeight:94,borderWidth:2,marginRight:-2,alignItems:"center",justifyContent:"center"},timeValue:{fontSize:29,fontWeight:"900",lineHeight:31},timeLabel:{fontSize:9,fontWeight:"800",letterSpacing:2,marginTop:5},
- chips:{flexDirection:"row",flexWrap:"wrap",gap:8,marginTop:18},chip:{borderWidth:2,paddingHorizontal:10,paddingVertical:9},milestones:{marginTop:18,flexDirection:"row",flexWrap:"wrap",gap:8},
- milestone:{width:"31.5%",minHeight:92,borderWidth:2,padding:10},otherInput:{borderWidth:2,padding:12,marginTop:12,fontSize:14},progressTrack:{height:8,borderWidth:2,borderColor:"#0A0A0A",marginTop:18,marginBottom:16},progressFill:{height:4},milestoneNumber:{fontSize:23,fontWeight:"900"},milestoneLabel:{fontSize:9,fontWeight:"800",letterSpacing:1.2,marginTop:4}
+  page:{flex:1},
+  content:{paddingBottom:100},
+  topBar:{height:64,paddingHorizontal:20,flexDirection:"row",alignItems:"center",justifyContent:"space-between",borderBottomWidth:2},
+  logo:{fontSize:30,fontWeight:"900",letterSpacing:-2},
+  topActions:{flexDirection:"row",alignItems:"center",gap:10},
+  iconButton:{width:40,height:40,borderWidth:2,alignItems:"center",justifyContent:"center"},
+  iconText:{fontSize:22,fontWeight:"700"},
+  versionButton:{width:42,height:42,borderWidth:2,alignItems:"center",justifyContent:"center"},
+  versionText:{fontSize:12,fontWeight:"900"},
+  hero:{paddingHorizontal:20,paddingTop:34,paddingBottom:18},
+  days:{fontSize:132,lineHeight:126,fontWeight:"900",letterSpacing:-7},
+  daysLine:{flexDirection:"row",alignItems:"baseline",gap:12},
+  daysLabel:{fontSize:38,lineHeight:42,fontWeight:"900",letterSpacing:-1},
+  word:{fontSize:36,lineHeight:40,fontWeight:"300",fontStyle:"italic",letterSpacing:-1},
+  coinSection:{alignItems:"center",justifyContent:"center",paddingVertical:24},
+  customize:{alignSelf:"center",borderBottomWidth:2,paddingBottom:3,marginBottom:28},
+  customizeText:{fontSize:15,fontWeight:"500",letterSpacing:2},
+  section:{paddingHorizontal:20,paddingVertical:28,borderTopWidth:2,borderBottomWidth:2},
+  sectionTitle:{fontSize:30,lineHeight:34,fontWeight:"900",letterSpacing:-.5},
+  eyebrow:{fontSize:11,fontWeight:"800",letterSpacing:3,marginBottom:8},
+  date:{fontSize:28,lineHeight:32,fontWeight:"800"},
+  subtext:{marginTop:10,fontSize:10,letterSpacing:2,fontWeight:"700"},
+  timeGrid:{flexDirection:"row",marginTop:20},
+  timeCell:{flex:1,minHeight:94,borderWidth:2,marginRight:-2,alignItems:"center",justifyContent:"center"},
+  timeValue:{fontSize:29,fontWeight:"900",lineHeight:31},
+  timeLabel:{fontSize:9,fontWeight:"800",letterSpacing:2,marginTop:5},
+  chips:{flexDirection:"row",flexWrap:"wrap",gap:8,marginTop:18},
+  chip:{borderWidth:2,paddingHorizontal:10,paddingVertical:9},
+  milestones:{marginTop:18,flexDirection:"row",flexWrap:"wrap",gap:8},
+  milestone:{width:"31.5%",minHeight:92,borderWidth:2,padding:10},
+  otherInput:{borderWidth:2,padding:12,marginTop:12,fontSize:14},
+  progressTrack:{height:8,borderWidth:2,borderColor:"#0A0A0A",marginTop:18,marginBottom:16},
+  progressFill:{height:4},
+  milestoneNumber:{fontSize:23,fontWeight:"900"},
+  milestoneLabel:{fontSize:9,fontWeight:"800",letterSpacing:1.2,marginTop:4},
 });
