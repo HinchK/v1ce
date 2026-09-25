@@ -81,7 +81,7 @@ export default function CoinBack({
           </>
         )}
       </Svg>
-      <View pointerEvents="none" style={[styles.content, { width: size * 0.72 }]}>
+      <View style={[styles.content, { width: size * 0.72, pointerEvents: "none" }]}>
         <Text style={[styles.brand, { color: colors.text, fontSize: size * 0.055 }]}>V1CE</Text>
         {imageOnlyMode ? (
           <>

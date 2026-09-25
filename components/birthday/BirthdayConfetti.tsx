@@ -21,7 +21,7 @@ export default function BirthdayConfetti() {
   }, []);
   const t = Date.now();
   return (
-    <View pointerEvents="none" style={StyleSheet.absoluteFill}>
+    <View style={[StyleSheet.absoluteFill, { pointerEvents: "none" }]}>
       {pieces.map((p, i) => {
         const y = ((t / 12 + p.delay) % 360);
         return (
