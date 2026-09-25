@@ -13,13 +13,6 @@ import BirthdayTag from "@/components/birthday/BirthdayTag";
 import GifterBadge from "@/components/GifterBadge";
 import ArcadeCabinet from "@/components/ui/ArcadeCabinet";
 
-const MOCK_FRIENDS = [
-  { id: "mock-1", name: "Alex", days: 120 },
-  { id: "mock-2", name: "Sam", days: 45 },
-  { id: "mock-3", name: "Riley", days: 365 },
-  { id: "mock-4", name: "Jordan", days: 12 },
-];
-
 const SOURCE_GAMES = [
   { title: "COIN FLIP", subtitle: "CALL IT", route: "/game" },
   { title: "SOBER STREAK", subtitle: "KEEP THE RUN", route: "/game" },
@@ -80,8 +73,6 @@ export default function Lounge() {
 
   const friendName = (f: FriendConnection) =>
     f.requester_id === user?.id ? f.recipient_name || f.recipient_email || "Friend" : f.requester_name || f.requester_email || "Friend";
-  const visibleFriends = friends.length > 0 ? friends : [];
-  const displayFriends = visibleFriends.length > 0 ? visibleFriends : MOCK_FRIENDS.map((f) => ({ mock: true, ...f }));
   const isBirthday =
     profile?.birthday &&
     new Date(profile.birthday).getMonth() === new Date().getMonth() &&
@@ -100,23 +91,27 @@ export default function Lounge() {
       ) : null}
 
       <Text style={[styles.section, { color: colors.foreground }]}>{t("lounge.friends")}</Text>
-      {displayFriends.map((item: any, index: number) => {
-        const name = item.mock ? item.name : friendName(item);
-        const locked = !profile?.is_premium && index > 0;
-        return (
-          <TouchableOpacity
-            key={item.id}
-            disabled={locked}
-            onPress={() => setPreview({ name, days: item.days || 1 })}
-            style={[styles.friend, { borderColor: colors.border, opacity: locked ? 0.45 : 1 }]}
-          >
-            <LofiAvatar seed={name} color={colors.foreground} />
-            <Text style={{ color: colors.foreground, fontFamily: fonts.extraBold, flex: 1 }}>{name}</Text>
-            {profile?.gifted_count ? <GifterBadge giftedCount={profile.gifted_count} size="sm" /> : null}
-            {locked ? <Text style={{ color: colors.mutedForeground, fontFamily: fonts.extraBold }}>LOCKED</Text> : null}
-          </TouchableOpacity>
-        );
-      })}
+      {friends.length === 0 ? (
+        <Text style={[styles.empty, { color: colors.mutedForeground }]}>{t("friends.noFriendsYet")}</Text>
+      ) : (
+        friends.map((item, index) => {
+          const name = friendName(item);
+          const locked = !profile?.is_premium && index > 0;
+          return (
+            <TouchableOpacity
+              key={item.id}
+              disabled={locked}
+              onPress={() => setPreview({ name, days: 1 })}
+              style={[styles.friend, { borderColor: colors.border, opacity: locked ? 0.45 : 1 }]}
+            >
+              <LofiAvatar seed={name} color={colors.foreground} />
+              <Text style={{ color: colors.foreground, fontFamily: fonts.extraBold, flex: 1 }}>{name}</Text>
+              {profile?.gifted_count ? <GifterBadge giftedCount={profile.gifted_count} size="sm" /> : null}
+              {locked ? <Text style={{ color: colors.mutedForeground, fontFamily: fonts.extraBold }}>LOCKED</Text> : null}
+            </TouchableOpacity>
+          );
+        })
+      )}
 
       <Text style={[styles.section, { color: colors.foreground }]}>GAMES</Text>
       <View style={styles.arcadeRow}>
@@ -208,6 +203,7 @@ const styles = StyleSheet.create({
   container: { paddingHorizontal: 20, paddingTop: 28, paddingBottom: 48 },
   title: { fontSize: 64, lineHeight: 58, fontFamily: fonts.display, letterSpacing: 0.5 },
   section: { fontSize: 18, fontFamily: fonts.black, letterSpacing: 2, marginTop: 28, marginBottom: 12 },
+  empty: { fontSize: 14, lineHeight: 20, fontFamily: fonts.body },
   friend: { height: 52, borderWidth: 1, flexDirection: "row", alignItems: "center", padding: 8, marginBottom: 6, gap: 10 },
   bdayBanner: { borderWidth: 2, padding: 12, marginTop: 18, flexDirection: "row", gap: 10, alignItems: "center" },
   locked: { padding: 18, alignItems: "center", gap: 12 },
