@@ -1,6 +1,6 @@
 import { BlurView } from "expo-blur";
 import { Tabs } from "expo-router";
-import { Icon, Label, NativeTabs } from "expo-router/unstable-native-tabs";
+import { NativeTabs } from "expo-router/unstable-native-tabs";
 import { SymbolView } from "expo-symbols";
 import { Feather } from "@expo/vector-icons";
 import React from "react";
@@ -11,24 +11,24 @@ function NativeTabLayout() {
   return (
     <NativeTabs>
       <NativeTabs.Trigger name="index">
-        <Icon sf={{ default: "house", selected: "house.fill" }} />
-        <Label>HOME</Label>
+        <NativeTabs.Trigger.Icon sf={{ default: "house", selected: "house.fill" }} />
+        <NativeTabs.Trigger.Label>HOME</NativeTabs.Trigger.Label>
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="customize">
-        <Icon sf={{ default: "circle", selected: "circle.fill" }} />
-        <Label>CUSTOMIZE</Label>
+        <NativeTabs.Trigger.Icon sf={{ default: "circle", selected: "circle.fill" }} />
+        <NativeTabs.Trigger.Label>CUSTOMIZE</NativeTabs.Trigger.Label>
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="lounge">
-        <Icon sf={{ default: "person.2", selected: "person.2.fill" }} />
-        <Label>LOUNGE</Label>
+        <NativeTabs.Trigger.Icon sf={{ default: "person.2", selected: "person.2.fill" }} />
+        <NativeTabs.Trigger.Label>LOUNGE</NativeTabs.Trigger.Label>
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="friends">
-        <Icon sf={{ default: "person.2", selected: "person.2.fill" }} />
-        <Label>FRIENDS</Label>
+        <NativeTabs.Trigger.Icon sf={{ default: "person.2", selected: "person.2.fill" }} />
+        <NativeTabs.Trigger.Label>FRIENDS</NativeTabs.Trigger.Label>
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="share">
-        <Icon sf={{ default: "square.and.arrow.up", selected: "square.and.arrow.up.fill" }} />
-        <Label>SHARE</Label>
+        <NativeTabs.Trigger.Icon sf={{ default: "square.and.arrow.up", selected: "square.and.arrow.up.fill" }} />
+        <NativeTabs.Trigger.Label>SHARE</NativeTabs.Trigger.Label>
       </NativeTabs.Trigger>
     </NativeTabs>
   );
