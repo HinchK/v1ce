@@ -1,6 +1,7 @@
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useColors } from "@/hooks/useColors";
+import { fonts } from "@/constants/typography";
 
 export default function VictoryScreen({
   score,
@@ -21,7 +22,7 @@ export default function VictoryScreen({
         <Text style={styles.white}>SHARE WITH A FRIEND</Text>
       </TouchableOpacity>
       <TouchableOpacity onPress={onRetry} style={styles.button}>
-        <Text style={{ color: "#000", fontWeight: "900" }}>RETRY →</Text>
+        <Text style={{ color: "#000", fontFamily: fonts.black }}>RETRY →</Text>
       </TouchableOpacity>
     </View>
   );

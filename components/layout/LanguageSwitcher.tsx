@@ -2,6 +2,7 @@ import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { LANGUAGES, useTranslation } from "@/lib/i18n";
 import { useColors } from "@/hooks/useColors";
+import { fonts } from "@/constants/typography";
 
 export default function LanguageSwitcher() {
   const { lang, setLang } = useTranslation();
@@ -14,7 +15,7 @@ export default function LanguageSwitcher() {
           onPress={() => setLang(item.code)}
           style={[styles.chip, { borderColor: lang === item.code ? colors.foreground : colors.border }]}
         >
-          <Text style={{ color: colors.foreground, fontSize: 10, fontWeight: "800" }}>{item.label}</Text>
+          <Text style={{ color: colors.foreground, fontSize: 10, fontFamily: fonts.bodyBold }}>{item.label}</Text>
         </TouchableOpacity>
       ))}
     </View>

@@ -1,6 +1,7 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { useColors } from "@/hooks/useColors";
+import { fonts } from "@/constants/typography";
 
 const MOCK = [
   { name: "YOU", score: 0, medal: "—" },
@@ -18,8 +19,8 @@ export default function GameLeaderboard({ score = 0 }: { score?: number }) {
       {rows.map((row) => (
         <View key={row.name} style={styles.row}>
           <Text style={{ color: colors.foreground, width: 28 }}>{row.medal}</Text>
-          <Text style={{ color: colors.foreground, flex: 1, fontWeight: "800" }}>{row.name}</Text>
-          <Text style={{ color: colors.mutedForeground, fontWeight: "700" }}>{row.score}</Text>
+          <Text style={{ color: colors.foreground, flex: 1, fontFamily: fonts.bodyBold }}>{row.name}</Text>
+          <Text style={{ color: colors.mutedForeground, fontFamily: fonts.bodyBold }}>{row.score}</Text>
         </View>
       ))}
     </View>
@@ -28,6 +29,6 @@ export default function GameLeaderboard({ score = 0 }: { score?: number }) {
 
 const styles = StyleSheet.create({
   wrap: { borderWidth: 2, padding: 14, marginTop: 16 },
-  title: { fontSize: 12, fontWeight: "900", letterSpacing: 2, marginBottom: 10 },
+  title: { fontSize: 12, fontFamily: fonts.black, letterSpacing: 2, marginBottom: 10 },
   row: { flexDirection: "row", paddingVertical: 6 },
 });

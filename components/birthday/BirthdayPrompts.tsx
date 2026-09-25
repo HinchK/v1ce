@@ -1,6 +1,7 @@
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useColors } from "@/hooks/useColors";
+import { fonts } from "@/constants/typography";
 
 const PROMPTS = [
   "Happy birthday — proud of you.",
@@ -18,7 +19,7 @@ export default function BirthdayPrompts({ onSelect }: { onSelect: (text: string)
           onPress={() => onSelect(prompt)}
           style={[styles.chip, { borderColor: colors.foreground }]}
         >
-          <Text style={{ color: colors.foreground, fontSize: 12, fontWeight: "700" }}>{prompt}</Text>
+          <Text style={{ color: colors.foreground, fontSize: 12, fontFamily: fonts.bodyBold }}>{prompt}</Text>
         </TouchableOpacity>
       ))}
     </View>

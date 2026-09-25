@@ -5,6 +5,7 @@ import BirthdayConfetti from "@/components/birthday/BirthdayConfetti";
 import BirthdayPrompts from "@/components/birthday/BirthdayPrompts";
 import BirthdayStylePicker from "@/components/birthday/BirthdayStylePicker";
 import { useColors } from "@/hooks/useColors";
+import { fonts } from "@/constants/typography";
 
 export default function BirthdayCard({
   name,
@@ -36,7 +37,7 @@ export default function BirthdayCard({
             }}
           />
           <TouchableOpacity onPress={onClose} style={[styles.button, { backgroundColor: colors.foreground }]}>
-            <Text style={{ color: colors.background, fontWeight: "900", letterSpacing: 2 }}>CLOSE</Text>
+            <Text style={{ color: colors.background, fontFamily: fonts.black, letterSpacing: 2 }}>CLOSE</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -47,7 +48,7 @@ export default function BirthdayCard({
 const styles = StyleSheet.create({
   overlay: { flex: 1, backgroundColor: "rgba(0,0,0,0.55)", justifyContent: "center", padding: 20 },
   card: { borderWidth: 2, padding: 20, overflow: "hidden" },
-  kicker: { fontSize: 12, fontWeight: "800", letterSpacing: 4 },
-  title: { fontSize: 36, fontWeight: "900", lineHeight: 38, marginTop: 8, marginBottom: 8 },
+  kicker: { fontSize: 12, fontFamily: fonts.bodyBold, letterSpacing: 4 },
+  title: { fontSize: 36, fontFamily: fonts.display, lineHeight: 38, marginTop: 8, marginBottom: 8 },
   button: { height: 52, alignItems: "center", justifyContent: "center", marginTop: 18 },
 });

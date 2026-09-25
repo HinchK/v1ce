@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useColors } from "@/hooks/useColors";
+import { fonts } from "@/constants/typography";
 
 export default function DrawShapePicker({
   value,
@@ -20,7 +21,7 @@ export default function DrawShapePicker({
 
   return (
     <View>
-      <Text style={{ color: colors.mutedForeground, fontSize: 11, marginBottom: 8 }}>
+      <Text style={{ color: colors.mutedForeground, fontSize: 11, fontFamily: fonts.body, marginBottom: 8 }}>
         Tap the pad to draw a custom polygon for your coin.
       </Text>
       <View
@@ -41,7 +42,7 @@ export default function DrawShapePicker({
           onChange("");
         }}
       >
-        <Text style={{ color: colors.mutedForeground, fontWeight: "800", marginTop: 8, letterSpacing: 1 }}>CLEAR</Text>
+        <Text style={{ color: colors.mutedForeground, fontFamily: fonts.bodyBold, marginTop: 8, letterSpacing: 1 }}>CLEAR</Text>
       </TouchableOpacity>
     </View>
   );

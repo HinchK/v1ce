@@ -2,6 +2,7 @@ import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import Svg, { Polygon } from "react-native-svg";
 import { useColors } from "@/hooks/useColors";
+import { fonts } from "@/constants/typography";
 
 export default function GifterBadge({ giftedCount = 0, size = "md" }: { giftedCount?: number; size?: "sm" | "md" | "lg" }) {
   const colors = useColors();
@@ -19,5 +20,5 @@ export default function GifterBadge({ giftedCount = 0, size = "md" }: { giftedCo
 
 const styles = StyleSheet.create({
   wrap: { alignItems: "center", justifyContent: "center" },
-  count: { fontWeight: "900", zIndex: 1 },
+  count: { fontFamily: fonts.bodyBold, zIndex: 1 },
 });

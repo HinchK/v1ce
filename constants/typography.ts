@@ -4,6 +4,7 @@ export const fonts = {
   bodyMedium: "SpaceGrotesk_500Medium",
   bodySemi: "SpaceGrotesk_600SemiBold",
   bodyBold: "SpaceGrotesk_700Bold",
+  mono: "CourierPrime_700Bold",
   extraBold: "Inter_800ExtraBold",
   black: "Inter_900Black",
   italic: "Inter_800ExtraBold_Italic",

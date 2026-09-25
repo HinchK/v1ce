@@ -3,6 +3,7 @@ import { StyleSheet, Text, View } from "react-native";
 import Svg, { Circle, Image, Path, Polygon } from "react-native-svg";
 import { COIN_COLORS, NUMBER_STYLES, resolveCoinColor } from "@/constants/coin";
 import { CoinBackground } from "@/components/coin/CoinBackground";
+import { fonts } from "@/constants/typography";
 
 export { COIN_COLORS, NUMBER_STYLES };
 
@@ -166,6 +167,6 @@ const styles=StyleSheet.create({
   wrap:{alignItems:"center",justifyContent:"center",aspectRatio:1},
   content:{position:"absolute",alignItems:"center",justifyContent:"center",alignSelf:"center"},
   number:{includeFontPadding:false,textAlign:"center"},
-  label:{fontWeight:"400",letterSpacing:3,opacity:.7,textAlign:"center",marginTop:2},
-  name:{fontWeight:"500",letterSpacing:2,opacity:.4,marginTop:8,textAlign:"center",textTransform:"uppercase"},
+  label:{letterSpacing:3,opacity:.7,textAlign:"center",marginTop:2},
+  name:{fontFamily:fonts.bodyMedium,letterSpacing:2,opacity:.4,marginTop:8,textAlign:"center",textTransform:"uppercase"},
 });

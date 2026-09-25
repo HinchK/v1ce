@@ -3,6 +3,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { BACKGROUNDS } from "@/constants/app";
 import { useColors } from "@/hooks/useColors";
 import { CoinBackground } from "@/components/coin/CoinBackground";
+import { fonts } from "@/constants/typography";
 
 export default function BackgroundPicker({ value, onChange }: { value: string; onChange: (value: string) => void }) {
   const colors = useColors();
@@ -17,7 +18,7 @@ export default function BackgroundPicker({ value, onChange }: { value: string; o
           <View style={styles.preview}>
             <CoinBackground kind={item} size={36} />
           </View>
-          <Text style={{ color: colors.foreground, fontSize: 9, fontWeight: "800", letterSpacing: 1 }}>{item.toUpperCase()}</Text>
+          <Text style={{ color: colors.foreground, fontSize: 9, fontFamily: fonts.bodyBold, letterSpacing: 1 }}>{item.toUpperCase()}</Text>
         </TouchableOpacity>
       ))}
     </View>
