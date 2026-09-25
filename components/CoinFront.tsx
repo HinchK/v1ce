@@ -155,7 +155,7 @@ export default function CoinFront({
             <Text numberOfLines={1} style={[styles.name,{color:resolvedNumberColor,fontSize:size*.04,maxWidth}]}>{displayName}</Text>
           ) : null}
         </View>
-      ) : null}
+      )}
     </View>
   );
 
