@@ -25,6 +25,12 @@ import { Raleway_700Bold } from "@expo-google-fonts/raleway";
 import { Fraunces_700Bold } from "@expo-google-fonts/fraunces";
 import { Caveat_400Regular } from "@expo-google-fonts/caveat";
 import { DynaPuff_600SemiBold } from "@expo-google-fonts/dynapuff";
+import {
+  SpaceGrotesk_400Regular,
+  SpaceGrotesk_500Medium,
+  SpaceGrotesk_600SemiBold,
+  SpaceGrotesk_700Bold,
+} from "@expo-google-fonts/space-grotesk";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
@@ -39,6 +45,7 @@ import { ThemeProvider } from "@/context/ThemeContext";
 import { CoinProvider } from "@/context/CoinContext";
 import { PremiumProvider } from "@/context/PremiumContext";
 import { LanguageProvider } from "@/lib/i18n";
+import AppChrome from "@/components/layout/AppChrome";
 
 SplashScreen.preventAutoHideAsync();
 const queryClient = new QueryClient();
@@ -48,7 +55,13 @@ function RootLayoutNav() {
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="index" />
       <Stack.Screen name="onboarding" />
-      <Stack.Screen name="(tabs)" />
+      <Stack.Screen
+        name="(tabs)"
+        options={{
+          headerShown: true,
+          header: () => <AppChrome showNav={false} />,
+        }}
+      />
       <Stack.Screen name="game" />
       <Stack.Screen name="widget" />
       <Stack.Screen name="coin-widget" />
@@ -83,6 +96,10 @@ export default function RootLayout() {
     Fraunces_700Bold,
     Caveat_400Regular,
     DynaPuff_600SemiBold,
+    SpaceGrotesk_400Regular,
+    SpaceGrotesk_500Medium,
+    SpaceGrotesk_600SemiBold,
+    SpaceGrotesk_700Bold,
     BigShouldersStencilDisplayRegular: require("../assets/fonts/BigShouldersStencilDisplay-Regular.ttf"),
   });
 

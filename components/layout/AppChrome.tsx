@@ -32,7 +32,7 @@ function ThemeGlyph({ color, fill }: { color: string; fill: string }) {
   );
 }
 
-export default function AppChrome() {
+export default function AppChrome({ showNav = true }: { showNav?: boolean }) {
   const colors = useColors();
   const { isDark, toggleTheme } = useTheme();
   const { lang, setLang, t } = useTranslation();
@@ -75,20 +75,22 @@ export default function AppChrome() {
         </View>
       </View>
 
-      <View style={[styles.nav, { borderBottomColor: colors.foreground }]}>
-        {TABS.map((tab) => {
-          const active = tab.path === "/" ? pathname === "/" || pathname === "/index" : pathname === tab.path;
-          return (
-            <TouchableOpacity
-              key={tab.path}
-              onPress={() => go(tab.path)}
-              style={[styles.tab, active && { backgroundColor: colors.foreground }]}
-            >
-              <Text style={[styles.tabLabel, { color: active ? colors.background : colors.foreground }]}>{t(tab.key)}</Text>
-            </TouchableOpacity>
-          );
-        })}
-      </View>
+      {showNav ? (
+        <View style={[styles.nav, { borderBottomColor: colors.foreground }]}>
+          {TABS.map((tab) => {
+            const active = tab.path === "/" ? pathname === "/" || pathname === "/index" : pathname === tab.path;
+            return (
+              <TouchableOpacity
+                key={tab.path}
+                onPress={() => go(tab.path)}
+                style={[styles.tab, active && { backgroundColor: colors.foreground }]}
+              >
+                <Text style={[styles.tabLabel, { color: active ? colors.background : colors.foreground }]}>{t(tab.key)}</Text>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+      ) : null}
 
       <Modal visible={langOpen} transparent animationType="fade" onRequestClose={() => setLangOpen(false)}>
         <Pressable style={styles.menuBackdrop} onPress={() => setLangOpen(false)}>
@@ -148,7 +150,7 @@ const styles = StyleSheet.create({
     zIndex: 2,
   },
   logoWrap: { position: "absolute", left: 0, right: 0, top: 0, bottom: 0, alignItems: "center", justifyContent: "center" },
-  logo: { height: 22, width: 86 },
+  logo: { height: 28, width: 112 },
   right: { marginLeft: "auto", flexDirection: "row", alignItems: "center", gap: 8, zIndex: 3 },
   iconBtn: { padding: 6, zIndex: 3 },
   v1: { borderWidth: 1.5, paddingHorizontal: 6, paddingVertical: 2, minWidth: 28, alignItems: "center" },

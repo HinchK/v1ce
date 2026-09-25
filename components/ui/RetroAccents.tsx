@@ -1,48 +1,65 @@
 import React from "react";
-import Svg, { Circle, Path, Polygon } from "react-native-svg";
+import Svg, { Circle, Line, Path, Polygon } from "react-native-svg";
 
 type AccentProps = { size?: number; color?: string; opacity?: number };
 
 export function Starburst({ size = 64, color = "#0A0A0A", opacity = 0.08 }: AccentProps) {
   return (
     <Svg width={size} height={size} viewBox="0 0 100 100" opacity={opacity}>
-      {Array.from({ length: 12 }).map((_, i) => {
-        const a = (i * Math.PI) / 6;
-        return <Path key={i} d={`M50 50 L${50 + Math.cos(a) * 48} ${50 + Math.sin(a) * 48}`} stroke={color} strokeWidth="2" />;
-      })}
+      <Polygon
+        fill={color}
+        points="50,4 54.14,34.55 73,10.16 61.31,38.69 89.84,27 65.45,45.86 96,50 65.45,54.14 89.84,73 61.31,61.31 73,89.84 54.14,65.45 50,96 45.86,65.45 27,89.84 38.69,61.31 10.16,73 34.55,54.14 4,50 34.55,45.86 10.16,27 38.69,38.69 27,10.16 45.86,34.55"
+      />
     </Svg>
   );
 }
 
 export function DiamondGrid({ size = 50, color = "#0A0A0A", opacity = 0.1 }: AccentProps) {
   return (
-    <Svg width={size} height={size} viewBox="0 0 50 50" opacity={opacity}>
-      <Path d="M25 2 L48 25 L25 48 L2 25 Z" fill="none" stroke={color} strokeWidth="2" />
+    <Svg width={size} height={size} viewBox="0 0 100 100" opacity={opacity}>
+      <Polygon points="50,4 96,50 50,96 4,50" fill="none" stroke={color} strokeWidth="2.5" />
+      <Polygon points="50,20 80,50 50,80 20,50" fill="none" stroke={color} strokeWidth="2" />
+      <Polygon points="50,36 64,50 50,64 36,50" fill="none" stroke={color} strokeWidth="2" />
+      <Circle cx="50" cy="50" r="4" fill={color} />
     </Svg>
   );
 }
 
 export function Crosshair({ size = 44, color = "#0A0A0A", opacity = 0.1 }: AccentProps) {
   return (
-    <Svg width={size} height={size} viewBox="0 0 44 44" opacity={opacity}>
-      <Path d="M22 0 V44 M0 22 H44" stroke={color} strokeWidth="2" />
-      <Circle cx="22" cy="22" r="8" fill="none" stroke={color} strokeWidth="2" />
+    <Svg width={size} height={size} viewBox="0 0 100 100" opacity={opacity}>
+      <Circle cx="50" cy="50" r="42" fill="none" stroke={color} strokeWidth="2.5" />
+      <Circle cx="50" cy="50" r="23" fill="none" stroke={color} strokeWidth="2" />
+      <Circle cx="50" cy="50" r="7.5" fill={color} />
+      <Line x1="3" y1="50" x2="23" y2="50" stroke={color} strokeWidth="2.5" />
+      <Line x1="77" y1="50" x2="97" y2="50" stroke={color} strokeWidth="2.5" />
+      <Line x1="50" y1="3" x2="50" y2="23" stroke={color} strokeWidth="2.5" />
+      <Line x1="50" y1="77" x2="50" y2="97" stroke={color} strokeWidth="2.5" />
     </Svg>
   );
 }
 
 export function AsteriskStar({ size = 36, color = "#0A0A0A", opacity = 0.12 }: AccentProps) {
   return (
-    <Svg width={size} height={size} viewBox="0 0 36 36" opacity={opacity}>
-      <Path d="M18 2 V34 M4 18 H32 M7 7 L29 29 M29 7 L7 29" stroke={color} strokeWidth="2" />
+    <Svg width={size} height={size} viewBox="0 0 100 100" opacity={opacity}>
+      <Line x1="94" y1="50" x2="6" y2="50" stroke={color} strokeWidth="3" strokeLinecap="round" />
+      <Line x1="81.3" y1="81.3" x2="18.7" y2="18.7" stroke={color} strokeWidth="3" strokeLinecap="round" />
+      <Line x1="50" y1="94" x2="50" y2="6" stroke={color} strokeWidth="3" strokeLinecap="round" />
+      <Line x1="18.7" y1="81.3" x2="81.3" y2="18.7" stroke={color} strokeWidth="3" strokeLinecap="round" />
+      <Line x1="73.3" y1="10" x2="26.7" y2="90" stroke={color} strokeWidth="3" strokeLinecap="round" />
+      <Line x1="26.7" y1="10" x2="73.3" y2="90" stroke={color} strokeWidth="3" strokeLinecap="round" />
+      <Circle cx="50" cy="50" r="8" fill={color} />
     </Svg>
   );
 }
 
 export function BlobSplat({ size = 90, color = "#0A0A0A", opacity = 0.05 }: AccentProps) {
   return (
-    <Svg width={size} height={size} viewBox="0 0 90 90" opacity={opacity}>
-      <Path d="M20 40 Q10 10 40 18 Q70 8 72 40 Q88 70 50 78 Q12 72 20 40 Z" fill={color} />
+    <Svg width={size} height={size} viewBox="0 0 100 100" opacity={opacity}>
+      <Path
+        d="M50,12 L60.22,28.78 L79.71,26.31 L78.16,43.57 L87.05,58.46 L68.42,64.69 L66.49,84.23 L50,78.88 L33.51,84.23 L31.58,64.69 L12.95,58.46 L21.84,43.57 L20.29,26.31 L39.78,28.78 Z"
+        fill={color}
+      />
     </Svg>
   );
 }
@@ -68,8 +85,14 @@ export function WarpedTorus({ size = 100, color = "#0A0A0A", opacity = 0.07 }: A
 
 export function RetroSquiggle({ size = 80, color = "#0A0A0A", opacity = 0.08 }: AccentProps) {
   return (
-    <Svg width={size} height={size} viewBox="0 0 80 80" opacity={opacity}>
-      <Path d="M4 40 Q20 8 40 40 T76 40" fill="none" stroke={color} strokeWidth="3" />
+    <Svg width={size} height={(size * 24) / 140} viewBox="0 0 140 24" opacity={opacity}>
+      <Path
+        d="M0,12 Q14,2 28,12 Q42,22 56,12 Q70,2 84,12 Q98,22 112,12 Q126,2 140,12"
+        fill="none"
+        stroke={color}
+        strokeWidth="3"
+        strokeLinecap="round"
+      />
     </Svg>
   );
 }

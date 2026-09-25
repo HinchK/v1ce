@@ -63,7 +63,7 @@ export default function Onboarding() {
         sobriety_date: date,
         substances,
         email: guestEmail,
-        coin_color: "#E0E0E0",
+        coin_color: "#F5D680",
       },
       guestEmail
     );

@@ -14,9 +14,29 @@ import MiniColorInput from "@/components/customize/MiniColorInput";
 import DrawShapePicker from "@/components/customize/DrawShapePicker";
 import { daysSince } from "@/constants/app";
 import { fonts } from "@/constants/typography";
-import { Crosshair } from "@/components/ui/RetroAccents";
+import { AsteriskStar, Crosshair, DiamondGrid, Starburst } from "@/components/ui/RetroAccents";
 import SobrietyCoin from "@/components/coin/SobrietyCoin";
 import { useTranslation } from "@/lib/i18n";
+import OutlineText from "@/components/ui/OutlineText";
+
+const ROTATING_WORDS = [
+  "COIN",
+  "TOKEN",
+  "CHIP",
+  "V1CE",
+  "JOURNEY",
+  "PROGRESS",
+  "BAGEL",
+  "SHINY CIRCLE",
+  "NOT A NICKEL",
+  "PIZZA FUND",
+  "PET ROCK",
+  "DOUBLOON",
+  "PAPERWEIGHT",
+  "SOUVENIR",
+  "OBJECT",
+  "THINGY",
+];
 
 function Switch({ on, onToggle, label }: { on: boolean; onToggle: () => void; label: string }) {
   const colors = useColors();
@@ -42,7 +62,7 @@ export default function Customize() {
   const { t } = useTranslation();
   const router = useRouter();
   const [saving, setSaving] = useState(false);
-  const [color, setColor] = useState(profile?.coin_color || "#E0E0E0");
+  const [color, setColor] = useState(profile?.coin_color || "#F5D680");
   const [shape, setShape] = useState(profile?.coin_shape || "circle");
   const [style, setStyle] = useState(profile?.number_style || "classic");
   const [displayName, setDisplayName] = useState(profile?.display_name || "");
@@ -55,10 +75,16 @@ export default function Customize() {
   const [background, setBackground] = useState(profile?.coin_background || "solid");
   const [coinPhoto, setCoinPhoto] = useState(profile?.coin_photo || "");
   const [uploading, setUploading] = useState(false);
+  const [wordIndex, setWordIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => setWordIndex((index) => (index + 1) % ROTATING_WORDS.length), 1500);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     if (!profile) return;
-    setColor(profile.coin_color || "#E0E0E0");
+    setColor(profile.coin_color || "#F5D680");
     setShape(profile.coin_shape || "circle");
     setStyle(profile.number_style || "classic");
     setDisplayName(profile.display_name || "");
@@ -135,6 +161,22 @@ export default function Customize() {
 
   return (
     <ScrollView style={{ backgroundColor: colors.background }} contentContainerStyle={styles.page} keyboardShouldPersistTaps="handled">
+      <View style={[styles.header, { borderBottomColor: colors.foreground }]}>
+        <View style={styles.headerBurst}>
+          <Starburst size={90} color={colors.foreground} opacity={0.08} />
+        </View>
+        <View style={styles.headerDiamond}>
+          <DiamondGrid size={50} color={colors.foreground} opacity={0.1} />
+        </View>
+        <Text style={[styles.headerTitle, { color: colors.foreground }]}>{t("customize.your")}</Text>
+        <OutlineText
+          fill={colors.background}
+          stroke={colors.foreground}
+          style={styles.headerWord}
+        >
+          {ROTATING_WORDS[wordIndex]}
+        </OutlineText>
+      </View>
       <View style={[styles.preview, { borderBottomColor: colors.foreground }]}>
         <SobrietyCoin
           days={days}
@@ -156,6 +198,10 @@ export default function Customize() {
       </View>
 
       <View style={[styles.section, { borderBottomColor: colors.foreground }]}>
+        <View style={styles.shapeAccent}>
+          <AsteriskStar size={36} color={colors.foreground} opacity={0.12} />
+        </View>
+        <Text style={[styles.sectionTitle, { color: colors.foreground, marginBottom: 16 }]}>{t("customize.shape")}</Text>
         <ShapePicker value={shape} onChange={setShape} />
         {shape === "drawn" ? (
           <View style={{ marginTop: 16 }}>
@@ -230,7 +276,7 @@ export default function Customize() {
 
       <View style={[styles.section, { borderBottomColor: colors.foreground }]}>
         <Text style={[styles.sectionTitle, { color: colors.foreground }]}>{t("customize.color")}</Text>
-        <ColorPicker value={/^#[0-9A-Fa-f]{6}$/.test(color) ? color : "#E0E0E0"} onChange={setColor} />
+        <ColorPicker value={/^#[0-9A-Fa-f]{6}$/.test(color) ? color : "#F5D680"} onChange={setColor} />
 
         <View style={[styles.inner, { borderTopColor: colors.foreground }]}>
           <Text style={[styles.subhead, { color: colors.foreground }]}>BACKGROUND</Text>
@@ -276,8 +322,14 @@ export default function Customize() {
 
 const styles = StyleSheet.create({
   page: { paddingBottom: 48 },
-  preview: { alignItems: "center", paddingVertical: 20, borderBottomWidth: 2 },
-  section: { paddingHorizontal: 20, paddingVertical: 26, borderBottomWidth: 2 },
+  header: { paddingHorizontal: 20, paddingTop: 32, paddingBottom: 24, borderBottomWidth: 2, position: "relative", overflow: "hidden" },
+  headerBurst: { position: "absolute", right: 2, top: -8 },
+  headerDiamond: { position: "absolute", right: 64, bottom: 2 },
+  headerTitle: { fontSize: 64, lineHeight: 60, fontFamily: fonts.display },
+  headerWord: { fontSize: 64, lineHeight: 60, fontFamily: fonts.display, letterSpacing: 1 },
+  preview: { alignItems: "center", paddingVertical: 32, borderBottomWidth: 2 },
+  section: { paddingHorizontal: 20, paddingVertical: 32, borderBottomWidth: 2, position: "relative", overflow: "hidden" },
+  shapeAccent: { position: "absolute", right: 16, top: 16 },
   sectionTitle: { fontSize: 26, fontFamily: fonts.display, letterSpacing: 1, marginBottom: 6 },
   row: { flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 6 },
   badge: { borderWidth: 1, paddingHorizontal: 6, paddingVertical: 2 },

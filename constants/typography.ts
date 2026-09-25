@@ -1,9 +1,9 @@
 export const fonts = {
   display: "BebasNeue_400Regular",
-  body: "Inter_400Regular",
-  bodyMedium: "Inter_500Medium",
-  bodySemi: "Inter_600SemiBold",
-  bodyBold: "Inter_700Bold",
+  body: "SpaceGrotesk_400Regular",
+  bodyMedium: "SpaceGrotesk_500Medium",
+  bodySemi: "SpaceGrotesk_600SemiBold",
+  bodyBold: "SpaceGrotesk_700Bold",
   extraBold: "Inter_800ExtraBold",
   black: "Inter_900Black",
   italic: "Inter_800ExtraBold_Italic",

@@ -14,7 +14,7 @@ type CoinContextValue = {
 const CoinContext = createContext<CoinContextValue | null>(null);
 
 export function CoinProvider({ children }: { children: ReactNode }) {
-  const [coinData, setCoinData] = useState<CoinData>({ days: 0, color: "#E0E0E0", displayName: "" });
+  const [coinData, setCoinData] = useState<CoinData>({ days: 0, color: "#F5D680", displayName: "" });
   const value = useMemo(
     () => ({
       coinData,

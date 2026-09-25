@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Image, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useRouter } from "expo-router";
 import { useAuth } from "@/context/AuthContext";
 import { useCoinContext } from "@/context/CoinContext";
@@ -15,7 +15,15 @@ import SubstanceChecklist from "@/components/home/SubstanceChecklist";
 import MilestoneTimeline from "@/components/home/MilestoneTimeline";
 import MilestoneCalendarExport from "@/components/home/MilestoneCalendarExport";
 import CalendarField from "@/components/onboarding/CalendarField";
-import { FilledSplat, FilledStarburst, WireframeGlobe } from "@/components/ui/RetroAccents";
+import {
+  AsteriskStar,
+  BlobSplat,
+  Crosshair,
+  DiamondGrid,
+  Halftone,
+  Starburst,
+  WarpedTorus,
+} from "@/components/ui/RetroAccents";
 
 export default function Home() {
   const { profile, setProfile } = useAuth();
@@ -32,7 +40,7 @@ export default function Home() {
   }, [profile?.substances]);
 
   useEffect(() => {
-    updateCoinData({ days, color: profile?.coin_color || "#E0E0E0", displayName: profile?.display_name || "" });
+    updateCoinData({ days, color: profile?.coin_color || "#F5D680", displayName: profile?.display_name || "" });
   }, [days, profile?.coin_color, profile?.display_name, updateCoinData]);
 
   const persist = async (values: Record<string, unknown>) => {
@@ -43,12 +51,9 @@ export default function Home() {
 
   return (
     <ScrollView style={{ backgroundColor: colors.background }} contentContainerStyle={styles.page} showsVerticalScrollIndicator={false}>
-      <View style={styles.header}>
-        <Image source={require("../../assets/images/v1ce-logo.png")} style={styles.wordmark} resizeMode="contain" />
-      </View>
       <View style={[styles.hero, { borderBottomColor: colors.foreground }]}>
         <View style={styles.burst}>
-          <FilledStarburst size={72} color={colors.foreground} />
+          <Starburst size={64} color={colors.foreground} opacity={0.06} />
         </View>
         <Text style={[styles.days, { color: colors.foreground }]}>{days}</Text>
         <RotatingLabel />
@@ -56,7 +61,7 @@ export default function Home() {
           <SobrietyCoin
             days={days}
             shape={profile?.coin_shape || "circle"}
-            color={profile?.coin_color || "#E0E0E0"}
+            color={profile?.coin_color || "#F5D680"}
             numberStyle={profile?.number_style || "classic"}
             size={250}
             displayName={profile?.display_name || ""}
@@ -77,41 +82,49 @@ export default function Home() {
           </Text>
         </Pressable>
         <View style={styles.splat}>
-          <FilledSplat size={88} color={colors.foreground} />
+          <BlobSplat size={90} color={colors.foreground} opacity={0.05} />
         </View>
       </View>
 
       <View style={[styles.section, { borderBottomColor: colors.foreground }]}>
+        <View style={styles.diamond}>
+          <DiamondGrid size={72} color={colors.foreground} opacity={0.08} />
+        </View>
         <Text style={[styles.sectionTitle, { color: colors.foreground }]}>{t("home.timeElapsed")}</Text>
         <SobrietyCounter sobrietyDate={sobrietyDate} />
       </View>
 
       <View style={[styles.section, { borderBottomColor: colors.foreground }]}>
         <Text style={[styles.eyebrow, { color: colors.mutedForeground }]}>{t("home.soberSince")}</Text>
-        <Text style={[styles.date, { color: colors.foreground }]}>
-          {sobrietyDate
-            ? new Date(`${sobrietyDate}T00:00:00`).toLocaleDateString(undefined, {
-                month: "long",
-                day: "numeric",
-                year: "numeric",
-              }).toUpperCase()
-            : "NOT SET"}
-        </Text>
-        <CalendarField
-          value={sobrietyDate}
-          onChange={(next) => {
-            persist({ sobriety_date: next });
-          }}
-        />
+        <View style={styles.dateRow}>
+          <Text style={[styles.date, { color: colors.foreground }]}>
+            {sobrietyDate
+              ? new Date(`${sobrietyDate}T00:00:00`).toLocaleDateString("en-US", {
+                  month: "long",
+                  day: "numeric",
+                  year: "numeric",
+                }).toUpperCase()
+              : "NOT SET"}
+          </Text>
+          <View style={styles.calendar}>
+            <CalendarField
+              value={sobrietyDate}
+              onChange={(next) => {
+                persist({ sobriety_date: next });
+              }}
+            />
+          </View>
+        </View>
       </View>
 
       <View style={[styles.section, { borderBottomColor: colors.foreground }]}>
-        <View style={styles.globe}>
-          <WireframeGlobe size={56} color={colors.foreground} opacity={1} />
+        <View style={styles.crosshair}>
+          <Crosshair size={60} color={colors.foreground} opacity={0.08} />
         </View>
-        <View style={styles.docBurst}>
-          <FilledStarburst size={48} color={colors.foreground} />
+        <View style={styles.halftone}>
+          <Halftone size={56} color={colors.foreground} opacity={0.06} />
         </View>
+        <Text style={[styles.sectionTitle, { color: colors.foreground }]}>{t("home.whatsYourDoc")}</Text>
         <SubstanceChecklist
           selected={substances}
           onChange={(next) => {
@@ -123,8 +136,11 @@ export default function Home() {
 
       {days > 0 ? (
         <View style={[styles.section, { borderBottomColor: colors.foreground }]}>
-          <View style={styles.docBurst}>
-            <FilledStarburst size={52} color={colors.foreground} />
+          <View style={styles.asterisk}>
+            <AsteriskStar size={48} color={colors.foreground} opacity={0.09} />
+          </View>
+          <View style={styles.torus}>
+            <WarpedTorus size={100} color={colors.foreground} opacity={0.07} />
           </View>
           <Text style={[styles.sectionTitle, { color: colors.foreground }]}>{t("home.yourMilestones")}</Text>
           <MilestoneTimeline days={days} />
@@ -136,9 +152,7 @@ export default function Home() {
 }
 const styles = StyleSheet.create({
   page: { paddingBottom: 48 },
-  header: { height: 58, paddingHorizontal: 20, justifyContent: "center", alignItems: "flex-start" },
-  wordmark: { width: 128, height: 46 },
-  hero: { paddingHorizontal: 20, paddingTop: 18, paddingBottom: 36, borderBottomWidth: 2, overflow: "visible" },
+  hero: { paddingHorizontal: 20, paddingTop: 24, paddingBottom: 40, borderBottomWidth: 2, overflow: "hidden" },
   days: {
     fontSize: 132,
     lineHeight: 118,
@@ -146,9 +160,9 @@ const styles = StyleSheet.create({
     fontFamily: fonts.display,
     marginLeft: -6,
   },
-  burst: { position: "absolute", right: 12, top: 18 },
-  splat: { position: "absolute", left: -4, bottom: -18, zIndex: 1 },
-  coinWrap: { alignItems: "center", paddingVertical: 18 },
+  burst: { position: "absolute", right: 16, top: 16 },
+  splat: { position: "absolute", left: -24, bottom: -16 },
+  coinWrap: { alignItems: "center", paddingVertical: 16 },
   customizeWrap: { alignItems: "center", zIndex: 2 },
   link: {
     fontSize: 11,
@@ -157,10 +171,15 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     paddingBottom: 2,
   },
-  section: { paddingHorizontal: 20, paddingVertical: 28, borderBottomWidth: 2, position: "relative" },
-  sectionTitle: { fontSize: 48, lineHeight: 46, fontFamily: fonts.display, letterSpacing: 0.5, marginBottom: 18 },
+  section: { paddingHorizontal: 20, paddingVertical: 40, borderBottomWidth: 2, position: "relative", overflow: "hidden" },
+  sectionTitle: { fontSize: 48, lineHeight: 48, fontFamily: fonts.display, letterSpacing: 1, marginBottom: 24 },
   eyebrow: { fontSize: 10, fontFamily: fonts.bodyBold, letterSpacing: 3, marginBottom: 8, textTransform: "uppercase" },
-  date: { fontSize: 28, lineHeight: 32, fontFamily: fonts.display, letterSpacing: 0.5, marginBottom: 16 },
-  globe: { position: "absolute", right: 16, bottom: 20, opacity: 0.9 },
-  docBurst: { position: "absolute", right: 10, top: 18 },
+  dateRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 16 },
+  date: { flex: 1, fontSize: 30, lineHeight: 34, fontFamily: fonts.display, letterSpacing: 0.5 },
+  calendar: { width: 148 },
+  diamond: { position: "absolute", right: 12, top: 16 },
+  crosshair: { position: "absolute", right: 16, top: 16 },
+  halftone: { position: "absolute", right: 0, bottom: 16 },
+  asterisk: { position: "absolute", right: 20, top: 20 },
+  torus: { position: "absolute", right: -16, bottom: -16 },
 });
