@@ -16,3 +16,14 @@ export const NUMBER_STYLES = {
   caveat: { fontFamily: "Caveat", fontWeight: "400" as const, letterSpacing: 0.01 },
   dyna_puff: { fontFamily: "DynaPuff", fontWeight: "600" as const, letterSpacing: 0.01 },
 } as const;
+
+export function resolveCoinColor(value?: string) {
+  if (value && value in COIN_COLORS) return COIN_COLORS[value as keyof typeof COIN_COLORS];
+  if (value && /^#[0-9A-Fa-f]{6}$/.test(value)) {
+    const hex = value.toUpperCase();
+    const luminance = (parseInt(hex.slice(1,3),16)*299 + parseInt(hex.slice(3,5),16)*587 + parseInt(hex.slice(5,7),16)*114) / 1000;
+    const text = luminance > 155 ? "#0A0A0A" : "#FFFFFF";
+    return { bg: hex, border: text, text, accent: text === "#FFFFFF" ? "#888888" : "#777777" };
+  }
+  return COIN_COLORS.gold;
+}
