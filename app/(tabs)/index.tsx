@@ -14,6 +14,7 @@ import SobrietyCounter from "@/components/home/SobrietyCounter";
 import SubstanceChecklist from "@/components/home/SubstanceChecklist";
 import MilestoneTimeline from "@/components/home/MilestoneTimeline";
 import MilestoneCalendarExport from "@/components/home/MilestoneCalendarExport";
+import CalendarField from "@/components/onboarding/CalendarField";
 import { FilledSplat, FilledStarburst, WireframeGlobe } from "@/components/ui/RetroAccents";
 
 export default function Home() {
@@ -83,6 +84,25 @@ export default function Home() {
       </View>
 
       <View style={[styles.section, { borderBottomColor: colors.foreground }]}>
+        <Text style={[styles.eyebrow, { color: colors.mutedForeground }]}>{t("home.soberSince")}</Text>
+        <Text style={[styles.date, { color: colors.foreground }]}>
+          {sobrietyDate
+            ? new Date(`${sobrietyDate}T00:00:00`).toLocaleDateString(undefined, {
+                month: "long",
+                day: "numeric",
+                year: "numeric",
+              }).toUpperCase()
+            : "NOT SET"}
+        </Text>
+        <CalendarField
+          value={sobrietyDate}
+          onChange={(next) => {
+            persist({ sobriety_date: next });
+          }}
+        />
+      </View>
+
+      <View style={[styles.section, { borderBottomColor: colors.foreground }]}>
         <View style={styles.globe}>
           <WireframeGlobe size={56} color={colors.foreground} opacity={1} />
         </View>
@@ -134,6 +154,8 @@ const styles = StyleSheet.create({
   },
   section: { paddingHorizontal: 20, paddingVertical: 28, borderBottomWidth: 2, position: "relative" },
   sectionTitle: { fontSize: 48, lineHeight: 46, fontFamily: fonts.display, letterSpacing: 0.5, marginBottom: 18 },
+  eyebrow: { fontSize: 10, fontFamily: fonts.bodyBold, letterSpacing: 3, marginBottom: 8, textTransform: "uppercase" },
+  date: { fontSize: 28, lineHeight: 32, fontFamily: fonts.display, letterSpacing: 0.5, marginBottom: 16 },
   globe: { position: "absolute", right: 16, bottom: 20, opacity: 0.9 },
   docBurst: { position: "absolute", right: 10, top: 18 },
 });
