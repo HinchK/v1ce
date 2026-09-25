@@ -11,18 +11,18 @@ type ThemeContextValue = {
 };
 
 const ThemeContext = createContext<ThemeContextValue>({
-  mode: "system",
+  mode: "light",
   isDark: false,
   toggleTheme: () => {},
 });
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const systemScheme = useColorScheme();
-  const [mode, setMode] = useState<ThemeMode>("system");
+  const [mode, setMode] = useState<ThemeMode>("light");
 
   useEffect(() => {
     AsyncStorage.getItem("v1ce_theme").then((stored) => {
-      if (stored === "light" || stored === "dark") setMode(stored);
+      if (stored === "light" || stored === "dark" || stored === "system") setMode(stored);
     });
   }, []);
 
