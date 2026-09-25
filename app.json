@@ -2,6 +2,7 @@
   "expo": {
     "name": "V1CE",
     "slug": "v1ce-native",
+    "owner": "dezwashere",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -40,8 +41,6 @@
       ],
       "expo-font",
       "expo-web-browser",
-      "expo-image",
-      "expo-sharing",
       [
         "expo-splash-screen",
         {
@@ -50,13 +49,17 @@
           "imageWidth": 200
         }
       ],
-      "expo-status-bar",
       [
         "@bacons/apple-targets"
       ],
       "./plugins/withV1CEWidgetFonts.js",
       "./plugins/app.plugin.js"
     ],
+    "extra": {
+      "eas": {
+        "projectId": "7da6caaf-6da0-45af-a389-3eac8719c6f8"
+      }
+    },
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
