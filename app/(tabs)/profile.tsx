@@ -9,6 +9,7 @@ import { useColors } from "@/hooks/useColors";
 import GifterBadge from "@/components/GifterBadge";
 import LanguageSwitcher from "@/components/layout/LanguageSwitcher";
 import { useTranslation } from "@/lib/i18n";
+import { fonts } from "@/constants/typography";
 
 export default function Profile() {
   const { profile, user, setProfile, signOut } = useAuth();
@@ -80,7 +81,7 @@ export default function Profile() {
           <Image source={{ uri: avatarUrl }} style={styles.avatar} />
         ) : (
           <View style={[styles.avatar, styles.placeholder, { backgroundColor: colors.foreground }]}>
-            <Text style={{ color: colors.background, fontSize: 28, fontWeight: "900" }}>{initials}</Text>
+            <Text style={{ color: colors.background, fontSize: 28, fontFamily: fonts.black }}>{initials}</Text>
           </View>
         )}
         <View style={styles.badge}><GifterBadge giftedCount={profile?.gifted_count || 0} size="md" /></View>
@@ -93,19 +94,19 @@ export default function Profile() {
       <Text style={[styles.label, { color: colors.mutedForeground, marginTop: 18 }]}>BIRTHDAY</Text>
       <TextInput value={birthday || ""} onChangeText={setBirthday} placeholder="YYYY-MM-DD" placeholderTextColor={colors.mutedForeground} style={[styles.input, { borderColor: colors.foreground, color: colors.foreground }]} />
       <TouchableOpacity disabled={saving} onPress={save} style={[styles.button, { backgroundColor: colors.foreground }]}>
-        <Text style={{ color: colors.background, fontWeight: "800" }}>{saving ? t("profile.saving") : t("profile.save")}</Text>
+        <Text style={{ color: colors.background, fontFamily: fonts.bodyBold }}>{saving ? t("profile.saving") : t("profile.save")}</Text>
       </TouchableOpacity>
       <Text style={[styles.label, { color: colors.mutedForeground, marginTop: 28 }]}>THEME</Text>
       <TouchableOpacity onPress={toggleTheme} style={[styles.outline, { borderColor: colors.foreground }]}>
-        <Text style={{ color: colors.foreground, fontWeight: "800" }}>{isDark ? "DARK" : "LIGHT"}</Text>
+        <Text style={{ color: colors.foreground, fontFamily: fonts.bodyBold }}>{isDark ? "DARK" : "LIGHT"}</Text>
       </TouchableOpacity>
       <Text style={[styles.label, { color: colors.mutedForeground, marginTop: 28 }]}>LANGUAGE</Text>
       <LanguageSwitcher />
       <TouchableOpacity onPress={() => router.push("/widget")} style={[styles.outline, { borderColor: colors.foreground, marginTop: 24 }]}>
-        <Text style={{ color: colors.foreground, fontWeight: "800", letterSpacing: 2 }}>SHARE / WIDGET</Text>
+        <Text style={{ color: colors.foreground, fontFamily: fonts.bodyBold, letterSpacing: 2 }}>SHARE / WIDGET</Text>
       </TouchableOpacity>
       <View style={[styles.account, { borderTopColor: colors.border }]}>
-        <Text style={{ color: colors.foreground, fontWeight: "700" }}>{user?.email || profile?.email}</Text>
+        <Text style={{ color: colors.foreground, fontFamily: fonts.bodyBold }}>{user?.email || profile?.email}</Text>
         <TouchableOpacity
           style={[styles.logout, { borderColor: colors.destructive }]}
           onPress={async () => {
@@ -113,7 +114,7 @@ export default function Profile() {
             router.replace("/onboarding");
           }}
         >
-          <Text style={{ color: colors.destructive, fontWeight: "900", letterSpacing: 2 }}>{t("profile.logOut").toUpperCase()}</Text>
+          <Text style={{ color: colors.destructive, fontFamily: fonts.black, letterSpacing: 2 }}>{t("profile.logOut").toUpperCase()}</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
@@ -122,14 +123,14 @@ export default function Profile() {
 
 const styles = StyleSheet.create({
   container: { padding: 20, paddingBottom: 48 },
-  title: { fontSize: 48, fontWeight: "900", lineHeight: 50, marginBottom: 40 },
+  title: { fontSize: 64, fontFamily: fonts.display, lineHeight: 60, marginBottom: 40, letterSpacing: 1 },
   avatarWrap: { alignItems: "center", marginBottom: 34 },
   avatar: { width: 112, height: 112 },
   placeholder: { alignItems: "center", justifyContent: "center" },
   badge: { position: "absolute", right: "31%", top: -8 },
-  avatarAction: { fontSize: 11, fontWeight: "900", letterSpacing: 2, marginTop: 14 },
-  label: { fontSize: 10, letterSpacing: 3, fontWeight: "800", marginBottom: 7 },
-  input: { borderWidth: 2, padding: 13, fontSize: 15 },
+  avatarAction: { fontSize: 11, fontFamily: fonts.black, letterSpacing: 2, marginTop: 14 },
+  label: { fontSize: 10, letterSpacing: 3, fontFamily: fonts.bodyBold, marginBottom: 7 },
+  input: { borderWidth: 2, padding: 13, fontSize: 15, fontFamily: fonts.body },
   button: { height: 54, alignItems: "center", justifyContent: "center", marginTop: 24 },
   outline: { height: 48, borderWidth: 2, alignItems: "center", justifyContent: "center" },
   account: { borderTopWidth: 2, marginTop: 40, paddingTop: 24 },

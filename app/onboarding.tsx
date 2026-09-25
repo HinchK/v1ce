@@ -170,7 +170,7 @@ export default function Onboarding() {
 }
 
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: "#F3F3F3" },
+  screen: { flex: 1, backgroundColor: "#F7F7F7" },
   content: { paddingHorizontal: 24, flexGrow: 1, width: "100%", maxWidth: 430, alignSelf: "center" },
   title: { fontSize: 56, lineHeight: 54, fontFamily: fonts.display, color: "#0A0A0A", marginBottom: 12 },
   subtitle: { fontSize: 16, lineHeight: 24, color: "#737373", fontFamily: fonts.body, marginBottom: 32 },
@@ -191,8 +191,8 @@ const styles = StyleSheet.create({
   button: { marginTop: "auto", height: 56, justifyContent: "center", alignItems: "center", backgroundColor: "#0A0A0A" },
   buttonFlex: { flex: 1, marginTop: 0 },
   buttonDisabled: { backgroundColor: "#C8C8C8" },
-  buttonText: { fontSize: 22, letterSpacing: 2, fontFamily: fonts.display, color: "#F3F3F3" },
-  journey: { fontSize: 18, lineHeight: 20, letterSpacing: 1, fontFamily: fonts.display, color: "#F3F3F3", textAlign: "center" },
+  buttonText: { fontSize: 22, letterSpacing: 2, fontFamily: fonts.display, color: "#F7F7F7" },
+  journey: { fontSize: 18, lineHeight: 20, letterSpacing: 1, fontFamily: fonts.display, color: "#F7F7F7", textAlign: "center" },
   buttonRow: { flexDirection: "row", gap: 10, marginTop: "auto" },
   backButton: { flex: 1, height: 56, backgroundColor: "#E4E4E4", justifyContent: "center", alignItems: "center" },
   backButtonText: { fontSize: 18, letterSpacing: 1, fontFamily: fonts.display, color: "#0A0A0A" },

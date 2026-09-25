@@ -87,16 +87,16 @@ export default function Premium() {
 
 const styles = StyleSheet.create({
   container: { padding: 20, paddingBottom: 48 },
-  title: { fontSize: 52, fontWeight: "900", lineHeight: 52 },
-  subtitle: { fontSize: 15, marginTop: 16 },
+  title: { fontSize: 64, fontFamily: fonts.display, lineHeight: 60, letterSpacing: 1 },
+  subtitle: { fontSize: 15, lineHeight: 22, marginTop: 16, fontFamily: fonts.body },
   badge: { borderWidth: 2, padding: 12, alignSelf: "flex-start", marginTop: 24 },
   plans: { flexDirection: "row", gap: 8, marginTop: 24 },
   plan: { flex: 1, borderWidth: 2, padding: 14, minHeight: 82 },
-  planTitle: { fontSize: 15, fontWeight: "900", letterSpacing: 1 },
-  planSub: { fontSize: 10, marginTop: 6 },
+  planTitle: { fontSize: 24, fontFamily: fonts.display, letterSpacing: 1 },
+  planSub: { fontSize: 10, marginTop: 6, fontFamily: fonts.body },
   button: { height: 56, alignItems: "center", justifyContent: "center", marginTop: 16 },
   perk: { flexDirection: "row", gap: 14, paddingVertical: 18, borderBottomWidth: 1, alignItems: "center" },
   icon: { width: 32, height: 32, borderWidth: 2, alignItems: "center", justifyContent: "center" },
-  perkTitle: { fontSize: 15, fontWeight: "900", letterSpacing: 1 },
-  desc: { fontSize: 12, lineHeight: 18, marginTop: 4 },
+  perkTitle: { fontSize: 15, fontFamily: fonts.bodyBold, letterSpacing: 1 },
+  desc: { fontSize: 12, lineHeight: 18, marginTop: 4, fontFamily: fonts.body },
 });
