@@ -48,7 +48,7 @@ function ClassicTabLayout() {
   const isIOS = Platform.OS === "ios";
   const isWeb = Platform.OS === "web";
 
-  const icon = (iosName: string, androidName: keyof typeof Feather.glyphMap) =>
+  const icon = (iosName: React.ComponentProps<typeof SymbolView>["name"], androidName: keyof typeof Feather.glyphMap) =>
     ({ color }: { color: string }) =>
       isIOS
         ? <SymbolView name={iosName} tintColor={color} size={24} />

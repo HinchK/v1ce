@@ -21,6 +21,7 @@ import ColorPicker from "@/components/customize/ColorPicker";
 import NumberStylePicker from "@/components/customize/NumberStylePicker";
 import { AsteriskStar, Crosshair, DiamondGrid, Starburst } from "@/components/ui/RetroAccents";
 import OutlineText from "@/components/ui/OutlineText";
+import { supabase, TABLES } from "@/lib/supabase";
 
 const ROTATING_WORDS = [
   "COIN",
