@@ -90,6 +90,7 @@ private func customColor(_ value: String?, fallback: Color) -> Color {
 }
 
 private let fontNames: [String: String] = [
+  "classic": "Big Shoulders Stencil",
   "big_shoulders_stencil": "Big Shoulders Stencil",
   "roboto_mono": "Roboto Mono",
   "oswald": "Oswald",
@@ -99,9 +100,8 @@ private let fontNames: [String: String] = [
   "dyna_puff": "DynaPuff"
 ]
 
-
 private func widgetFont(_ style: String, size: CGFloat) -> Font {
-  Font.custom(fontNames[style] ?? "Cinzel", size: size)
+  Font.custom(fontNames[style] ?? "Big Shoulders Stencil", size: size)
 }
 
 private func polygon(_ points: String, in rect: CGRect) -> Path {
