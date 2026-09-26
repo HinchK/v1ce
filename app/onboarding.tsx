@@ -1,15 +1,30 @@
-import { useState, useCallback } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, KeyboardAvoidingView, Platform, ScrollView } from "react-native";
+import { useCallback, useState } from "react";
+import {
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { FontAwesome, Feather } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import * as Linking from "expo-linking";
+import * as WebBrowser from "expo-web-browser";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAuth } from "@/context/AuthContext";
 import { supabase, TABLES, defaultProfileFields } from "@/lib/supabase";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Feather } from "@expo/vector-icons";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ONBOARDING_SUBSTANCES } from "@/constants/app";
 import { fonts } from "@/constants/typography";
 import CalendarField from "@/components/onboarding/CalendarField";
+import V1ceLogo from "@/components/layout/V1ceLogo";
 import { useTranslation } from "@/lib/i18n";
+
+WebBrowser.maybeCompleteAuthSession();
 
 const SUBSTANCE_KEYS: Record<string, string> = {
   Alcohol: "alcohol",
@@ -24,6 +39,11 @@ const SUBSTANCE_KEYS: Record<string, string> = {
   Other: "other",
 };
 
+function urlParam(url: string, name: string) {
+  const match = url.match(new RegExp("[?#&]" + name + "=([^&#]+)"));
+  return match ? decodeURIComponent(match[1]) : null;
+}
+
 export default function Onboarding() {
   const { t } = useTranslation();
   const [step, setStep] = useState(0);
@@ -33,6 +53,7 @@ export default function Onboarding() {
   const [date, setDate] = useState("");
   const [substances, setSubstances] = useState<string[]>([]);
   const [isSaving, setIsSaving] = useState(false);
+  const [authBusy, setAuthBusy] = useState<"apple" | "google" | "email" | null>(null);
   const router = useRouter();
   const { user, setProfile } = useAuth();
   const insets = useSafeAreaInsets();
@@ -41,9 +62,82 @@ export default function Onboarding() {
     setSubstances((prev) => (prev.includes(s) ? prev.filter((x) => x !== s) : [...prev, s]));
   }, []);
 
+  const ensureSession = async () => {
+    const { data: sessionData } = await supabase.auth.getSession();
+    if (sessionData.session) return sessionData.session.user;
+    const { data, error } = await supabase.auth.signInAnonymously();
+    if (error) throw error;
+    return data.user;
+  };
+
+  const continueWithEmail = async () => {
+    if (!eula || authBusy) return;
+    setAuthBusy("email");
+    try {
+      await ensureSession();
+      setStep(1);
+    } catch (error: any) {
+      Alert.alert("Could not continue", error?.message || "Please try again.");
+    } finally {
+      setAuthBusy(null);
+    }
+  };
+
+  const continueWithOAuth = async (provider: "apple" | "google") => {
+    if (!eula || authBusy) return;
+    setAuthBusy(provider);
+    try {
+      const redirectTo = Linking.createURL("/onboarding");
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider,
+        options: { redirectTo, skipBrowserRedirect: true },
+      });
+      if (error) throw error;
+      if (!data.url) throw new Error("No sign-in URL was returned.");
+
+      const result = await WebBrowser.openAuthSessionAsync(data.url, redirectTo);
+      if (result.type !== "success") return;
+
+      const code = urlParam(result.url, "code");
+      if (code) {
+        const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
+        if (exchangeError) throw exchangeError;
+      } else {
+        const accessToken = urlParam(result.url, "access_token");
+        const refreshToken = urlParam(result.url, "refresh_token");
+        if (accessToken && refreshToken) {
+          const { error: sessionError } = await supabase.auth.setSession({
+            access_token: accessToken,
+            refresh_token: refreshToken,
+          });
+          if (sessionError) throw sessionError;
+        }
+      }
+
+      const { data: currentUser, error: userError } = await supabase.auth.getUser();
+      if (userError) throw userError;
+      if (currentUser.user?.email) setEmail(currentUser.user.email);
+      setStep(1);
+    } catch (error: any) {
+      Alert.alert(
+        provider === "apple" ? "Apple sign-in unavailable" : "Google sign-in unavailable",
+        error?.message || "Please try again."
+      );
+    } finally {
+      setAuthBusy(null);
+    }
+  };
+
   const persistProfile = async (values: Record<string, unknown>, storedEmail: string) => {
+    const { data: currentUser } = await supabase.auth.getUser();
+    const authUserId = currentUser.user?.id || user?.id;
+    if (!authUserId) {
+      Alert.alert("Error", "Your sign-in session is missing. Please return to the first screen and try again.");
+      return false;
+    }
+
     await AsyncStorage.setItem("v1ce_email", storedEmail);
-    const payload = { ...defaultProfileFields, ...values, id: user?.id, email: storedEmail };
+    const payload = { ...defaultProfileFields, ...values, id: authUserId, email: storedEmail };
     const { data, error } = await supabase.from(TABLES.SobrietyProfile).upsert(payload).select().single();
     if (error) {
       Alert.alert("Error", error.message || "Could not save profile. Please try again.");
@@ -57,67 +151,67 @@ export default function Onboarding() {
   const handleSave = async () => {
     if (!date || isSaving) return;
     setIsSaving(true);
-    const guestEmail =
+    const storedEmail =
       email.trim().toLowerCase() ||
       user?.email ||
       `${name.trim().toLowerCase().replace(/\s+/g, ".")}.${Date.now()}@guest.v1ce.app`;
+
     await persistProfile(
       {
         display_name: name.trim(),
         sobriety_date: date,
         substances,
-        email: guestEmail,
+        email: storedEmail,
         coin_color: "#F5D680",
       },
-      guestEmail
+      storedEmail
     );
     setIsSaving(false);
   };
 
-  const step0Valid = name.trim().length > 0 && eula;
   const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+  const nameValid = name.trim().length > 0;
+  const authDisabled = !eula || !!authBusy;
 
   return (
     <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined}>
       <ScrollView
-        style={[styles.screen, { paddingTop: insets.top + 36 }]}
+        style={[styles.screen, { paddingTop: insets.top + 28 }]}
         contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + 24 }]}
         keyboardShouldPersistTaps="handled"
       >
         {step === 0 && (
           <>
+            <View style={styles.logoWrap}>
+              <V1ceLogo height={64} />
+            </View>
             <Text style={styles.title}>{t("onboarding.welcome")}</Text>
-            <Text style={styles.subtitle}>{t("onboarding.welcomeSub")}</Text>
-            <Text style={styles.label}>{t("onboarding.nameLabel").toUpperCase()}</Text>
-            <TextInput
-              value={name}
-              onChangeText={setName}
-              maxLength={20}
-              style={styles.input}
-              placeholder={t("onboarding.namePlaceholder")}
-              placeholderTextColor="#A3A3A3"
-              autoCapitalize="words"
-            />
-            <TouchableOpacity style={styles.checkboxRow} onPress={() => setEula(!eula)}>
-              <View style={[styles.checkbox, eula && styles.checkboxOn]}>
-                {eula ? <Feather name="check" size={14} color="#F3F3F3" /> : null}
-              </View>
-              <Text style={styles.checkboxText}>{t("onboarding.eulaText")}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.button, !step0Valid && styles.buttonDisabled]}
-              disabled={!step0Valid}
-              onPress={() => setStep(1)}
-            >
-              <Text style={styles.buttonText}>{t("onboarding.next")}</Text>
-            </TouchableOpacity>
-          </>
-        )}
+            <Text style={styles.subtitle}>Sign in to save your V1CE journey.</Text>
 
-        {step === 1 && (
-          <>
-            <Text style={styles.title}>{t("onboarding.emailTitle")}</Text>
-            <Text style={styles.subtitle}>{t("onboarding.emailSub")}</Text>
+            <TouchableOpacity
+              style={[styles.providerButton, authDisabled && styles.providerDisabled]}
+              disabled={authDisabled}
+              onPress={() => continueWithOAuth("apple")}
+            >
+              <FontAwesome name="apple" size={22} color="#0A0A0A" />
+              <Text style={styles.providerText}>{authBusy === "apple" ? "CONNECTING..." : "CONTINUE WITH APPLE"}</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.providerButton, authDisabled && styles.providerDisabled]}
+              disabled={authDisabled}
+              onPress={() => continueWithOAuth("google")}
+            >
+              <FontAwesome name="google" size={20} color="#0A0A0A" />
+              <Text style={styles.providerText}>{authBusy === "google" ? "CONNECTING..." : "CONTINUE WITH GOOGLE"}</Text>
+            </TouchableOpacity>
+
+            <View style={styles.divider}>
+              <View style={styles.dividerLine} />
+              <Text style={styles.dividerText}>OR</Text>
+              <View style={styles.dividerLine} />
+            </View>
+
             <Text style={styles.label}>{t("onboarding.emailLabel").toUpperCase()}</Text>
             <TextInput
               value={email}
@@ -129,13 +223,45 @@ export default function Onboarding() {
               autoCorrect={false}
               keyboardType="email-address"
             />
+
+            <TouchableOpacity
+              style={[styles.button, (!emailValid || authDisabled) && styles.buttonDisabled]}
+              disabled={!emailValid || authDisabled}
+              onPress={continueWithEmail}
+            >
+              <Text style={styles.buttonText}>{authBusy === "email" ? "..." : "CONTINUE WITH EMAIL →"}</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.checkboxRow} onPress={() => setEula(!eula)}>
+              <View style={[styles.checkbox, eula && styles.checkboxOn]}>
+                {eula ? <Feather name="check" size={14} color="#F3F3F3" /> : null}
+              </View>
+              <Text style={styles.checkboxText}>{t("onboarding.eulaText")}</Text>
+            </TouchableOpacity>
+          </>
+        )}
+
+        {step === 1 && (
+          <>
+            <Text style={styles.title}>WHAT'S{"\n"}YOUR NAME?</Text>
+            <Text style={styles.subtitle}>This is the name shown throughout your V1CE experience.</Text>
+            <Text style={styles.label}>{t("onboarding.nameLabel").toUpperCase()}</Text>
+            <TextInput
+              value={name}
+              onChangeText={setName}
+              maxLength={20}
+              style={styles.input}
+              placeholder={t("onboarding.namePlaceholder")}
+              placeholderTextColor="#A3A3A3"
+              autoCapitalize="words"
+            />
             <View style={styles.buttonRow}>
               <TouchableOpacity style={styles.backButton} onPress={() => setStep(0)}>
                 <Text style={styles.backButtonText}>{t("onboarding.back")}</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[styles.button, styles.buttonFlex, !emailValid && styles.buttonDisabled]}
-                disabled={!emailValid}
+                style={[styles.button, styles.buttonFlex, !nameValid && styles.buttonDisabled]}
+                disabled={!nameValid}
                 onPress={() => setStep(2)}
               >
                 <Text style={styles.buttonText}>{t("onboarding.next")}</Text>
@@ -148,8 +274,8 @@ export default function Onboarding() {
           <>
             <Text style={styles.title}>{t("onboarding.whenDidYouStart")}</Text>
             <Text style={styles.subtitle}>{t("onboarding.whenSub")}</Text>
-            <Text style={styles.label}>{t("onboarding.sobrietyDate").toUpperCase()}</Text>
-            <CalendarField value={date} onChange={setDate} />
+            <Text style={styles.label}>{t("onboarding.sobrietyDate").toUpperCase()} · MM/DD/YYYY</Text>
+            <CalendarField value={date} onChange={setDate} placeholder="MM/DD/YYYY" />
             <View style={styles.buttonRow}>
               <TouchableOpacity style={styles.backButton} onPress={() => setStep(1)}>
                 <Text style={styles.backButtonText}>{t("onboarding.back")}</Text>
@@ -207,8 +333,9 @@ export default function Onboarding() {
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: "#F7F7F7" },
   content: { paddingHorizontal: 24, flexGrow: 1, width: "100%", maxWidth: 430, alignSelf: "center" },
+  logoWrap: { alignItems: "center", marginBottom: 30 },
   title: { fontSize: 56, lineHeight: 54, fontFamily: fonts.display, color: "#0A0A0A", marginBottom: 12 },
-  subtitle: { fontSize: 16, lineHeight: 24, color: "#737373", fontFamily: fonts.body, marginBottom: 32 },
+  subtitle: { fontSize: 16, lineHeight: 24, color: "#737373", fontFamily: fonts.body, marginBottom: 28 },
   label: { fontSize: 10, letterSpacing: 2, color: "#737373", fontFamily: fonts.bodyBold, marginBottom: 8 },
   input: {
     borderWidth: 2,
@@ -219,14 +346,30 @@ const styles = StyleSheet.create({
     fontFamily: fonts.bodySemi,
     color: "#0A0A0A",
   },
-  checkboxRow: { flexDirection: "row", alignItems: "flex-start", gap: 12, marginTop: 24 },
+  providerButton: {
+    height: 54,
+    borderWidth: 2,
+    borderColor: "#0A0A0A",
+    backgroundColor: "#FFFFFF",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 12,
+    marginBottom: 10,
+  },
+  providerDisabled: { opacity: 0.45 },
+  providerText: { fontSize: 14, letterSpacing: 1.2, fontFamily: fonts.bodyBold, color: "#0A0A0A" },
+  divider: { flexDirection: "row", alignItems: "center", gap: 12, marginVertical: 16 },
+  dividerLine: { flex: 1, height: 1, backgroundColor: "#B8B8B8" },
+  dividerText: { fontSize: 10, letterSpacing: 2, color: "#737373", fontFamily: fonts.bodyBold },
+  checkboxRow: { flexDirection: "row", alignItems: "flex-start", gap: 12, marginTop: 18, marginBottom: 8 },
   checkbox: { width: 22, height: 22, borderWidth: 2, borderColor: "#0A0A0A", alignItems: "center", justifyContent: "center", marginTop: 2 },
   checkboxOn: { backgroundColor: "#0A0A0A" },
   checkboxText: { flex: 1, fontSize: 13, lineHeight: 18, color: "#737373", fontFamily: fonts.body },
-  button: { marginTop: "auto", height: 56, justifyContent: "center", alignItems: "center", backgroundColor: "#0A0A0A" },
+  button: { marginTop: 18, height: 56, justifyContent: "center", alignItems: "center", backgroundColor: "#0A0A0A" },
   buttonFlex: { flex: 1, marginTop: 0 },
   buttonDisabled: { backgroundColor: "#C8C8C8" },
-  buttonText: { fontSize: 22, letterSpacing: 2, fontFamily: fonts.display, color: "#F7F7F7" },
+  buttonText: { fontSize: 19, letterSpacing: 1.2, fontFamily: fonts.display, color: "#F7F7F7", textAlign: "center" },
   journey: { fontSize: 18, lineHeight: 20, letterSpacing: 1, fontFamily: fonts.display, color: "#F7F7F7", textAlign: "center" },
   buttonRow: { flexDirection: "row", gap: 10, marginTop: "auto" },
   backButton: { flex: 1, height: 56, backgroundColor: "#E4E4E4", justifyContent: "center", alignItems: "center" },

@@ -17,8 +17,7 @@ export function formatDisplayDate(iso: string) {
   if (!iso) return "";
   const [y, m, d] = iso.split("-").map(Number);
   if (!y || !m || !d) return iso;
-  const short = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-  return `${short[m - 1]} ${d}, ${y}`;
+  return `${pad(m)}/${pad(d)}/${y}`;
 }
 
 function toIso(year: number, month: number, day: number) {

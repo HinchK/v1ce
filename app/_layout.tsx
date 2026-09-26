@@ -59,7 +59,7 @@ function RootLayoutNav() {
         name="(tabs)"
         options={{
           headerShown: true,
-          header: () => <AppChrome showNav={false} />,
+          header: () => <AppChrome showNav />,
         }}
       />
       <Stack.Screen name="game" />

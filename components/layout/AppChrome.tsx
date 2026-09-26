@@ -17,12 +17,6 @@ const TABS = [
   { key: "nav.share", path: "/share" },
 ] as const;
 
-const MENU = [
-  { label: "PROFILE", path: "/profile" },
-  { label: "STATS", path: "/analytics" },
-  { label: "PREMIUM", path: "/premium" },
-] as const;
-
 function ThemeGlyph({ color, fill }: { color: string; fill: string }) {
   return (
     <Svg width={22} height={22} viewBox="0 0 22 22">
@@ -39,11 +33,9 @@ export default function AppChrome({ showNav = true }: { showNav?: boolean }) {
   const insets = useSafeAreaInsets();
   const pathname = usePathname();
   const router = useRouter();
-  const [menuOpen, setMenuOpen] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
 
   const go = (path: string) => {
-    setMenuOpen(false);
     setLangOpen(false);
     router.push(path as any);
   };
@@ -51,9 +43,6 @@ export default function AppChrome({ showNav = true }: { showNav?: boolean }) {
   return (
     <View style={{ backgroundColor: colors.background, paddingTop: insets.top }}>
       <View style={[styles.header, { borderBottomColor: colors.foreground }]}>
-        <TouchableOpacity onPress={() => setMenuOpen(true)} hitSlop={10} style={styles.iconBtn}>
-          <Feather name="menu" size={22} color={colors.foreground} />
-        </TouchableOpacity>
         <View style={[styles.logoWrap, { pointerEvents: "none" }]}>
           <Image
             source={require("../../assets/images/v1ce-logo.png")}
@@ -121,21 +110,6 @@ export default function AppChrome({ showNav = true }: { showNav?: boolean }) {
           </View>
         </Pressable>
       </Modal>
-
-      <Modal visible={menuOpen} transparent animationType="fade" onRequestClose={() => setMenuOpen(false)}>
-        <Pressable style={styles.menuBackdrop} onPress={() => setMenuOpen(false)}>
-          <Pressable style={[styles.drawer, { backgroundColor: colors.background, paddingTop: insets.top + 16 }]} onPress={(e) => e.stopPropagation()}>
-            <TouchableOpacity onPress={() => setMenuOpen(false)} style={styles.drawerClose}>
-              <Feather name="x" size={22} color={colors.foreground} />
-            </TouchableOpacity>
-            {MENU.map((item) => (
-              <TouchableOpacity key={item.path} onPress={() => go(item.path)} style={[styles.drawerItem, { borderBottomColor: colors.foreground }]}>
-                <Text style={[styles.drawerLabel, { color: colors.foreground }]}>{item.label}</Text>
-              </TouchableOpacity>
-            ))}
-          </Pressable>
-        </Pressable>
-      </Modal>
     </View>
   );
 }
@@ -168,8 +142,4 @@ const styles = StyleSheet.create({
   langItem: { paddingVertical: 8, paddingHorizontal: 12, alignItems: "center" },
   langText: { fontSize: 13, fontFamily: fonts.bodyBold },
   menuBackdrop: { flex: 1, backgroundColor: "rgba(0,0,0,0.35)" },
-  drawer: { width: 260, height: "100%", paddingHorizontal: 20 },
-  drawerClose: { alignSelf: "flex-end", padding: 8, marginBottom: 12 },
-  drawerItem: { borderBottomWidth: 2, paddingVertical: 18 },
-  drawerLabel: { fontSize: 28, fontFamily: fonts.display, letterSpacing: 1 },
 });
