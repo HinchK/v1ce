@@ -23,6 +23,7 @@ import { fonts } from "@/constants/typography";
 import CalendarField from "@/components/onboarding/CalendarField";
 import V1ceLogo from "@/components/layout/V1ceLogo";
 import { useTranslation } from "@/lib/i18n";
+import { ONBOARDING_VERSION, ONBOARDING_VERSION_KEY } from "@/app/index";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -144,6 +145,7 @@ export default function Onboarding() {
       return false;
     }
     setProfile(data);
+    await AsyncStorage.setItem(ONBOARDING_VERSION_KEY, ONBOARDING_VERSION);
     router.replace("/(tabs)");
     return true;
   };

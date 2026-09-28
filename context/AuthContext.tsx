@@ -98,7 +98,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signOut = async () => {
     await supabase.auth.signOut();
-    await AsyncStorage.removeItem("v1ce_email");
+    await AsyncStorage.multiRemove(["v1ce_email", "v1ce_onboarding_version"]);
     setUser(null);
     setProfile(null);
   };
