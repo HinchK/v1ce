@@ -6,6 +6,7 @@ import { supabase, TABLES, type BlockedUser, type FriendConnection } from "@/lib
 import { useColors } from "@/hooks/useColors";
 import { fonts } from "@/constants/typography";
 import { useTranslation } from "@/lib/i18n";
+import LofiAvatar from "@/components/lounge/LofiAvatar";
 
 export default function Friends() {
   const { user } = useAuth();
@@ -147,33 +148,36 @@ export default function Friends() {
       )}
 
       {__DEV__ ? (
-        <>
-          {["MIA · DEMO", "JORDAN · DEMO", "SAM · DEMO"].map((name, index) => (
-            <View key={name} style={[styles.card, { borderColor: colors.border }]}>
-              <Text style={{ color: colors.foreground, fontFamily: fonts.bodyBold, flex: 1 }}>{name}</Text>
-              <Text style={{ color: colors.foreground, fontFamily: fonts.extraBold }}>{index === 0 ? "ACTIVE · BDAY" : "ACTIVE"}</Text>
+        <View style={styles.friendGrid}>
+          {["MIA", "JORDAN", "SAM"].map((name, index) => (
+            <View key={name} style={[styles.friendTile, { borderColor: colors.border }]}>
+              <LofiAvatar seed={name} size={58} color={colors.foreground} />
+              <Text numberOfLines={1} style={[styles.friendTileName, { color: colors.foreground }]}>{name}</Text>
+              <Text style={[styles.friendTileStatus, { color: colors.mutedForeground }]}>{index === 0 ? "ACTIVE · BDAY" : "ACTIVE"}</Text>
             </View>
           ))}
-        </>
+        </View>
       ) : friends.length === 0 ? (
         <Text style={[styles.foot, { color: colors.mutedForeground }]}>{t("friends.noFriendsYet")}</Text>
       ) : (
-        friends.map((f) => (
-          <View key={f.id} style={[styles.card, { borderColor: colors.border }]}>
-            <Text style={{ color: colors.foreground, fontFamily: fonts.bodyBold, flex: 1 }}>{friendName(f)}</Text>
-            <View style={styles.actions}>
-              <TouchableOpacity onPress={() => toggleLounge(f.id, !!f.is_active_in_lounge)}>
-                <Text style={{ color: colors.foreground, fontFamily: fonts.extraBold }}>{f.is_active_in_lounge ? t("friends.active") : t("friends.inactive")}</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => remove(f.id)}>
-                <Text style={{ color: colors.mutedForeground, fontSize: 18, fontFamily: fonts.extraBold }}>X</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => block(f.id)}>
-                <Text style={{ color: colors.mutedForeground }}>{t("friends.blockUser")}</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        ))
+        <View style={styles.friendGrid}>
+          {friends.map((f) => {
+            const name = friendName(f);
+            return (
+              <View key={f.id} style={[styles.friendTile, { borderColor: colors.border }]}>
+                <LofiAvatar seed={name} size={58} color={colors.foreground} />
+                <Text numberOfLines={1} style={[styles.friendTileName, { color: colors.foreground }]}>{name}</Text>
+                <TouchableOpacity onPress={() => toggleLounge(f.id, !!f.is_active_in_lounge)}>
+                  <Text style={[styles.friendTileStatus, { color: colors.foreground }]}>{f.is_active_in_lounge ? t("friends.active") : t("friends.inactive")}</Text>
+                </TouchableOpacity>
+                <View style={styles.tileActions}>
+                  <TouchableOpacity onPress={() => remove(f.id)}><Text style={{ color: colors.mutedForeground, fontFamily: fonts.extraBold, fontSize: 8 }}>REMOVE</Text></TouchableOpacity>
+                  <TouchableOpacity onPress={() => block(f.id)}><Text style={{ color: colors.mutedForeground, fontFamily: fonts.bodyBold, fontSize: 8 }}>BLOCK</Text></TouchableOpacity>
+                </View>
+              </View>
+            );
+          })}
+        </View>
       )}
 
       {blocked.length > 0 ? (
@@ -214,4 +218,9 @@ const styles = StyleSheet.create({
   foot: { textAlign: "center", fontSize: 14, fontFamily: fonts.body, marginTop: 36 },
   card: { borderWidth: 2, padding: 16, marginBottom: 10, flexDirection: "row", justifyContent: "space-between", alignItems: "center", gap: 8 },
   actions: { flexDirection: "row", gap: 14, alignItems: "center" },
+  friendGrid: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
+  friendTile: { width: "31.5%", minHeight: 150, borderWidth: 2, alignItems: "center", justifyContent: "center", padding: 8 },
+  friendTileName: { width: "100%", textAlign: "center", fontFamily: fonts.extraBold, fontSize: 12, marginTop: 8 },
+  friendTileStatus: { fontFamily: fonts.bodyBold, fontSize: 8, letterSpacing: 0.5, marginTop: 4, textAlign: "center" },
+  tileActions: { marginTop: 8, gap: 5, alignItems: "center" },
 });
