@@ -73,7 +73,17 @@ export default function Lounge() {
     new Date(profile.birthday).getDate() === new Date().getDate();
 
   return (
-    <ScrollView style={{ backgroundColor: colors.background }} contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
+    <KeyboardAvoidingView
+      style={{ flex: 1, backgroundColor: colors.background }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={96}
+    >
+    <ScrollView
+      style={{ backgroundColor: colors.background }}
+      contentContainerStyle={styles.container}
+      showsVerticalScrollIndicator={false}
+      keyboardShouldPersistTaps="handled"
+    >
       <Text style={[styles.title, { color: colors.foreground }]}>{t("lounge.title")}</Text>
       <Text style={{ color: colors.mutedForeground, fontFamily: fonts.body }}>{t("lounge.subtitle")}</Text>
 
@@ -190,6 +200,7 @@ export default function Lounge() {
         onShare={(text) => send(text)}
       />
     </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
