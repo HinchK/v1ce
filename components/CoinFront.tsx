@@ -113,7 +113,7 @@ export default function CoinFront({
   const bounds=BOUNDS[shape]||BOUNDS.circle;
   const narrow=["star","arrow"].includes(shape);
   const maxWidth=size*bounds.width*(narrow?.6:.8);
-  const numberFontSize=size*(narrow?.25:.32);
+  const numberFontSize=size*(narrow?.25:.32);\n  const numberLineHeight=numberFontSize*1.12;
   const verticalOffset=["arrow","badge"].includes(shape)?size*.05:0;
   const path=PATHS[shape]||PATHS.hexagon;
 
