@@ -73,6 +73,20 @@ export default function Onboarding() {
     return data.user;
   };
 
+  const continueAsGuest = async () => {
+    if (!eula || authBusy) return;
+    setAuthBusy("email");
+    try {
+      await ensureSession();
+      setEmail("");
+      setStep(1);
+    } catch (error: any) {
+      Alert.alert("Could not continue", error?.message || "Please try again.");
+    } finally {
+      setAuthBusy(null);
+    }
+  };
+
   const continueWithEmail = async () => {
     if (!eula || authBusy) return;
     setAuthBusy("email");
@@ -242,6 +256,14 @@ export default function Onboarding() {
               </View>
               <Text style={styles.checkboxText}>{t("onboarding.eulaText")}</Text>
             </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.skipButton, authDisabled && styles.providerDisabled]}
+              disabled={authDisabled}
+              onPress={continueAsGuest}
+            >
+              <Text style={styles.skipButtonText}>{authBusy === "email" ? "..." : "SKIP FOR NOW →"}</Text>
+            </TouchableOpacity>
           </>
         )}
 
@@ -348,6 +370,8 @@ export default function Onboarding() {
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: "#F7F7F7" },
   content: { paddingHorizontal: 24, flexGrow: 1, width: "100%", maxWidth: 430, alignSelf: "center" },
+  skipButton: { alignItems: "center", paddingVertical: 14, marginTop: 10 },
+  skipButtonText: { fontSize: 12, letterSpacing: 1.5, color: "#737373", fontFamily: fonts.black },
   logoWrap: { alignItems: "center", marginBottom: 30 },
   title: { fontSize: 56, lineHeight: 54, fontFamily: fonts.display, color: "#0A0A0A", marginBottom: 12 },
   subtitle: { fontSize: 16, lineHeight: 24, color: "#737373", fontFamily: fonts.body, marginBottom: 28 },
