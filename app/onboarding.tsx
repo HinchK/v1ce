@@ -37,6 +37,7 @@ const SUBSTANCE_KEYS: Record<string, string> = {
   Nicotine: "nicotine",
   Sugar: "sugar",
   Gambling: "gambling",
+  "OCD Compulsions": "ocdCompulsions",
   Other: "other",
 };
 
@@ -53,6 +54,7 @@ export default function Onboarding() {
   const [eula, setEula] = useState(false);
   const [date, setDate] = useState("");
   const [substances, setSubstances] = useState<string[]>([]);
+  const [otherDoc, setOtherDoc] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const [authBusy, setAuthBusy] = useState<"apple" | "google" | "email" | null>(null);
   const router = useRouter();
@@ -162,7 +164,7 @@ export default function Onboarding() {
       {
         display_name: name.trim(),
         sobriety_date: date,
-        substances,
+        substances: substances.flatMap((s) => s === "Other" && otherDoc.trim() ? [otherDoc.trim()] : [s]),
         email: storedEmail,
         coin_color: "#F5D680",
       },
@@ -313,6 +315,17 @@ export default function Onboarding() {
                 );
               })}
             </View>
+            {substances.includes("Other") && (
+              <TextInput
+                value={otherDoc}
+                onChangeText={setOtherDoc}
+                style={[styles.input, styles.otherDocInput]}
+                placeholder="TYPE YOUR DOC"
+                placeholderTextColor="#A3A3A3"
+                autoCapitalize="sentences"
+                maxLength={60}
+              />
+            )}
             <View style={styles.buttonRow}>
               <TouchableOpacity style={styles.backButton} onPress={() => setStep(2)}>
                 <Text style={styles.backButtonText}>{t("onboarding.back")}</Text>
@@ -387,6 +400,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
   },
   subCellOn: { backgroundColor: "#0A0A0A" },
+  otherDocInput: { marginBottom: 24 },
   subText: { fontSize: 14, fontFamily: fonts.body, color: "#0A0A0A" },
   subTextOn: { color: "#FFFFFF" },
 });

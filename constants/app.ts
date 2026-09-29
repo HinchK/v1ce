@@ -25,6 +25,7 @@ export const ONBOARDING_SUBSTANCES = [
   "Nicotine",
   "Sugar",
   "Gambling",
+  "OCD Compulsions",
   "Other",
 ];
 
