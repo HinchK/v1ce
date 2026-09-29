@@ -3,7 +3,7 @@ import { Redirect } from "expo-router";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 
-export const ONBOARDING_VERSION = "2";
+export const ONBOARDING_VERSION = "3";
 export const ONBOARDING_VERSION_KEY = "v1ce_onboarding_version";
 
 export default function Index() {
