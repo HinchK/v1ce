@@ -141,11 +141,11 @@ export default function CoinFront({
         <CoinBackground kind={background} size={size} color={colors.bg} />
       </View>
       {imageOnlyMode ? null : (
-        <View style={[styles.content,{pointerEvents:"none",width:maxWidth,top:size*.5-numberFontSize*.52+verticalOffset}]}>
+        <View style={[styles.content,{pointerEvents:"none",width:maxWidth,top:size*.5-numberLineHeight*.58+verticalOffset}]}>
           <Text numberOfLines={1} style={[styles.number,{
             color:resolvedNumberColor,
             fontSize:numberFontSize,
-            lineHeight:numberFontSize*.9,
+            lineHeight:numberLineHeight,
             letterSpacing:numberFontSize*(numStyle.letterSpacing??0),
             fontWeight:numStyle.fontWeight,
             fontFamily:FONT_FAMILIES[numStyle.fontFamily]||undefined,
