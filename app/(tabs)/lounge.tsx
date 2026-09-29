@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Alert, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { useRouter } from "expo-router";
 import { useAuth } from "@/context/AuthContext";
 import { supabase, TABLES, type FriendConnection, type LoungeChatMessage } from "@/lib/supabase";
@@ -126,13 +126,6 @@ export default function Lounge() {
           );
         })
       )}
-
-      <Text style={[styles.section, { color: colors.foreground }]}>GAMES</Text>
-      <TouchableOpacity onPress={() => router.push("/game")} style={[styles.gameCard, { borderColor: colors.foreground }]}>
-        <Text style={[styles.gameTitle, { color: colors.foreground }]}>SNAKE</Text>
-        <Text style={{ color: colors.mutedForeground, fontSize: 10, marginTop: 4, fontFamily: fonts.bodyBold }}>TAP UP · DOWN · LEFT · RIGHT</Text>
-        <Text style={{ color: colors.foreground, fontFamily: fonts.black, marginTop: 10 }}>PLAY →</Text>
-      </TouchableOpacity>
 
       <Text style={[styles.section, { color: colors.foreground }]}>{t("lounge.loungeChat")}</Text>
       <View style={[styles.chat, { borderColor: colors.border }]}>
