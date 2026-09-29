@@ -438,4 +438,7 @@ const styles = StyleSheet.create({
   saveWrap: { paddingHorizontal: 20, paddingTop: 24 },
   save: { height: 56, alignItems: "center", justifyContent: "center" },
   saveText: { fontFamily: fonts.display, fontSize: 24, letterSpacing: 2 },
-  miniSwatches: { flexDirection: "row", flexWrap: "wrap", gap: 7, marginTop: 10, marginBottom: 10 },\n  miniSwatch: { width: 32, height: 32, borderWidth: 2 },\n  autoSwatch: { minWidth: 54, height: 32, borderWidth: 2, alignItems: "center", justifyContent: "center" },\n});
+  miniSwatches: { flexDirection: "row", flexWrap: "wrap", gap: 7, marginTop: 10, marginBottom: 10 },
+  miniSwatch: { width: 32, height: 32, borderWidth: 2 },
+  autoSwatch: { minWidth: 54, height: 32, borderWidth: 2, alignItems: "center", justifyContent: "center" },
+});
