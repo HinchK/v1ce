@@ -11,13 +11,6 @@ import CoinPreview from "@/components/lounge/CoinPreview";
 import BirthdayCard from "@/components/birthday/BirthdayCard";
 import BirthdayTag from "@/components/birthday/BirthdayTag";
 import GifterBadge from "@/components/GifterBadge";
-import ArcadeCabinet from "@/components/ui/ArcadeCabinet";
-
-const SOURCE_GAMES = [
-  { title: "COIN FLIP", subtitle: "CALL IT", route: "/game" },
-  { title: "SOBER STREAK", subtitle: "KEEP THE RUN", route: "/game" },
-  { title: "MILESTONE MATCH", subtitle: "MEMORY", route: "/game" },
-];
 
 export default function Lounge() {
   const router = useRouter();
@@ -114,31 +107,11 @@ export default function Lounge() {
       )}
 
       <Text style={[styles.section, { color: colors.foreground }]}>GAMES</Text>
-      <View style={styles.arcadeRow}>
-        {SOURCE_GAMES.map((game) => (
-          <TouchableOpacity key={game.title} onPress={() => router.push(game.route as any)} style={[styles.gameCard, { borderColor: colors.foreground }]}>
-            <Text style={[styles.gameTitle, { color: colors.foreground }]}>{game.title}</Text>
-            <Text style={{ color: colors.mutedForeground, fontSize: 10, marginTop: 4, fontFamily: fonts.bodyBold }}>{game.subtitle}</Text>
-          </TouchableOpacity>
-        ))}
-      </View>
-
-      <Text style={[styles.section, { color: colors.foreground }]}>ARCADE</Text>
-      <TouchableOpacity activeOpacity={0.9} onPress={() => router.push("/game")} style={{ marginBottom: 12 }}>
-        <ArcadeCabinet />
+      <TouchableOpacity onPress={() => router.push("/game")} style={[styles.gameCard, { borderColor: colors.foreground }]}>
+        <Text style={[styles.gameTitle, { color: colors.foreground }]}>SNAKE</Text>
+        <Text style={{ color: colors.mutedForeground, fontSize: 10, marginTop: 4, fontFamily: fonts.bodyBold }}>TAP UP · DOWN · LEFT · RIGHT</Text>
+        <Text style={{ color: colors.foreground, fontFamily: fonts.black, marginTop: 10 }}>PLAY →</Text>
       </TouchableOpacity>
-      <View style={styles.arcadeRow}>
-        <TouchableOpacity onPress={() => router.push("/game")} style={[styles.gameCard, { borderColor: colors.foreground, flex: 1 }]}>
-          <Text style={[styles.gameTitle, { color: colors.foreground }]}>SOBRIETY RUN</Text>
-          <Text style={{ color: colors.mutedForeground, fontSize: 10, marginTop: 4, fontFamily: fonts.bodyBold }}>12 LEVELS · BOSS FIGHT</Text>
-          <Text style={{ color: colors.foreground, fontFamily: fonts.black, marginTop: 10 }}>PLAY →</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => router.push("/game")} style={[styles.gameCard, { borderColor: colors.foreground, flex: 1 }]}>
-          <Text style={[styles.gameTitle, { color: colors.foreground }]}>JAYWALKER</Text>
-          <Text style={{ color: colors.mutedForeground, fontSize: 10, marginTop: 4, fontFamily: fonts.bodyBold }}>SNAKE · POWER-UPS</Text>
-          <Text style={{ color: colors.foreground, fontFamily: fonts.black, marginTop: 10 }}>PLAY →</Text>
-        </TouchableOpacity>
-      </View>
 
       <Text style={[styles.section, { color: colors.foreground }]}>{t("lounge.loungeChat")}</Text>
       <View style={[styles.chat, { borderColor: colors.border }]}>
