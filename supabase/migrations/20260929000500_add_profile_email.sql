@@ -1,0 +1,1 @@
+alter table public.profiles\n  add column if not exists email text;\n\ncreate index if not exists profiles_email_idx\n  on public.profiles (lower(email))\n  where email is not null;\n

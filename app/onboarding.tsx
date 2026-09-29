@@ -178,8 +178,8 @@ export default function Onboarding() {
   return (
     <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined}>
       <ScrollView
-        style={[styles.screen, { paddingTop: insets.top + 28 }]}
-        contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + 24 }]}
+        style={styles.screen}
+        contentContainerStyle={[styles.content, { paddingTop: insets.top + 44, paddingBottom: insets.bottom + 24 }]}
         keyboardShouldPersistTaps="handled"
       >
         {step === 0 && (
