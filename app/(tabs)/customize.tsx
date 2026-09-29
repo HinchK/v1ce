@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
   ScrollView,
@@ -8,12 +8,12 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { useRouter } from "expo-router";
+import { useFocusEffect, useRouter } from "expo-router";
 import { useAuth } from "@/context/AuthContext";
 import { useColors } from "@/hooks/useColors";
 import { usePremium } from "@/context/PremiumContext";
 import { useTranslation } from "@/lib/i18n";
-import { daysSince } from "@/constants/app";
+import { COLOR_SWATCHES, daysSince } from "@/constants/app";
 import { fonts } from "@/constants/typography";
 import SobrietyCoin from "@/components/coin/SobrietyCoin";
 import ShapePicker from "@/components/customize/ShapePicker";
@@ -23,6 +23,7 @@ import NumberStylePicker from "@/components/customize/NumberStylePicker";
 import { AsteriskStar, Crosshair, DiamondGrid, Starburst } from "@/components/ui/RetroAccents";
 import OutlineText from "@/components/ui/OutlineText";
 import { supabase, TABLES } from "@/lib/supabase";
+import { CUSTOMIZE_WORD_PREFS_KEY, DEFAULT_ROTATING_PREFS, loadRotatingTextPrefs, type RotatingTextPrefs } from "@/lib/rotatingTextPrefs";
 
 const ROTATING_WORDS = [
   "COIN",
@@ -125,6 +126,7 @@ export default function Customize() {
   const router = useRouter();
 
   const [wordIndex, setWordIndex] = useState(0);
+  const [wordPrefs, setWordPrefs] = useState<RotatingTextPrefs>(DEFAULT_ROTATING_PREFS);
   const [saving, setSaving] = useState(false);
   const [color, setColor] = useState(profile?.coin_color || "#F5D680");
   const [shape, setShape] = useState(profile?.coin_shape || "circle");
@@ -138,10 +140,22 @@ export default function Customize() {
   const [numberColor, setNumberColor] = useState(profile?.coin_number_color || "");
   const [coinPhoto, setCoinPhoto] = useState(profile?.coin_photo || "");
 
+  useFocusEffect(useCallback(() => {
+    loadRotatingTextPrefs(CUSTOMIZE_WORD_PREFS_KEY).then((next) => { setWordPrefs(next); setWordIndex(0); });
+  }, []));
+
+  const customHeaderWords = wordPrefs.customWords.map((word) => word.trim()).filter(Boolean);
+  const headerWords = customHeaderWords.length ? customHeaderWords : ROTATING_WORDS;
+
   useEffect(() => {
-    const interval = setInterval(() => setWordIndex((index) => (index + 1) % ROTATING_WORDS.length), 1500);
+    if (!wordPrefs.rotating || headerWords.length < 2) return;
+    const interval = setInterval(() => setWordIndex((index) => (index + 1) % headerWords.length), 1500);
     return () => clearInterval(interval);
-  }, []);
+  }, [wordPrefs.rotating, headerWords.length]);
+
+  const visibleHeaderWord = wordPrefs.rotating
+    ? headerWords[wordIndex % Math.max(headerWords.length, 1)]
+    : (wordPrefs.pausedWord.trim() || headerWords[0] || "COIN");
 
   useEffect(() => {
     if (!profile) return;
@@ -215,7 +229,7 @@ export default function Customize() {
           stroke={colors.foreground}
           style={styles.headerWord}
         >
-          {ROTATING_WORDS[wordIndex]}
+          {visibleHeaderWord}
         </OutlineText>
       </View>
       <View style={[styles.preview, { borderBottomColor: colors.foreground }]}>
@@ -345,7 +359,7 @@ export default function Customize() {
                 BORDER COLOR{" "}
                 <Text style={{ opacity: 0.5 }}>(LEAVE BLANK FOR AUTO)</Text>
               </Text>
-              <MiniColorInput value={borderColor} onChange={setBorderColor} />
+              <View style={styles.miniSwatches}><TouchableOpacity onPress={() => setBorderColor("")} style={[styles.autoSwatch, { borderColor: !borderColor ? colors.foreground : colors.border }]}><Text style={[styles.autoText, { color: colors.foreground }]}>AUTO</Text></TouchableOpacity>{COLOR_SWATCHES.slice(0, 12).map((hex) => <TouchableOpacity key={hex} onPress={() => setBorderColor(hex)} style={[styles.miniSwatch, { backgroundColor: hex, borderColor: borderColor === hex ? colors.foreground : colors.border }]} />)}</View><MiniColorInput value={borderColor} onChange={setBorderColor} />
             </View>
           )}
         </View>
@@ -355,7 +369,7 @@ export default function Customize() {
           <Text style={[styles.micro, { color: colors.mutedForeground }]}>
             LEAVE BLANK TO AUTO-CONTRAST WITH COIN COLOR
           </Text>
-          <MiniColorInput value={numberColor} onChange={setNumberColor} />
+          <View style={styles.miniSwatches}><TouchableOpacity onPress={() => setNumberColor("")} style={[styles.autoSwatch, { borderColor: !numberColor ? colors.foreground : colors.border }]}><Text style={[styles.autoText, { color: colors.foreground }]}>AUTO</Text></TouchableOpacity>{COLOR_SWATCHES.slice(0, 12).map((hex) => <TouchableOpacity key={hex} onPress={() => setNumberColor(hex)} style={[styles.miniSwatch, { backgroundColor: hex, borderColor: numberColor === hex ? colors.foreground : colors.border }]} />)}</View><MiniColorInput value={numberColor} onChange={setNumberColor} />
         </View>
       </View>
 
