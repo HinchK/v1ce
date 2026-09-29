@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Alert, Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { useRouter } from "expo-router";
@@ -10,6 +10,8 @@ import GifterBadge from "@/components/GifterBadge";
 import LanguageSwitcher from "@/components/layout/LanguageSwitcher";
 import { useTranslation } from "@/lib/i18n";
 import { fonts } from "@/constants/typography";
+import RotatingTextSettings from "@/components/settings/RotatingTextSettings";
+import { CUSTOMIZE_WORD_PREFS_KEY, DEFAULT_ROTATING_PREFS, HOME_WORD_PREFS_KEY, loadRotatingTextPrefs, saveRotatingTextPrefs, type RotatingTextPrefs } from "@/lib/rotatingTextPrefs";
 
 export default function Profile() {
   const { profile, user, setProfile, signOut } = useAuth();
@@ -22,6 +24,18 @@ export default function Profile() {
   const [avatarUrl, setAvatarUrl] = useState(profile?.avatar_url || "");
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [homeWordPrefs, setHomeWordPrefs] = useState<RotatingTextPrefs>(DEFAULT_ROTATING_PREFS);
+  const [customizeWordPrefs, setCustomizeWordPrefs] = useState<RotatingTextPrefs>(DEFAULT_ROTATING_PREFS);
+
+  useEffect(() => {
+    Promise.all([loadRotatingTextPrefs(HOME_WORD_PREFS_KEY), loadRotatingTextPrefs(CUSTOMIZE_WORD_PREFS_KEY)]).then(([home, customize]) => {
+      setHomeWordPrefs(home);
+      setCustomizeWordPrefs(customize);
+    });
+  }, []);
+
+  const updateHomeWords = (next: RotatingTextPrefs) => { setHomeWordPrefs(next); void saveRotatingTextPrefs(HOME_WORD_PREFS_KEY, next); };
+  const updateCustomizeWords = (next: RotatingTextPrefs) => { setCustomizeWordPrefs(next); void saveRotatingTextPrefs(CUSTOMIZE_WORD_PREFS_KEY, next); };
   const initials = (name.trim() || user?.email || "?")
     .split(/\s+/)
     .slice(0, 2)
@@ -96,6 +110,8 @@ export default function Profile() {
       <TouchableOpacity disabled={saving} onPress={save} style={[styles.button, { backgroundColor: colors.foreground }]}>
         <Text style={{ color: colors.background, fontFamily: fonts.bodyBold }}>{saving ? t("profile.saving") : t("profile.save")}</Text>
       </TouchableOpacity>
+      <RotatingTextSettings title="HOME ROTATING WORDS" prefs={homeWordPrefs} onChange={updateHomeWords} />
+      <RotatingTextSettings title="CUSTOMIZE ROTATING WORDS" prefs={customizeWordPrefs} onChange={updateCustomizeWords} />
       <Text style={[styles.label, { color: colors.mutedForeground, marginTop: 28 }]}>THEME</Text>
       <TouchableOpacity onPress={toggleTheme} style={[styles.outline, { borderColor: colors.foreground }]}>
         <Text style={{ color: colors.foreground, fontFamily: fonts.bodyBold }}>{isDark ? "DARK" : "LIGHT"}</Text>
