@@ -62,7 +62,6 @@ function RootLayoutNav() {
           header: () => <AppChrome showNav />,
         }}
       />
-      <Stack.Screen name="game" />
       <Stack.Screen name="widget" />
       <Stack.Screen name="coin-widget" />
     </Stack>
