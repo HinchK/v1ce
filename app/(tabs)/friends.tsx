@@ -15,7 +15,7 @@ export default function Friends() {
   const [friends, setFriends] = useState<FriendConnection[]>([]);
   const [pending, setPending] = useState<FriendConnection[]>([]);
   const [blocked, setBlocked] = useState<BlockedUser[]>([]);
-  const signedIn = !!user?.email;
+  const signedIn = !!user?.id;
 
   const load = async () => {
     if (!user?.id) return;
@@ -146,7 +146,16 @@ export default function Friends() {
         ))
       )}
 
-      {friends.length === 0 ? (
+      {__DEV__ ? (
+        <>
+          {["MIA · DEMO", "JORDAN · DEMO", "SAM · DEMO"].map((name, index) => (
+            <View key={name} style={[styles.card, { borderColor: colors.border }]}>
+              <Text style={{ color: colors.foreground, fontFamily: fonts.bodyBold, flex: 1 }}>{name}</Text>
+              <Text style={{ color: colors.foreground, fontFamily: fonts.extraBold }}>{index === 0 ? "ACTIVE · BDAY" : "ACTIVE"}</Text>
+            </View>
+          ))}
+        </>
+      ) : friends.length === 0 ? (
         <Text style={[styles.foot, { color: colors.mutedForeground }]}>{t("friends.noFriendsYet")}</Text>
       ) : (
         friends.map((f) => (
@@ -186,7 +195,7 @@ export default function Friends() {
 
 const styles = StyleSheet.create({
   page: { paddingHorizontal: 20, paddingTop: 28, paddingBottom: 48 },
-  title: { fontSize: 56, lineHeight: 52, fontFamily: fonts.display },
+  title: { fontSize: 56, lineHeight: 64, fontFamily: fonts.display },
   sub: { fontSize: 15, lineHeight: 22, fontFamily: fonts.body, marginTop: 12 },
   rule: { height: 2, marginVertical: 22 },
   heading: { fontSize: 13, fontFamily: fonts.extraBold, letterSpacing: 1.4, marginBottom: 12 },

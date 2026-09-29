@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
   hero: { paddingHorizontal: 20, paddingTop: 24, paddingBottom: 40, borderBottomWidth: 2, overflow: "hidden" },
   days: {
     fontSize: 132,
-    lineHeight: 118,
+    lineHeight: 142,
     letterSpacing: -4,
     fontFamily: fonts.display,
     marginLeft: -6,

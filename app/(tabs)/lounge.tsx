@@ -23,6 +23,7 @@ export default function Lounge() {
   const [sending, setSending] = useState(false);
   const [preview, setPreview] = useState<{ name: string; days: number } | null>(null);
   const [birthdayOpen, setBirthdayOpen] = useState(false);
+  const [birthdayName, setBirthdayName] = useState("");
 
   const load = useCallback(async () => {
     if (!user?.id) return;
@@ -84,7 +85,27 @@ export default function Lounge() {
       ) : null}
 
       <Text style={[styles.section, { color: colors.foreground }]}>{t("lounge.friends")}</Text>
-      {friends.length === 0 ? (
+      {__DEV__ ? (
+        ["Mia", "Jordan", "Sam"].map((name, index) => (
+          <TouchableOpacity
+            key={name}
+            onPress={() => {
+              if (index === 0) {
+                setBirthdayName(name);
+                setBirthdayOpen(true);
+              } else {
+                setPreview({ name, days: [365, 42, 128][index] });
+              }
+            }}
+            style={[styles.friend, { borderColor: colors.border }]}
+          >
+            <LofiAvatar seed={name} color={colors.foreground} />
+            <Text style={{ color: colors.foreground, fontFamily: fonts.extraBold, flex: 1 }}>{name}</Text>
+            {index === 0 ? <BirthdayTag /> : null}
+            <Text style={{ color: colors.mutedForeground, fontFamily: fonts.bodyBold, fontSize: 9 }}>DEMO</Text>
+          </TouchableOpacity>
+        ))
+      ) : friends.length === 0 ? (
         <Text style={[styles.empty, { color: colors.mutedForeground }]}>{t("friends.noFriendsYet")}</Text>
       ) : (
         friends.map((item, index) => {
@@ -122,11 +143,24 @@ export default function Lounge() {
               <Text style={{ color: colors.foreground, fontFamily: fonts.black, letterSpacing: 1 }}>{t("lounge.signIn")}</Text>
             </TouchableOpacity>
           </View>
-        ) : profile?.is_premium ? (
-          messages.length === 0 ? (
+        ) : (
+          messages.length === 0 && !__DEV__ ? (
             <Text style={{ color: colors.mutedForeground, fontFamily: fonts.body }}>No messages yet. Say hello.</Text>
           ) : (
-            messages.map((m) => (
+            <>
+              {__DEV__ ? [
+                { id: "demo-mia", sender_id: "demo-mia", sender_name: "Mia", body: "Checking in. Hope everybody is having a good day." },
+                { id: "demo-jordan", sender_id: "demo-jordan", sender_name: "Jordan", body: "One day at a time." },
+                { id: "demo-sam", sender_id: "demo-sam", sender_name: "Sam", body: "Proud of this group." },
+              ].map((m) => (
+                <View key={m.id} style={styles.message}>
+                  <LofiAvatar seed={m.sender_name} size={28} color={colors.foreground} />
+                  <Text style={{ color: colors.foreground, flex: 1, fontFamily: fonts.body }}>
+                    <Text style={{ fontFamily: fonts.black }}>{m.sender_name}: </Text>{m.body}
+                  </Text>
+                </View>
+              )) : null}
+              {messages.map((m) => (
               <View key={m.id} style={styles.message}>
                 <LofiAvatar seed={m.display_name || m.sender_name || "F"} size={28} color={colors.foreground} />
                 <Text style={{ color: colors.foreground, flex: 1, fontFamily: fonts.body }}>
@@ -134,18 +168,12 @@ export default function Lounge() {
                   {m.body || m.message}
                 </Text>
               </View>
-            ))
+              ))}
+            </>
           )
-        ) : (
-          <View style={styles.locked}>
-            <Text style={{ color: colors.mutedForeground, fontFamily: fonts.body }}>{t("lounge.premiumRequired")}</Text>
-            <TouchableOpacity onPress={() => router.push("/(tabs)/premium")}>
-              <Text style={{ color: colors.foreground, fontFamily: fonts.black, letterSpacing: 1 }}>{t("lounge.unlockPremium")}</Text>
-            </TouchableOpacity>
-          </View>
         )}
       </View>
-      {user?.id && profile?.is_premium ? (
+      {user?.id ? (
         <View style={styles.composer}>
           <TextInput
             value={message}
@@ -163,7 +191,7 @@ export default function Lounge() {
 
       <CoinPreview visible={!!preview} onClose={() => setPreview(null)} name={preview?.name || ""} days={preview?.days || 0} />
       <BirthdayCard
-        name={profile?.display_name || "friend"}
+        name={birthdayName || profile?.display_name || "friend"}
         visible={birthdayOpen}
         onClose={() => setBirthdayOpen(false)}
         onShare={(text) => send(text)}
@@ -174,7 +202,7 @@ export default function Lounge() {
 
 const styles = StyleSheet.create({
   container: { paddingHorizontal: 20, paddingTop: 28, paddingBottom: 48 },
-  title: { fontSize: 64, lineHeight: 58, fontFamily: fonts.display, letterSpacing: 0.5 },
+  title: { fontSize: 64, lineHeight: 72, fontFamily: fonts.display, letterSpacing: 0.5 },
   section: { fontSize: 18, fontFamily: fonts.black, letterSpacing: 2, marginTop: 28, marginBottom: 12 },
   empty: { fontSize: 14, lineHeight: 20, fontFamily: fonts.body },
   friend: { height: 52, borderWidth: 1, flexDirection: "row", alignItems: "center", padding: 8, marginBottom: 6, gap: 10 },

@@ -40,8 +40,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [profile, setProfileState] = useState<SobrietyProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const setProfile = useCallback((next: SobrietyProfile | null) => {
-    setProfileState(next);
-    void writeWidgetProfileSnapshot(next);
+    const effective = __DEV__ && next ? ({ ...next, is_premium: true } as SobrietyProfile) : next;
+    setProfileState(effective);
+    void writeWidgetProfileSnapshot(effective);
   }, []);
 
   const refreshProfile = useCallback(async () => {
